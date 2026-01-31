@@ -4,8 +4,11 @@
 use core::convert::TryInto;
 use core::mem::transmute;
 
+#[macro_use]
 pub mod utils;
+pub mod ccu;
 pub mod gpio;
+pub mod uart;
 pub mod dma;
 pub mod ili9844;
 pub mod nes;
@@ -18,6 +21,8 @@ use runes::memory::{CPUMemory, PPUMemory};
 use runes::mos6502;
 use runes::ppu;
 use nes::{SimpleCart, Screen, Speaker, INesHeader, ROM, Mapper2, Joystick};
+use uart::{init_uart0, uart0_write};
+use utils::delay;
 
 //pub const GPIO_BASE: *mut u32 = 0x0200_0000 as *mut u32;
 //pub const GPIO_BASE: usize = 0x0200_0000;
@@ -38,6 +43,15 @@ fn init_display() {
 
 #[riscv_rt::entry]
 fn main() -> ! {
+  //init_uart0();
+  delay(100_000_000);
+  println!("Hello world!!!");
+
+  loop {
+    delay(10_000_000);
+  }
+
+  /*
   unsafe {
     let mut cfg_value = GPIO_PE_CFG0.read_volatile();
     cfg_value &= 0b0000 & (0b0000 << 8);
@@ -45,15 +59,14 @@ fn main() -> ! {
     cfg_value |= PE0_OUTPUT << 8;
     GPIO_PE_CFG0.write_volatile(cfg_value);
 
-    /*
     loop {
       GPIO_PE_DAT.write_volatile(0xFFFFFFFF);
       delay(1_000_0000);
       GPIO_PE_DAT.write_volatile(0x0);
       delay(1_000_0000);
     }
-    */
   }
+  */
 
   init_display();
 
