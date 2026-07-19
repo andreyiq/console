@@ -52,8 +52,12 @@ fn main() -> ! {
   display.init();
   println!("display init ok");
 
-  // Чистый чёрный фон вокруг NES-кадра (256×240 в центре 480×320).
+  // Чистый чёрный фон на весь экран — один полный flush, чтобы задать
+  // чёрную рамку вокруг NES-кадра. Дальше NES будет делать partial flush
+  // только области 256×240 (184 KB вместо 460 KB).
   fb::clear(0x00, 0x00, 0x00);
+  display.flush_buffer_dma(fb::raw());
+  println!("border flushed");
 
   // Этап 7: NES-эмулятор. Не возвращается.
   nes::run(&display);

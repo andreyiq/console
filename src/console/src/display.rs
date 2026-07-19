@@ -208,6 +208,41 @@ impl Display {
     self.spi.cs_high();
   }
 
+  /// Отправить прямоугольную область `buf` (w×h×3 байт, contiguous) на дисплей
+  /// через DMA. Окно (x, y, w, h) задаётся отдельно — `buf` должен быть
+  /// ровно w*h*3 байт без stride/padding.
+  ///
+  /// Используется для partial flush: NES-кадр 256×240 = 184 KB вместо
+  /// полного 480×320 = 460 KB → ~2.5× меньше через SPI → выше FPS.
+  /// Чёрная рамка вокруг остаётся на дисплее с инициализации.
+  pub fn flush_region_dma(&self, buf: &[u8], x: u16, y: u16, w: u16, h: u16) {
+    let n = buf.len() as u32;
+    if n == 0 || w == 0 || h == 0 {
+      return;
+    }
+    self.set_window(x, y, w, h);
+
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_byte(0x2C); // Memory Write
+    self.dc_data();
+
+    self.spi.prepare_dma(n);
+
+    let dma = dma::Dma::Channel0;
+    dma.start(
+      CFG_DRAM_TO_SPI0_TX,
+      buf.as_ptr() as u32,
+      self.spi.txd_addr(),
+      n,
+    );
+
+    dma.wait_done();
+    self.spi.wait_burst_done();
+
+    self.spi.cs_high();
+  }
+
   /// Залить прямоугольник цветом RGB888. Базовый примитив для всех остальных.
   ///
   /// Один set_window + одна транзакция Memory Write на весь прямоугольник —
