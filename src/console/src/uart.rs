@@ -1,4 +1,5 @@
-use crate::{ccu, gpio, utils::set_bits};
+use crate::ccu;
+use crate::gpio;
 
 pub const UART0_BASE: u32 = 0x0250_0000;
 
@@ -15,18 +16,11 @@ pub fn init_uart0() {
     // Включаем тактирование и снимаем reset через CCU
     ccu::Peripheral::Uart0.enable();
 
-    // Настраиваем порты
-    let mut v = gpio::PE_CFG0.read_volatile();
-    // Function 6 = UART0, 8 - PE2, 12 - PE3
-    v = set_bits(v, 6, 8, 4);
-    v = set_bits(v, 6, 12, 4);
-    gpio::PE_CFG0.write_volatile(v);
-
-    let mut v = gpio::PE_PULL0.read_volatile();
-    // 4 - PE2, 6 - PE3
-    v = set_bits(v, gpio::Pull::Up as u32, 4, 2);
-    v = set_bits(v, gpio::Pull::Up as u32, 6, 2);
-    gpio::PE_PULL0.write_volatile(v);
+    // PE2 = UART0-TX, PE3 = UART0-RX (func 6), pull-up на обоих
+    gpio::PE2.set_func(gpio::Func::Uart0);
+    gpio::PE3.set_func(gpio::Func::Uart0);
+    gpio::PE2.set_pull(gpio::Pull::Up);
+    gpio::PE3.set_pull(gpio::Pull::Up);
 
     // Baud 115200 при 24 MHz: divisor = 24000000/(16*115200) = 13
     UART_FCR.write_volatile(1);
@@ -41,9 +35,9 @@ pub fn init_uart0() {
     UART_HALT.write_volatile(v);
 
     // Step 3 Controller Parameter Configuration
-    // Set data width, stop bits, and even/odd parity type by writing the UART_LCR register.
-    // Reset, enable FIFO and set FIFO trigger condition by writing the UART_FCR register.
-    // Set the flow control parameter by writing the UART_MCR register.
+    // Set data width, stop bits, and even/odd parity type by writing the UART_LCR register.
+    // Reset, enable FIFO and set FIFO trigger condition by writing the UART_FCR register.
+    // Set the flow control parameter by writing the UART_MCR register.
   }
 }
 

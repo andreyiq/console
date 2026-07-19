@@ -43,15 +43,16 @@ fn main() -> ! {
 
   // Этап 3: инициализируем SPI0-контроллер и отправляем тестовые байты.
   // На анализаторе (PC2 = CLK, PC4 = MOSI) должно быть видно 10 пакетов по 8 тактов.
-  spi::init();
+  let spi = spi::Spi::Spi0;
+  spi.init();
   println!("spi0 init ok");
 
-  spi::cs_low();
-  for _ in 0..10 {
-    spi::send_byte(0x55); // 01010101 — хорошо видно на анализаторе
+  spi.cs_low();
+  for _ in 0..1000_000_0 {
+    spi.send_byte(0x55); // 01010101 — хорошо видно на анализаторе
     utils::delay(100_000);
   }
-  spi::cs_high();
+  spi.cs_high();
   println!("spi0 test done");
 
   loop {

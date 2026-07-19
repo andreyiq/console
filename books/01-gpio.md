@@ -67,31 +67,30 @@ PC_CFG0:  [31:28]=PC7  [27:24]=PC6  [23:20]=PC5  [19:16]=PC4
 
 ## Как переключить пин в output и поднять/опустить
 
-Код из `src/gpio.rs`:
+Код из `src/gpio.rs` — метод на `struct Pin`:
 
 ```rust
-pub fn pc_set_func(pin: PinC, func: Func) {
-    let n = pin as u32;
-    let shift = n * 4;
+pub fn set_func(&self, f: Func) {
+    let shift = self.pin * 4;
     let mask = 0xF << shift;
     unsafe {
-        let old = read_volatile(PC_CFG0);
-        write_volatile(PC_CFG0, (old & !mask) | ((func as u32) << shift));
+        let old = read_volatile(self.cfg0_addr());
+        write_volatile(self.cfg0_addr(), (old & !mask) | ((f as u32) << shift));
     }
 }
 ```
 
-Разбор по шагам для `pc_set_func(PinC::P2, Func::Output)`:
+Разбор по шагам для `PC2.set_func(Func::Output)`:
 
-1. `n = 2`, `shift = 2 * 4 = 8` — PC2 живёт в битах `[11:8]`
+1. `pin = 2`, `shift = 2 * 4 = 8` — PC2 живёт в битах `[11:8]`
 2. `mask = 0xF << 8 = 0x0000_0F00` — выделяем 4 бита PC2
 3. `old & !mask` — **очищаем** биты PC2, не трогая остальные пины
 4. `| (Output << 8)` — вписываем `0001` в биты `[11:8]`
 
 Итог: в `PC_CFG0` биты `[11:8]` становятся `0001` — PC2 теперь output.
 
-Для `pc_set_high(P2)`: пишем `1 << 2 = 0b0100` в `PC_DAT`. Контроллер выводит 3.3V на ножку PC2.
-Для `pc_set_low(P2)`: пишем `0` в бит 2 — на ножке 0V.
+Для `PC2.set_high()`: пишем `1 << 2 = 0b0100` в `PC_DAT`. Контроллер выводит 3.3V на ножку PC2.
+Для `PC2.set_low()`: пишем `0` в бит 2 — на ножке 0V.
 
 ## Почему `read_volatile` / `write_volatile`
 
@@ -103,52 +102,75 @@ pub fn pc_set_func(pin: PinC, func: Func) {
 
 `volatile` заставляет компилятор каждый раз **реально** выполнять чтение/запись по указанному адресу, в точности так, как написано. Без `volatile` пин может не переключиться.
 
-## Типобезопасный API: enum'ы
+## Типобезопасный API: `Pin` + `Port` + `Func`
 
-Чтобы не передавать «магические числа» (какой пин, какая функция), мы используем enum'ы:
+Чтобы не передавать «магические числа» (какой порт, какой пин, какая функция), мы используем:
+
+- `enum Port { B, C, D, E, F, G }` — порт
+- `struct Pin { port: Port, pin: u32 }` — конкретная ножка
+- `enum Func { Input, Output, Spi0, Spi1, Uart0, IoDisable, ... }` — функция (значение = регистровое)
 
 ```rust
-#[repr(u32)]
-pub enum PinC {
-    P0 = 0, P1, P2, P3, P4, P5,
-}
+#[derive(Clone, Copy)]
+pub enum Port { B, C, D, E, F, G }
 
 #[repr(u32)]
 pub enum Func {
     Input     = 0b0000,
     Output    = 0b0001,
-    Spi0      = 0b0010,
+    Spi0      = 0b0010,  // для PC
+    Spi1      = 0b0100,  // для PD
+    Uart0     = 0b0110,  // для PE
     IoDisable = 0b1111,
 }
+
+#[derive(Clone, Copy)]
+pub struct Pin { port: Port, pin: u32 }
+
+impl Pin {
+    pub const fn new(port: Port, pin: u32) -> Self { Self { port, pin } }
+    pub fn set_func(&self, f: Func);
+    pub fn set_high(&self);
+    pub fn set_low(&self);
+    pub fn set_pull(&self, p: Pull);
+}
+
+// Именованные константы — удобно и видно в IDE:
+pub const PC2: Pin = Pin::new(Port::C, 2);
+pub const PD11: Pin = Pin::new(Port::D, 11);
 ```
 
-`#[repr(u32)]` делает так, что enum представлен в памяти как `u32` со значением варианта — можно сразу сдвигать и писать в регистр.
+`#[repr(u32)]` у `Func` делает enum представленным в памяти как `u32` со значением варианта — можно сразу сдвигать и писать в регистр.
 
 Вызов:
 
 ```rust
-gpio::pc_set_func(gpio::PinC::P2, gpio::Func::Output);
-gpio::pc_set_high(gpio::PinC::P2);
-gpio::pc_set_low(gpio::PinC::P2);
+gpio::PC2.set_func(gpio::Func::Output);
+gpio::PC2.set_high();
+gpio::PC2.set_low();
 ```
 
 Преимущества:
-- IDE подсказывает варианты `PinC::` и `Func::`
+- IDE подсказывает варианты `Func::` и имена пинов `PC2`, `PD11`, ...
 - Нельзя перепутать пин и функцию (разные типы)
-- Нельзя передать `PinC::P9` — его нет в enum'е
-- Нельзя случайно передать `99` вместо пина
+- Один `Pin` работает для всех портов — не нужно плодить `pc_*`, `pd_*`, `pe_*` функции
+- Добавить новый пин = добавить `pub const PX: Pin = Pin::new(Port::X, n);`
+
+### Подводный камень `Func`
+
+Значения в enum — регистровые, и они **привязаны к порту**: `Spi0=0b0010` корректен только для PC, а `Spi1=0b0100` — только для PD. Если вызвать `PD11.set_func(Func::Spi0)`, код скомпилируется, но запишет в PD11 функцию `0b0010`, которая на PD означает `LCD0-D15`, а не SPI. Имена подсказывают правильный выбор, но финальный контроль — за разработчиком (см. таблицу 9.7 в user manual).
 
 ## Практика: мигаем PC2
 
 В `main.rs`:
 
 ```rust
-gpio::pc_set_func(gpio::PinC::P2, gpio::Func::Output);
+gpio::PC2.set_func(gpio::Func::Output);
 
 loop {
-    gpio::pc_set_high(gpio::PinC::P2);
+    gpio::PC2.set_high();
     utils::delay(1_000_000);
-    gpio::pc_set_low(gpio::PinC::P2);
+    gpio::PC2.set_low();
     utils::delay(1_000_000);
 }
 ```

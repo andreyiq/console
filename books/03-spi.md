@@ -112,45 +112,68 @@ XCH (bit 31 в `SPI_TCR`) — это «пусковая кнопка». Запи
 
 ## Код
 
-`src/spi.rs` — свежий драйвер SPI0:
+`src/spi.rs` — драйвер SPI на основе `enum Spi` (паттерн как `ccu::Peripheral`):
 
 ```rust
-pub fn init() {
-  // 1. Пины PC2,4,5 = SPI0 (func 2), PC3 = GPIO output (CS)
-  gpio::pc_set_func(PinC::P2, Func::Spi0);
-  gpio::pc_set_func(PinC::P3, Func::Output);  // CS вручную
-  gpio::pc_set_func(PinC::P4, Func::Spi0);
-  gpio::pc_set_func(PinC::P5, Func::Spi0);
-  cs_high();
+pub enum Spi { Spi0, Spi1 }
 
-  // 2. Делитель, сброс FIFO, режим TX-only, master+enable
-  write_reg(CLK_CTL, 0x1000);
-  write_reg(FCR, 0x8000_8000);  // сброс FIFO
-  write_reg(FCR, 0x10001);       // порог 1 байт
-  write_reg(TCR, DHB);           // TX only
-  write_reg(GCR, 0x83);          // TP_EN | MODE (master) | EN
+struct SpiInfo {
+  base: u32,
+  clk: Pin, mosi: Pin, miso: Pin, cs: Pin,
+  func: Func,  // Func::Spi0 или Func::Spi1
 }
 
-pub fn send_byte(byte: u8) {
-  write_reg(BCC, 1);
-  write_reg(MBC, 1);
-  write_reg(MTC, 1);
-  write_reg(TXD, byte as u32);
-  write_reg(TCR, XCH | DHB);     // старт
-  while read_reg(TCR) & XCH != 0 {}  // ждём окончания
+impl Spi {
+  const fn info(&self) -> SpiInfo {
+    match self {
+      Spi::Spi0 => SpiInfo {
+        base: 0x0402_5000,
+        clk: PC2, mosi: PC4, miso: PC5, cs: PC3,
+        func: Func::Spi0,
+      },
+      Spi::Spi1 => SpiInfo { /* ... PD10-13 ... */ },
+    }
+  }
+
+  pub fn init(&self) {
+    let info = self.info();
+    // 1. Пины: CLK/MOSI/MISO в функцию SPI, CS — GPIO output
+    info.clk.set_func(info.func);
+    info.mosi.set_func(info.func);
+    info.miso.set_func(info.func);
+    info.cs.set_func(Func::Output);
+    info.cs.set_high();
+
+    // 2. Делитель, сброс FIFO, режим TX-only, master+enable
+    self.write_reg(CLK_CTL, 0x1000);
+    self.write_reg(FCR, 0x8000_8000);  // сброс FIFO
+    self.write_reg(FCR, 0x10001);       // порог 1 байт
+    self.write_reg(TCR, DHB);           // TX only
+    self.write_reg(GCR, 0x83);          // TP_EN | MODE (master) | EN
+  }
+
+  pub fn send_byte(&self, byte: u8) {
+    self.write_reg(BCC, 1);
+    self.write_reg(MBC, 1);
+    self.write_reg(MTC, 1);
+    self.write_reg(TXD, byte as u32);
+    self.write_reg(TCR, XCH | DHB);     // старт
+    while self.read_reg(TCR) & XCH != 0 {}  // ждём окончания
+  }
 }
 ```
 
 В `main.rs` после `ccu::Peripheral::Spi0.enable()`:
 
 ```rust
-spi::init();
-spi::cs_low();
+let spi = spi::Spi::Spi0;
+spi.init();
+spi.cs_low();
 for _ in 0..10 {
-  spi::send_byte(0x55);  // 01010101 — хорошо видно на анализаторе
+  spi.send_byte(0x55);  // 01010101 — хорошо видно на анализаторе
   utils::delay(100_000);
 }
-spi::cs_high();
+spi.cs_high();
 ```
 
 ## Что увидеть на анализаторе
