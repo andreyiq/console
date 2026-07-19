@@ -3,6 +3,7 @@
 
 pub mod ccu;
 pub mod gpio;
+pub mod spi;
 pub mod uart;
 #[macro_use]
 pub mod utils;
@@ -20,8 +21,7 @@ fn main() -> ! {
   utils::delay(100_000);
   println!("hello");
 
-  // Этап 2: включаем тактирование и снимаем reset для SPI0.
-  // Печатаем значения регистров до/после — убеждаемся что биты выставились.
+  // Этап 2: включаем тактирование SPI0 через CCU.
   let spi0 = ccu::Peripheral::Spi0;
   let clk_before = spi0.read_clk().unwrap_or(0);
   let bgr_before = spi0.read_bgr();
@@ -41,14 +41,20 @@ fn main() -> ! {
   utils::print_hex(bgr_after);
   println!("");
 
-  // Этап 1: мигаем PC2 (SPI0-CLK пин, сейчас как GPIO output).
-  // На логическом анализаторе должно быть видно квадратную волну.
-  gpio::pc_set_func(gpio::PinC::P2, gpio::Func::Output);
+  // Этап 3: инициализируем SPI0-контроллер и отправляем тестовые байты.
+  // На анализаторе (PC2 = CLK, PC4 = MOSI) должно быть видно 10 пакетов по 8 тактов.
+  spi::init();
+  println!("spi0 init ok");
+
+  spi::cs_low();
+  for _ in 0..10 {
+    spi::send_byte(0x55); // 01010101 — хорошо видно на анализаторе
+    utils::delay(100_000);
+  }
+  spi::cs_high();
+  println!("spi0 test done");
 
   loop {
-    gpio::pc_set_high(gpio::PinC::P2);
-    utils::delay(1_000_000);
-    gpio::pc_set_low(gpio::PinC::P2);
-    utils::delay(1_000_000);
+    utils::delay(10_000_000);
   }
 }
