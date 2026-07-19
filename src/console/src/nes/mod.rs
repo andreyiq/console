@@ -20,7 +20,9 @@ pub mod input;
 pub mod mapper0;
 pub mod palette;
 pub mod screen;
+pub mod smol;
 pub mod speaker;
+pub mod xnes_test;
 
 use runes::apu::APU;
 use runes::controller::stdctl;
@@ -32,14 +34,11 @@ use runes::ppu;
 use crate::display::Display;
 use crate::nes::input::NoInput;
 use crate::nes::mapper0::Mapper0;
-use crate::nes::screen::{
-  clear_flush, flush_needed, FbScreen, STRETCHED_OFFSET_X, STRETCHED_OFFSET_Y, STRETCHED_H,
-  STRETCHED_W,
-};
+use crate::nes::screen::FbScreen;
 use crate::nes::speaker::NoAudio;
 
 /// Прочитать счётчик циклов (RISC-V mcycle CSR). Для замеров времени.
-fn cycles() -> u64 {
+pub fn cycles() -> u64 {
   riscv::register::mcycle::read() as u64
 }
 
@@ -92,8 +91,9 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   // Speaker — заглушка (нет аудиовыхода).
   let mut spk = NoAudio;
 
-  // Screen — наш framebuffer в центре 480×320.
-  let mut scr = FbScreen::new();
+  // Screen — framebuffer 256×240 в DDR, flush одним DMA в конце кадра.
+  let mut scr = FbScreen::new(display);
+  FbScreen::clear_buf();
 
   // Собираем машину: CPU + PPU + APU.
   let mut cpu = mos6502::CPU::new(CPUMemory::new(&mapper, Some(&p1ctl), None));
@@ -106,58 +106,32 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   cpu.mem.bus.attach(cpu_ptr, &mut ppu, &mut apu);
 
   cpu.powerup();
-  println!("nes: powerup ok, starting loop");
+  println!("nes: powerup ok, BENCH MODE (PPU no-op, no bus.tick) — замер чистого CPU");
 
-  // CPU_HZ — примерная частота ядра C906. Реально не калибровалась
-  // (мы не настраивали CPU PLL, ядро на дефолтной частоте), поэтому
-  // напечатанный FPS завышен относительно наблюдаемого. Для точного
-  // замера нужна калибровка через known delay или отдельный таймер.
-  const CPU_HZ: u64 = 1_000_000_000;
+  // BENCH: крутим cpu.step() без PPU/APU тиков. Считаем guest cycles.
+  // На каждом 29830 cycles (1 NTSC кадр) — замер mcycle.
+  // Это даёт "host cycles per guest cycle" = mcycle_delta / 29830.
+  const CPU_HZ: u64 = 1_009_000_000;
+  const CYCLES_PER_FRAME: u32 = 29830;
+  let mut frame_cycles: u32 = 0;
   let mut frame: u32 = 0;
-  let mut fps: u32 = 0;
+  let mut last_mcycle: u64 = 0;
   loop {
-    let t0 = cycles();
-
-    // Докручиваем leftover циклы предыдущей инструкции — bus.tick() гонит
-    // PPU (3 тика на CPU-цикл) и APU. PPU в процессе зовёт scr.put().
-    while cpu.cycle > 0 {
-      cpu.mem.bus.tick();
-    }
-    // Выполняем одну инструкцию 6502.
     cpu.step();
-
-    // PPU вызовет render() когда кадр готов — atomic-флаг.
-    // Здесь: рисуем FPS на NES-кадре, потом resample 256×240 → 341×320
-    // (4:3, nearest-neighbor), потом partial flush только этой области.
-    if flush_needed() {
-      // FPS поверх NES-кадра: чёрная подложка + белые цифры в углу.
-      // Цифры 3×5 шрифтом, масштаб ×2 → 6×10 на цифру. До 3 цифр = 22×10.
-      // Подложка 26×14 с 2px padding.
-      screen::fill_rect(2, 2, 26, 14, 0x00, 0x00, 0x00);
-      screen::draw_number(fps, 4, 4, 2, 0xFF, 0xFF, 0xFF);
-
-      // Растянуть 256×240 → 341×320 (4:3). FPS тоже растянется, но читаемо.
-      screen::resample();
-
-      display.flush_region_dma(
-        screen::stretched_raw(),
-        STRETCHED_OFFSET_X,
-        STRETCHED_OFFSET_Y,
-        STRETCHED_W as u16,
-        STRETCHED_H as u16,
-      );
-      clear_flush();
-
-      let t1 = cycles();
-      let cpf = t1 - t0;
-      if cpf > 0 {
-        fps = (CPU_HZ / cpf) as u32;
-      }
+    let cycles = cpu.cycle;
+    cpu.cycle = 0;
+    frame_cycles = frame_cycles.wrapping_add(cycles);
+    if frame_cycles >= CYCLES_PER_FRAME {
+      frame_cycles -= CYCLES_PER_FRAME;
       frame = frame.wrapping_add(1);
-      // Раз в 60 кадров — лог в UART.
-      if frame % 60 == 0 {
-        println!("nes: frame {} fps={}", frame, fps);
+      let now = riscv::register::mcycle::read() as u64;
+      if last_mcycle != 0 && frame % 10 == 0 {
+        let cpf = now - last_mcycle; // host cycles per 29830 guest cycles
+        let hpg = cpf / (CYCLES_PER_FRAME as u64); // host cycles per guest cycle
+        let fps = CPU_HZ / cpf;
+        println!("bench: frame {} fps={} cpf={} hpg={}", frame, fps, cpf, hpg);
       }
+      last_mcycle = now;
     }
   }
 }

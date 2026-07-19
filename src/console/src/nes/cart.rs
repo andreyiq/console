@@ -11,10 +11,10 @@ use core::ptr::addr_of_mut;
 use runes::cartridge::{BankType, Cartridge, MirrorType};
 use runes::utils;
 
-/// ROM, прошитый в бинарник. Размер nestest.nes — 24 KB, mario.nes — 40 KB.
+/// ROM, прошитый в бинарник. Размер nestest.nes — 24 KB, mario.nes — 40 KB, pac-man.nes — 24 KB.
 /// Чтобы переключить ROM — поменяй путь в `include_bytes!` и константу `ROM_NAME`.
-pub static ROM: &[u8] = include_bytes!("../../archive/roms/mario.nes");
-pub const ROM_NAME: &str = "mario.nes";
+pub static ROM: &[u8] = include_bytes!("../../archive/roms/pac-man.nes");
+pub const ROM_NAME: &str = "pac-man.nes";
 
 /// SRAM картриджа (8 KB). `static mut` — доступ один раз через `take_sram()`.
 static mut SRAM: [u8; 0x2000] = [0; 0x2000];
