@@ -12,7 +12,7 @@ use crate::gpio::{self, Pin};
 use crate::spi::Spi;
 use crate::utils;
 
-/// Размер экрана (ориентация MADCTL=0xE8 → landscape).
+/// Размер экрана (MADCTL=0xE8 → landscape, как в архиве ili9844.rs).
 pub const WIDTH: u16 = 480;
 pub const HEIGHT: u16 = 320;
 
@@ -60,12 +60,13 @@ impl Display {
     self.spi.cs_high();
   }
 
-  /// Hardware reset: RST низко на ~50 ms, высоко на ~150 ms.
+  /// Hardware reset: RST низко ~5 ms, высоко ~120 ms.
+  /// По даташиту ILI9488: RST low ≥ 10 µs, после RST high ~120 ms перед командами.
   fn hardware_reset(&self) {
     self.rst.set_low();
-    utils::delay(50_000);
+    utils::delay(500_000); // ~5 ms
     self.rst.set_high();
-    utils::delay(150_000);
+    utils::delay(12_000_000); // ~120 ms
   }
 
   /// Полная инициализация: reset + init-последовательность + Sleep Out + Display On.
@@ -84,8 +85,8 @@ impl Display {
     self.command_data(0xC5, &[0x00, 0x4D, 0x80]); // VCOM Control
     self.command_data(0xB1, &[0xB0, 0x11]); // Frame Rate Control
     self.command_data(0xB4, &[0x02]); // Display Inversion Control
-    self.command_data(0x36, &[0xE8]); // MADCTL: landscape, BGR
-    self.command_data(0x3A, &[0x55]); // Pixel Format = RGB565
+    self.command_data(0x36, &[0xE8]); // MADCTL: landscape, BGR (как в архиве ili9844.rs)
+                                      // 0x3A (pixel format) НЕ отправляем — дисплей использует дефолтный RGB888 (3 байта/пиксель).
     self.command(0x21); // Display Inversion ON (IPS)
     self.command_data(0xE9, &[0x00]); // Set Image Function
     self.command_data(0xF7, &[0xA9, 0x51, 0x2C, 0x82]); // Adjust Control 3 (повтор)
@@ -102,9 +103,33 @@ impl Display {
       ],
     );
     self.command(0x11); // Sleep Out
-    utils::delay(480_000); // ~120 ms
+    utils::delay(50_000_000); // ~500 ms (BOE doc: Delay(480) = 480 ms)
     self.command(0x29); // Display ON
-    utils::delay(80_000); // ~20 ms
+    utils::delay(5_000_000); // ~50 ms
+  }
+
+  /// Прочитать регистр дисплея (1 байт ответа). cmd=0x0B для MADCTL, 0x0A для Power Mode.
+  pub fn read_reg_1byte(&self, cmd: u8) -> u8 {
+    let mut out = [0u8; 4];
+    self.spi.cs_low();
+    self.dc_command();
+    // cmd + 1 dummy + 1 data = 3 байта, читаем 3 (data в 3-й позиции).
+    self.spi.send_recv(&[cmd, 0x00, 0x00]);
+    self.spi.read_rx(&mut out);
+    self.spi.cs_high();
+    out[2]
+  }
+
+  /// Прочитать ID дисплея (команда 0x04). Возвращает 4 байта, обычно
+  /// [0x00, 0x94, 0x88, 0x00] для ILI9488.
+  pub fn read_id(&self) -> [u8; 4] {
+    let mut out = [0u8; 6];
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_recv(&[0x04, 0x00, 0x00, 0x00, 0x00, 0x00]);
+    self.spi.read_rx(&mut out);
+    self.spi.cs_high();
+    [out[2], out[3], out[4], out[5]]
   }
 
   /// Задать окно для рисования (Column + Page Address Set).
@@ -131,10 +156,28 @@ impl Display {
     );
   }
 
-  /// Залить весь экран цветом RGB565.
+  /// Залить весь экран цветом RGB888 (r, g, b).
   ///
-  /// Медленно (побайтово через SPI на делителе 0x1000) — для первого урока.
+  /// Медленно (побайтово через SPI) — для первого урока.
   /// Ускорим в Главе 5 (буфер) и Главе 6 (DMA).
+  pub fn fill_rgb(&self, r: u8, g: u8, b: u8) {
+    self.set_window(0, 0, WIDTH, HEIGHT);
+
+    // Memory Write — одна длинная транзакция: CS низко на все пиксели
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_byte(0x2C);
+    self.dc_data();
+
+    let pixel = [r, g, b];
+    let total = WIDTH as u32 * HEIGHT as u32;
+    for _ in 0..total {
+      self.spi.send(&pixel);
+    }
+    self.spi.cs_high();
+  }
+
+  /// Залить весь экран цветом RGB565. (Совместимость со старым API.)
   pub fn fill(&self, color: u16) {
     self.set_window(0, 0, WIDTH, HEIGHT);
 

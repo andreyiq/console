@@ -20,10 +20,16 @@ const MBC: u32 = 0x30; // Master Burst Counter
 const MTC: u32 = 0x34; // Master Transmit Counter
 const BCC: u32 = 0x38; // Master Burst Control
 const TXD: u32 = 0x200; // TX Data
+const RXD: u32 = 0x300; // RX Data
+
+// Биты FCR
+const RX_FIFO_RST: u32 = 1 << 6; // сброс RX FIFO
+const TX_FIFO_RST: u32 = 1 << 30; // сброс TX FIFO
 
 // Биты TCR
 const XCH: u32 = 1 << 31; // Exchange Burst — старт передачи (auto-clear по окончании)
 const DHB: u32 = 1 << 8; // Discard Hash Burst — только TX, без приёма
+const SS_OWNER: u32 = 1 << 6; // 1 = SS управляется программно (GPIO), контроллер не трогает SS
 
 // GCR: TP_EN | MODE (master) | EN
 const GCR_EN: u32 = 0x83;
@@ -92,7 +98,7 @@ impl Spi {
     self.write_reg(CLK_CTL, 0x1000); // делитель — медленно, удобно для анализатора
     self.write_reg(FCR, 0x8000_8000); // сброс TX и RX FIFO
     self.write_reg(FCR, 0x10001); // порог срабатывания = 1 байт
-    self.write_reg(TCR, DHB); // только TX, без приёма
+    self.write_reg(TCR, DHB | SS_OWNER); // только TX, без приёма; SS — программно
     self.write_reg(GCR, GCR_EN); // master mode + enable
   }
 
@@ -111,8 +117,8 @@ impl Spi {
     self.write_reg(BCC, 1);
     self.write_reg(MBC, 1);
     self.write_reg(MTC, 1);
-    self.write_reg(TXD, byte as u32);
-    self.write_reg(TCR, XCH | DHB); // старт
+    self.write_txd_byte(byte);
+    self.write_reg(TCR, XCH | DHB | SS_OWNER); // старт
     while self.read_reg(TCR) & XCH != 0 {
       core::hint::spin_loop();
     }
@@ -128,11 +134,57 @@ impl Spi {
     self.write_reg(MBC, n);
     self.write_reg(MTC, n);
     for &b in buf {
-      self.write_reg(TXD, b as u32);
+      self.write_txd_byte(b);
     }
-    self.write_reg(TCR, XCH | DHB);
+    self.write_reg(TCR, XCH | DHB | SS_OWNER);
     while self.read_reg(TCR) & XCH != 0 {
       core::hint::spin_loop();
+    }
+  }
+
+  /// Побайтовая (8-бит) запись в TXD. По мануалу F133 (9.3.6.17) размер записи
+  /// определяет сколько байт уйдёт в FIFO: byte → 1, half-word → 2, word → 4.
+  /// 32-битная запись молча клала бы 4 байта (0x000000A9 → 00 00 00 A9).
+  #[inline]
+  fn write_txd_byte(&self, byte: u8) {
+    unsafe {
+      write_volatile((self.info().base + TXD) as *mut u8, byte);
+    }
+  }
+
+  /// Прочитать один байт из RX FIFO (8-битная запись в RXD).
+  #[inline]
+  fn read_rxd_byte(&self) -> u8 {
+    unsafe { read_volatile((self.info().base + RXD) as *const u8) }
+  }
+
+  /// Отправить `buf` и одновременно прочитать столько же байт с MISO.
+  /// Используется для чтения регистров дисплея (например ID 0x04).
+  /// DHB=0 → RX включён. Перед вызовом CS уже низко, DC выставлен вызывающим.
+  pub fn send_recv(&self, buf: &[u8]) {
+    let n = buf.len() as u32;
+    if n == 0 {
+      return;
+    }
+    // Сброс RX FIFO чтобы выкинуть мусор от прошлых транзакций.
+    self.write_reg(FCR, TX_FIFO_RST | RX_FIFO_RST);
+    self.write_reg(FCR, 0x10001);
+    self.write_reg(BCC, n);
+    self.write_reg(MBC, n);
+    self.write_reg(MTC, n);
+    for &b in buf {
+      self.write_txd_byte(b);
+    }
+    self.write_reg(TCR, XCH); // DHB=0 → и TX, и RX; SS_OWNER=0 → контроллер не важен (CS уже низко)
+    while self.read_reg(TCR) & XCH != 0 {
+      core::hint::spin_loop();
+    }
+  }
+
+  /// Прочитать `out` байт из RX FIFO (после send_recv).
+  pub fn read_rx(&self, out: &mut [u8]) {
+    for b in out.iter_mut() {
+      *b = self.read_rxd_byte();
     }
   }
 }

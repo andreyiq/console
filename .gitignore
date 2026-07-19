@@ -9,3 +9,6 @@ src/console/archive/
 
 # OpenSpec (not used in this project)
 openspec/
+
+# Logic analyzer exports (DSLogic/libsigrok)
+log.csv

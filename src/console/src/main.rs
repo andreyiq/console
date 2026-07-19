@@ -53,7 +53,7 @@ fn main() -> ! {
   let display = display::Display::new(spi, gpio::PE0, gpio::PE1);
   display.init();
   println!("display init ok");
-  display.fill(0xF800); // красный RGB565
+  display.fill_rgb(0xFF, 0x00, 0x00); // красный RGB888
   println!("display fill done");
 
   loop {
