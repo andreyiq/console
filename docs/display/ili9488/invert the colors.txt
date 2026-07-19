@@ -1,0 +1,10 @@
+It is also important to invert the colors, but it is simple, anyone can do it.
+writecommand (0x21);
+
+
+writecommand(0xC5); 
+writedata(0x00); 
+writedata(0x4D); //  <--- important!!! -VCOM = -0.79688V
+writedata(0x80); 
+
+writecommand (0x21); //inverse colors for IPS

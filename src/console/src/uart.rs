@@ -4,7 +4,7 @@ pub const UART0_BASE: u32 = 0x0250_0000;
 
 pub const UART_THR: *mut u32 = (UART0_BASE + 0x0000) as *mut u32;
 pub const UART_DLL: *mut u32 = (UART0_BASE + 0x0000) as *mut u32;
-pub const UART_DLH: *mut u32 = (UART0_BASE + 0x0000) as *mut u32;
+pub const UART_DLH: *mut u32 = (UART0_BASE + 0x0004) as *mut u32;
 pub const UART_FCR: *mut u32 = (UART0_BASE + 0x0008) as *mut u32;
 pub const UART_USR: *mut u32 = (UART0_BASE + 0x007C) as *mut u32;
 pub const UART_HALT: *mut u32 = (UART0_BASE + 0x00A4) as *mut u32;
@@ -30,15 +30,13 @@ pub fn init_uart0() {
     set_bits(v, gpio::Pull::Up as u32, 6, 2);
     gpio::PE_PULL0.write_volatile(v);
 
-    // FIXME Set UART baud-rate (refer to section 9.2.3.4);
-    // Write UART_FCR[FIFOE] to 1 to enable TX/RX FIFO;
+    // Baud 115200 при 24 MHz: divisor = 24000000/(16*115200) = 13
     UART_FCR.write_volatile(1);
-    // Write UART_HALT[HALT_TX] to 1 to disable TX transfer;
     UART_HALT.write_volatile(1);
-    // Set UART_LCR[DLAB] to 1, remain default configuration for other bits; set 0x00 offset address to the UART_DLL register, set 0x04 offset address to the UART_DLH register;
-    UART_LCR.write_volatile(0x1 << 7);
-    UART_DLL.write_volatile(0);
-    UART_DLL.write_volatile(0x04);
+    UART_LCR.write_volatile(0x1 << 7); // DLAB=1
+    UART_DLL.write_volatile(13);  // divisor low
+    UART_DLH.write_volatile(0);  // divisor high
+    UART_LCR.write_volatile(0x03); // DLAB=0, 8N1
     // Set UART_HALT[HALT_TX] to 0 to enable TX transfer.
     let mut v = UART_HALT.read_volatile();
     v &= !1;

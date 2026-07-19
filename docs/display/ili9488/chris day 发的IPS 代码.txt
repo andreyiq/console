@@ -1,0 +1,69 @@
+ tft.writecommand(0xF7); // Adjust Control 3 (F7h)
+     tft.writedata(0xA9);
+     tft.writedata(0x51);
+     tft.writedata(0X2C);
+     tft.writedata(0X82);
+
+     tft.writecommand(0xC0); // Power Control 1 (C0h)
+     tft.writedata(0x0F);
+     tft.writedata(0x0f);
+
+     tft.writecommand(0xC1); // Power Control 2 (C1h)  //VGH = 5*VCI  
+VGL = -3*VCI
+     tft.writedata(0x47);
+
+     tft.writecommand(0xC5); // VCOM Control (C5h)
+     tft.writedata(0x00);
+     tft.writedata(0x4D);
+     tft.writedata(0x80);
+
+     tft.writecommand(0xB1); // Frame Rate Control (In Normal Mode/Full
+Colors) (B1h)
+     tft.writedata(0xB0);
+     tft.writedata(0X11);
+
+     tft.writecommand(0xB4); // Display Inversion Control (B4h)
+     tft.writedata(0x02);
+
+     tft.writecommand(0x21); // Display Inversion ON (21h)
+     tft.writedata(0x00);    // IPS
+
+     tft.writecommand(0xF7); // Adjust Control 3 (F7h)
+     tft.writedata(0xA9);
+     tft.writedata(0x51);
+     tft.writedata(0x2C);
+     tft.writedata(0x82);
+
+     tft.writecommand(0xE0); // PGAMCTRL (Positive Gamma Control) (E0h)
+     tft.writedata(0x00);
+     tft.writedata(0x07);
+     tft.writedata(0x0B);
+     tft.writedata(0x03);
+     tft.writedata(0x0F);
+     tft.writedata(0x05);
+     tft.writedata(0x30);
+     tft.writedata(0x56);
+     tft.writedata(0x47);
+     tft.writedata(0x04);
+     tft.writedata(0x0B);
+     tft.writedata(0x0A);
+     tft.writedata(0x2D);
+     tft.writedata(0x37);
+     tft.writedata(0x0F);
+
+     tft.writecommand(0xE1); // NGAMCTRL (Negative Gamma Control) (E1h)
+     tft.writedata(0x00);
+     tft.writedata(0x0E);
+     tft.writedata(0x13);
+     tft.writedata(0x04);
+     tft.writedata(0x11);
+     tft.writedata(0x07);
+     tft.writedata(0x39);
+     tft.writedata(0x45);
+     tft.writedata(0x50);
+     tft.writedata(0x07);
+     tft.writedata(0x10);
+     tft.writedata(0x0D);
+     tft.writedata(0x32);
+     tft.writedata(0x36);
+     tft.writedata(0x0F);

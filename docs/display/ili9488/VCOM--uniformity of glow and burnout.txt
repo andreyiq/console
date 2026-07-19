@@ -1,0 +1,7 @@
+The most important parameter for setting the uniformity of glow and burnout is -VCOM.
+The burnout does not disappear completely, but it becomes noticeably less.
+
+writecommand(0xC5);
+writedata(0x00);
+writedata(0x4D); <--- !!!
+writedata(0x80);

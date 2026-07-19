@@ -5,3 +5,8 @@ https://notes.mcejp.com/posts/Allwinner-D1s-F133-notes.html
 
 https://github.com/xboot/xfel
 https://github.com/SdtElectronics/Xassette-Asterisk
+
+# Где искать код, включающий доступ CPU к 0x05xx (DE/TCON):
+# - U-Boot: git clone https://source.denx.de/u-boot/u-boot; grep -r "0x0804\|MBUS\|RISC_MCLK\|0x0540" arch/ drivers/ (D1 = sun20i, riscv)
+# - Linux: git clone https://github.com/torvalds/linux; drivers/clk/sunxi-ng/ (ccu-*), drivers/gpu/drm/sun4i/
+# - BROM закрыт, в SPL/ядре может быть единственное место, где включают шину к 0x05xx

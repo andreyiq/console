@@ -1,7 +1,0 @@
-https://linux-sunxi.org/D1
-https://github.com/devdotnetorg/Allwinner-SoC
-
-https://notes.mcejp.com/posts/Allwinner-D1s-F133-notes.html
-
-https://github.com/xboot/xfel
-https://github.com/SdtElectronics/Xassette-Asterisk

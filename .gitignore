@@ -1,0 +1,11 @@
+# Rust build artifacts
+target/
+
+# Old code archive (kept locally for reference, not in git)
+src/console/archive/
+
+# Cursor IDE
+.cursor/
+
+# OpenSpec (not used in this project)
+openspec/

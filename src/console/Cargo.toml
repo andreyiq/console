@@ -7,7 +7,6 @@ edition = "2021"
 panic-halt = "1.0.0"
 riscv = "0.16.0"
 riscv-rt = "0.16.0"
-runes = "0.2.5"
 
 [profile.release]
 strip = false
