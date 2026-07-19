@@ -40,11 +40,14 @@ const EN_REG: u32 = 0x100; // DMAC Channel Enable
 const DESC_ADDR_REG: u32 = 0x108; // адрес дескриптора в памяти
 const BCNT_LEFT_REG: u32 = 0x118; // сколько байт осталось перенести
 
-// Порты DRQ (3.9.3.3): источник/приёмник.
+// Порты DRQ (3.9.3.3): каждый порт имеет source-тип и dest-тип.
+// port22: source=SPI0-RX, dest=SPI0-TX  → для передачи DRAM→SPI0-TX ставим DEST_DRQ=22.
+// port23: source=SPI1-RX, dest=SPI1-TX.
 pub const DRQ_SRAM: u32 = 0;
 pub const DRQ_DRAM: u32 = 1;
-pub const DRQ_SPI0_TX: u32 = 23;
-pub const DRQ_SPI0_RX: u32 = 22;
+pub const DRQ_SPI0_TX: u32 = 22; // destination-тип порта 22
+pub const DRQ_SPI0_RX: u32 = 22; // source-тип порта 22
+pub const DRQ_SPI1_TX: u32 = 23;
 
 // Биты Configuration.
 const fn cfg(src_drq: u32, dest_drq: u32, dest_io: bool) -> u32 {
@@ -110,8 +113,11 @@ impl Dma {
   }
 
   /// Включить тактирование DMAC (через CCU). Вызвать один раз до первого transfer.
+  /// Также выставить бит 2 в AUTO_GATE_REG (мануал 3.9.6.5, NOTE: bit[2] should be
+  /// set up at init) — иначе MCLK авто-гейтинг глушит контроллер и transfers не идут.
   pub fn init(&self) {
     ccu::Peripheral::Dmac.enable();
+    self.write_reg(0x28, 1 << 2); // DMA_MCLK_CIRCUIT: disable auto-gating of MCLK
   }
 
   /// Запустить перенос `n` байт из `src` (DRAM) в `dest` (фиксированный IO-адрес).
@@ -144,6 +150,21 @@ impl Dma {
     while self.read_reg(EN_REG) & 1 != 0 {
       core::hint::spin_loop();
     }
+  }
+
+  /// Прочитать EN_REG (для отладки).
+  pub fn en_read(&self) -> u32 {
+    self.read_reg(EN_REG)
+  }
+
+  /// Прочитать CFG_REG канала (0x10C) — загрузился ли config из дескриптора.
+  pub fn cfg_read(&self) -> u32 {
+    self.read_reg(0x10C)
+  }
+
+  /// Прочитать STA_REG DMAC (0x30) — статус каналов.
+  pub fn sta_read(&self) -> u32 {
+    self.read_reg(0x30)
   }
 
   /// Сколько байт ещё осталось перенести (для отладки/прогресса).

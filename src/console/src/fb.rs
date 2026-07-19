@@ -102,3 +102,52 @@ pub fn draw_rect(x: u16, y: u16, w: u16, h: u16, r: u8, g: u8, b: u8) {
 pub fn raw() -> &'static [u8] {
   as_slice()
 }
+
+// 3×5 шрифт для цифр 0-9. Каждая цифра — 5 строк по 3 бита (бит 2=лев, 1=центр, 0=прав).
+const DIGITS: [[u8; 5]; 10] = [
+  [0b111, 0b101, 0b101, 0b101, 0b111], // 0
+  [0b010, 0b110, 0b010, 0b010, 0b111], // 1
+  [0b111, 0b001, 0b111, 0b100, 0b111], // 2
+  [0b111, 0b001, 0b111, 0b001, 0b111], // 3
+  [0b101, 0b101, 0b111, 0b001, 0b001], // 4
+  [0b111, 0b100, 0b111, 0b001, 0b111], // 5
+  [0b111, 0b100, 0b111, 0b101, 0b111], // 6
+  [0b111, 0b001, 0b010, 0b010, 0b010], // 7
+  [0b111, 0b101, 0b111, 0b101, 0b111], // 8
+  [0b111, 0b101, 0b111, 0b001, 0b111], // 9
+];
+
+/// Нарисовать одну цифру (0-9) в (x,y), масштаб `scale` (1 = 3×5 px, 4 = 12×20 px).
+pub fn draw_digit(d: u8, x: u16, y: u16, scale: u16, r: u8, g: u8, b: u8) {
+  if d > 9 {
+    return;
+  }
+  let rows = DIGITS[d as usize];
+  for (ry, row) in rows.iter().enumerate() {
+    for cx in 0..3u16 {
+      if (row >> (2 - cx)) & 1 == 1 {
+        fill_rect(x + cx * scale, y + (ry as u16) * scale, scale, scale, r, g, b);
+      }
+    }
+  }
+}
+
+/// Нарисовать неотрицательное число `n` в (x,y). Ширина цифры = 3*scale + scale (зазор).
+pub fn draw_number(n: u32, x: u16, y: u16, scale: u16, r: u8, g: u8, b: u8) {
+  let digit_w = 3 * scale + scale; // 3 px цифра + 1 px зазор
+  if n == 0 {
+    draw_digit(0, x, y, scale, r, g, b);
+    return;
+  }
+  let mut digits = [0u8; 10];
+  let mut i = 0usize;
+  let mut v = n;
+  while v > 0 {
+    digits[i] = (v % 10) as u8;
+    v /= 10;
+    i += 1;
+  }
+  for k in 0..i {
+    draw_digit(digits[i - 1 - k], x + (k as u16) * digit_w, y, scale, r, g, b);
+  }
+}

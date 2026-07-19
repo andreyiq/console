@@ -26,6 +26,7 @@ const NDMA_MODE_CTL: u32 = 0x88; // SPI Normal DMA Mode Control (9.3.6.16)
 // Биты FCR
 const RX_FIFO_RST: u32 = 1 << 6; // сброс RX FIFO
 const TX_FIFO_RST: u32 = 1 << 30; // сброс TX FIFO
+const TF_DRQ_EN: u32 = 1 << 24; // TXFIFO DMA Request Enable (дефолт 0 — ВЫКЛ! без него DMA висит)
 
 // Биты TCR
 const XCH: u32 = 1 << 31; // Exchange Burst — старт передачи (auto-clear по окончании)
@@ -205,16 +206,38 @@ impl Spi {
   /// Сам XCH не заполнит FIFO — он ждёт, пока DMA накачает данные через TXD.
   /// Вызывается ПОСЛЕ `dma.start(...)`, чтобы DMA уже кормил FIFO.
   pub fn prepare_dma(&self, n: u32) {
+    // Включаем TX FIFO DMA Request (бит 24 FCR, дефолт 0) + порог TX=64 (держать FIFO полным).
+    self.write_reg(FCR, TF_DRQ_EN | (0x40 << 16) | 0x01);
     self.write_reg(BCC, n);
     self.write_reg(MBC, n);
     self.write_reg(MTC, n);
     self.write_reg(NDMA_MODE_CTL, NDMA_DRQ_CONTROLLED);
-    self.write_reg(TCR, XCH | DHB | SS_OWNER); // старт; FIFO пока пуст — SPI ждёт данные
+    self.write_reg(TCR, XCH | DHB | SS_OWNER); // старт; FIFO пока пуст — SPI ждёт данные от DMA
   }
 
   /// Готов ли burst (XCH сбросился = все байты отправлены).
   pub fn burst_done(&self) -> bool {
     self.read_reg(TCR) & XCH == 0
+  }
+
+  /// Прочитать TCR (для отладки).
+  pub fn tcr_read(&self) -> u32 {
+    self.read_reg(TCR)
+  }
+
+  /// Прочитать FCR (для отладки — проверить TF_DRQ_EN).
+  pub fn fcr_read(&self) -> u32 {
+    self.read_reg(FCR)
+  }
+
+  /// Прочитать FSR (FIFO Status — уровень TX/RX FIFO).
+  pub fn fsr_read(&self) -> u32 {
+    self.read_reg(0x1C)
+  }
+
+  /// Прочитать NDMA_MODE_CTL (для отладки).
+  pub fn ndma_read(&self) -> u32 {
+    self.read_reg(NDMA_MODE_CTL)
   }
 
   /// Дождаться завершения burst (когда DMA выкачал все данные и SPI отправил).

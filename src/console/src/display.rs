@@ -188,6 +188,11 @@ impl Display {
     self.spi.send_byte(0x2C); // Memory Write
     self.dc_data();
 
+    // Сначала готовим SPI: счётчики burst, NDMA-режим (DRQ-controlled), XCH (старт).
+    // XCH поднимает DRQ когда в TX FIFO есть место — это сигнал для DMA стартовать.
+    // Если запустить DMA раньше XCH — DRQ не поднимется, DMA зависнет.
+    self.spi.prepare_dma(n);
+
     // DMA кормит TX FIFO из RAM; SPI вычитывает FIFO и шлёт на MOSI.
     let dma = dma::Dma::Channel0;
     dma.start(
@@ -196,7 +201,6 @@ impl Display {
       self.spi.txd_addr(),
       n,
     );
-    self.spi.prepare_dma(n); // счётчики + NDMA-режим + XCH (старт обмена)
 
     dma.wait_done(); // DMA выгрузил все байты в FIFO
     self.spi.wait_burst_done(); // SPI отправил всё из FIFO на провод
