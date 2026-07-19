@@ -22,11 +22,12 @@ fn main() -> ! {
 
   // Этап 2: включаем тактирование и снимаем reset для SPI0.
   // Печатаем значения регистров до/после — убеждаемся что биты выставились.
-  let clk_before = ccu::read_spi0_clk();
-  let bgr_before = ccu::read_spi0_bgr();
-  ccu::enable_spi0();
-  let clk_after = ccu::read_spi0_clk();
-  let bgr_after = ccu::read_spi0_bgr();
+  let spi0 = ccu::Peripheral::Spi0;
+  let clk_before = spi0.read_clk().unwrap_or(0);
+  let bgr_before = spi0.read_bgr();
+  spi0.enable();
+  let clk_after = spi0.read_clk().unwrap_or(0);
+  let bgr_after = spi0.read_bgr();
 
   print!("SPI0_CLK before=");
   utils::print_hex(clk_before);

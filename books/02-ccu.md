@@ -100,38 +100,64 @@ write_volatile(SPI0_BGR_REG, old | SPI0_RST | SPI0_GATING);
 
 ## Код
 
-`src/ccu.rs`:
+`src/ccu.rs` — высокоуровневый API через enum `Peripheral`:
 
 ```rust
-pub const SPI0_CLK_REG: *mut u32 = (CCU_BASE + 0x0940) as *mut u32;
-pub const SPI0_BGR_REG: *mut u32 = (CCU_BASE + 0x096C) as *mut u32;
+pub enum Peripheral {
+  Spi0, Spi1, Uart0, Uart1,
+  // будущие: I2c0, Smhc0, ...
+}
 
-pub const SPI0_CLK_GATING: u32 = 1 << 31;
-pub const SPI0_RST: u32 = 1 << 16;
-pub const SPI0_GATING: u32 = 1;
+struct PeripheralInfo {
+  clk_reg: Option<*mut u32>,  // None у UART
+  bgr_reg: *mut u32,
+  rst_bit: u32,
+  gating_bit: u32,
+}
 
-pub fn enable_spi0() {
-  unsafe {
-    // 1. Включить тактовый сигнал SPI0 (bit 31)
-    let clk = read_volatile(SPI0_CLK_REG);
-    write_volatile(SPI0_CLK_REG, clk | SPI0_CLK_GATING);
-    // 2. Снять reset (bit 16) + включить gating шины (bit 0)
-    let bgr = read_volatile(SPI0_BGR_REG);
-    write_volatile(SPI0_BGR_REG, bgr | SPI0_RST | SPI0_GATING);
+impl Peripheral {
+  const fn info(&self) -> PeripheralInfo {
+    match self {
+      Peripheral::Spi0 => PeripheralInfo {
+        clk_reg: Some(SPI0_CLK_REG),
+        bgr_reg: SPI_BGR_REG,
+        rst_bit: 1 << 16,
+        gating_bit: 1 << 0,
+      },
+      // ... остальные периферии аналогично
+    }
   }
+
+  pub fn enable(&self) {
+    let info = self.info();
+    unsafe {
+      if let Some(clk_reg) = info.clk_reg {
+        let v = read_volatile(clk_reg);
+        write_volatile(clk_reg, v | CLK_GATING_BIT);  // bit 31
+      }
+      let v = read_volatile(info.bgr_reg);
+      write_volatile(info.bgr_reg, v | info.rst_bit | info.gating_bit);
+    }
+  }
+
+  pub fn read_clk(&self) -> Option<u32> { /* ... */ }
+  pub fn read_bgr(&self) -> u32 { /* ... */ }
 }
 ```
 
 В `main.rs`:
 
 ```rust
-let clk_before = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
-let bgr_before = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
-ccu::enable_spi0();
-let clk_after = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
-let bgr_after = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
+let spi0 = ccu::Peripheral::Spi0;
+let clk_before = spi0.read_clk().unwrap_or(0);
+let bgr_before = spi0.read_bgr();
+spi0.enable();
+let clk_after = spi0.read_clk().unwrap_or(0);
+let bgr_after = spi0.read_bgr();
 // печатаем в UART, чтобы убедиться что биты выставились
 ```
+
+Добавить новую периферию = добавить вариант в enum + один match arm в `info()`. Методы `enable`/`read_clk`/`read_bgr` не меняются.
 
 ## Проверка
 

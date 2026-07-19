@@ -12,10 +12,8 @@ pub const UART_LCR: *mut u32 = (UART0_BASE + 0x000C) as *mut u32;
 
 pub fn init_uart0() {
   unsafe {
-    // Включаем тактирование
-    let mut v = ccu::UART_BGR_REG.read_volatile();
-    v |= ccu::UART0_GATING | ccu::UART0_RST;
-    ccu::UART_BGR_REG.write(v);
+    // Включаем тактирование и снимаем reset через CCU
+    ccu::Peripheral::Uart0.enable();
 
     // Настраиваем порты
     let mut v = gpio::PE_CFG0.read_volatile();
