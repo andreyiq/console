@@ -37,41 +37,51 @@
 - `books/01-gpio.md` — Глава 1: GPIO (CFG/DAT/DRV/PULL, enum API, мигание PC2)
 - `books/02-ccu.md` — Глава 2: CCU (тактирование, reset, включение SPI0)
 - `books/03-spi.md` — Глава 3: SPI (протокол, регистры SPI0, отправка байта)
-- `books/04-ili9488.md` — Глава 4: ILI9488 (4-wire SPI, IM, init, MADCTL, RGB565, MemoryWrite)
+- `books/04-ili9488.md` — Глава 4: ILI9488 (4-wire SPI, IM, init, MADCTL, RGB888, MemoryWrite)
+- `books/05-dma.md` — Глава 5: DMAC (дескрипторы, DRQ-порты, SPI0-TX = 22, авто-гейтинг, TF_DRQ_EN)
+- `books/06-nes.md` — Глава 6: NES (архитектура 2A03/2C02, iNES, мапперы, runes API, план интеграции)
 
 ## Структура проекта (целевая после чистки)
 ```
 src/console/
-├── Cargo.toml          # без runes
+├── Cargo.toml          # runes = "0.2.5"
 ├── memory.x            # RAM @ 0x40000000, 64M
 ├── .cargo/config.toml  # target riscv64gc-unknown-none-elf
 ├── run.sh              # xfel build/write/exec
+├── run_dma.sh          # то же + захват UART-лога
 ├── archive/            # старый код (не удалять)
 │   ├── nes.rs display.rs dma.rs ili9844.rs main.rs.old
 │   └── roms/
 └── src/
-    ├── main.rs         # минимальный старт
-    ├── uart.rs         # UART0 для отладки
-    ├── utils.rs        # delay + println
-    ├── ccu.rs          # регистры CCU (enum Peripheral)
+    ├── main.rs         # главный цикл (анимация → NES)
+    ├── uart.rs         # UART0 + UartWriter для println!
+    ├── utils.rs         # delay + println! (core::fmt::Write)
+    ├── ccu.rs          # регистры CCU (enum Peripheral, PLL_PERI, SPI0_CLK)
     ├── gpio.rs         # generic Pin + enum Port/Func/Pull
-    ├── spi.rs          # enum Spi + SpiInfo
-    └── display.rs      # ILI9488 (Display struct)
+    ├── spi.rs          # enum Spi + SpiInfo + prepare_dma
+    ├── dma.rs          # DMAC (Descriptor, Dma::Channel0, DRQ-порты)
+    ├── display.rs      # ILI9488 (Display, flush_buffer_dma)
+    └── fb.rs           # framebuffer 480×320 RGB888 + draw_number
 ```
 
 ## Дорожная карта
 - [x] Этап 0. Чистый старт: main + UART печатает "hello"
 - [x] Этап 1. GPIO: CFG/DAT/DRV/PULL. Мигаем PC2 (видно на анализаторе)
-- [x] Этап 2. CCU: тактирование и сброс периферии (включить SPI0)
+- [x] Этап 2. CCU: тактирование и сброс периферии (включить SPI0, PLL_PERI 600 М / 15 = 20 М SCLK)
 - [x] Этап 3. SPI: GCR/TCR/FCR/MBC/MTC/BCC. Отправка байта (анализатор)
-- [x] Этап 4. ILI9488: init, D/C, заливка цветом (0x21, 0xC5/0x4D) ← текущий
-- [ ] Этап 5. Окно и пиксели: RGB565, set_window, MemoryWrite
-- [ ] Этап 6. Картинка: PNG → RGB565 массив, статичная картинка
-- [ ] Этап 7. DMA (опц.): port 22 (SPI0-TX), пересылка кадра
-- [ ] Этап 8. NES: вернуть runes, вывод кадра на ILI9488
+- [x] Этап 4. ILI9488: init, D/C, заливка цветом (RGB888, 0x21, 0xC5/0x4D)
+- [x] Этап 5. Окно и пиксели: framebuffer 480×320 RGB888, draw_number, fill_rect, set_pixel
+- [x] Этап 5.5. Framebuffer в RAM + один flush на кадр
+- [x] Этап 6. DMA: DMAC channel 0, DRQ SPI0-TX=22, TF_DRQ_EN, авто-гейтинг, ~5 FPS
+- [ ] Этап 7. NES: вернуть runes, вывод кадра 256×240 на ILI9488 ← текущий
 
 ## Текущий этап
-Этап 4: ILI9488 — инициализация дисплея (init-последовательность из BOE3.5IPS), заливка экрана красным (RGB565 0xF800). DCX на PE0, RESX на PE1.
+Этап 7: NES. Изучен крейт `runes` (0.2.5), написана теория (`books/06-nes.md`):
+архитектура NES (CPU 2A03, PPU 2C02, APU), формат iNES, мапперы (0/1/2/4),
+API `runes` (CPU/PPU/APU/Screen/Speaker/InputPoller/Cartridge/Mapper),
+план интеграции в наш проект (центрирование 256×240 на 480×320, палитра,
+свой Mapper0 для NROM, StaticCart без Vec, FbScreen с atomic-флагом flush,
+заглушки Speaker/Input). Следующий шаг — реализация модуля `nes/`.
 
 ## Конвенции
 - `no_std`, `no_main`, `riscv_rt::entry`

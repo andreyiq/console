@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+runes = "0.2.5"
 panic-halt = "1.0.0"
 riscv = "0.16.0"
 riscv-rt = "0.16.0"
