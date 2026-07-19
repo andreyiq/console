@@ -29,3 +29,13 @@ pub fn enable_spi0() {
     write_volatile(SPI0_BGR_REG, bgr | SPI0_RST | SPI0_GATING);
   }
 }
+
+/// Текущее значение SPI0_CLK_REG (для отладки).
+pub fn read_spi0_clk() -> u32 {
+  unsafe { read_volatile(SPI0_CLK_REG) }
+}
+
+/// Текущее значение SPI_BGR_REG (для отладки).
+pub fn read_spi0_bgr() -> u32 {
+  unsafe { read_volatile(SPI0_BGR_REG) }
+}

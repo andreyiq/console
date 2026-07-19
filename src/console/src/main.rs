@@ -8,7 +8,6 @@ pub mod uart;
 pub mod utils;
 
 use core::panic::PanicInfo;
-use core::ptr::read_volatile;
 
 #[panic_handler]
 fn panic(_: &PanicInfo) -> ! {
@@ -23,11 +22,11 @@ fn main() -> ! {
 
   // Этап 2: включаем тактирование и снимаем reset для SPI0.
   // Печатаем значения регистров до/после — убеждаемся что биты выставились.
-  let clk_before = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
-  let bgr_before = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
+  let clk_before = ccu::read_spi0_clk();
+  let bgr_before = ccu::read_spi0_bgr();
   ccu::enable_spi0();
-  let clk_after = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
-  let bgr_after = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
+  let clk_after = ccu::read_spi0_clk();
+  let bgr_after = ccu::read_spi0_bgr();
 
   print!("SPI0_CLK before=");
   utils::print_hex(clk_before);
