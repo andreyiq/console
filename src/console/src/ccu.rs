@@ -13,6 +13,7 @@ pub const UART_BGR_REG: *mut u32 = (CCU_BASE + 0x090C) as *mut u32;
 pub const SPI0_CLK_REG: *mut u32 = (CCU_BASE + 0x0940) as *mut u32;
 pub const SPI1_CLK_REG: *mut u32 = (CCU_BASE + 0x0944) as *mut u32;
 pub const SPI_BGR_REG: *mut u32 = (CCU_BASE + 0x096C) as *mut u32;
+pub const DMA_BGR_REG: *mut u32 = (CCU_BASE + 0x070C) as *mut u32; // 3.3.6.46 — такт DMAC от PSI_CLK
 
 /// Bit 31 в CLK_REG — одинаков для всех периферий с отдельным тактом.
 const CLK_GATING_BIT: u32 = 1 << 31;
@@ -23,6 +24,7 @@ pub enum Peripheral {
   Spi1,
   Uart0,
   Uart1,
+  Dmac,
   // будущие: I2c0, I2c1, Smhc0, ...
 }
 
@@ -65,6 +67,12 @@ impl Peripheral {
         bgr_reg: UART_BGR_REG,
         rst_bit: 1 << 17,
         gating_bit: 1 << 1,
+      },
+      Peripheral::Dmac => PeripheralInfo {
+        clk_reg: None,
+        bgr_reg: DMA_BGR_REG,
+        rst_bit: 1 << 16,
+        gating_bit: 1 << 0,
       },
     }
   }

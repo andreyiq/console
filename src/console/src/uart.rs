@@ -48,3 +48,16 @@ pub fn uart0_write(v: u32) {
     while (UART_USR.read_volatile() & 0b10) == 0 {}
   }
 }
+
+/// Writer поверх UART0 для `core::fmt::Write` — даёт `write!`/`writeln!` и форматный
+/// `println!("x={}", val)`. Байт-за-байтом, без буфера.
+pub struct UartWriter;
+
+impl core::fmt::Write for UartWriter {
+  fn write_str(&mut self, s: &str) -> core::fmt::Result {
+    for b in s.bytes() {
+      uart0_write(b as u32);
+    }
+    Ok(())
+  }
+}

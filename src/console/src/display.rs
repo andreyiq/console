@@ -8,6 +8,7 @@
 //!
 //! Init-последовательность из docs/display/ili9488/BOE3.5IPS-ILI9488.TXT.
 
+use crate::dma::{self, CFG_DRAM_TO_SPI0_TX};
 use crate::gpio::{self, Pin};
 use crate::spi::Spi;
 use crate::utils;
@@ -168,6 +169,38 @@ impl Display {
     for chunk in buf.chunks(CHUNK) {
       self.spi.send(chunk);
     }
+    self.spi.cs_high();
+  }
+
+  /// Отправить весь framebuffer на дисплей через DMA.
+  /// DMA (channel 0) качает байты из `buf` (DRAM) прямо в TX FIFO SPI0,
+  /// CPU в это время свободен. Один set_window + одна Memory Write транзакция.
+  /// Требует `dma::Dma::Channel0.init()` один раз при старте.
+  pub fn flush_buffer_dma(&self, buf: &[u8]) {
+    let n = buf.len() as u32;
+    if n == 0 {
+      return;
+    }
+    self.set_window(0, 0, WIDTH, HEIGHT);
+
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_byte(0x2C); // Memory Write
+    self.dc_data();
+
+    // DMA кормит TX FIFO из RAM; SPI вычитывает FIFO и шлёт на MOSI.
+    let dma = dma::Dma::Channel0;
+    dma.start(
+      CFG_DRAM_TO_SPI0_TX,
+      buf.as_ptr() as u32,
+      self.spi.txd_addr(),
+      n,
+    );
+    self.spi.prepare_dma(n); // счётчики + NDMA-режим + XCH (старт обмена)
+
+    dma.wait_done(); // DMA выгрузил все байты в FIFO
+    self.spi.wait_burst_done(); // SPI отправил всё из FIFO на провод
+
     self.spi.cs_high();
   }
 

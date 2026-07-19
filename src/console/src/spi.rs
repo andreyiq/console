@@ -21,6 +21,7 @@ const MTC: u32 = 0x34; // Master Transmit Counter
 const BCC: u32 = 0x38; // Master Burst Control
 const TXD: u32 = 0x200; // TX Data
 const RXD: u32 = 0x300; // RX Data
+const NDMA_MODE_CTL: u32 = 0x88; // SPI Normal DMA Mode Control (9.3.6.16)
 
 // Биты FCR
 const RX_FIFO_RST: u32 = 1 << 6; // сброс RX FIFO
@@ -33,6 +34,11 @@ const SS_OWNER: u32 = 1 << 6; // 1 = SS управляется программ�
 
 // GCR: TP_EN | MODE (master) | EN
 const GCR_EN: u32 = 0x83;
+
+// NDMA_MODE_CTL (0x88): bits 7:6 = SPI_ACT_M.
+// 10 = dma_active управляется DRQ (контроллер сам поднимает запрос к DMA когда FIFO пуст).
+// bit 5 = ACK_M (1 = ждать ack), bits 4:0 = WAIT (5 по умолчанию). Дефолт 0xE5 → 0xA5.
+const NDMA_DRQ_CONTROLLED: u32 = 0xA5;
 
 /// SPI-контроллер F133.
 pub enum Spi {
@@ -185,6 +191,36 @@ impl Spi {
   pub fn read_rx(&self, out: &mut [u8]) {
     for b in out.iter_mut() {
       *b = self.read_rxd_byte();
+    }
+  }
+
+  /// Физический адрес регистра TXD (0x04025200 для SPI0).
+  /// Нужен DMA как destination (DEST_ADDR_MODE=IO, адрес фиксирован).
+  pub fn txd_addr(&self) -> u32 {
+    self.info().base + TXD
+  }
+
+  /// Подготовить SPI к приёму данных от DMA: выставить счётчики burst на `n`
+  /// байт, включить DMA-режим (DRQ-controlled) и стартовать обмен (XCH).
+  /// Сам XCH не заполнит FIFO — он ждёт, пока DMA накачает данные через TXD.
+  /// Вызывается ПОСЛЕ `dma.start(...)`, чтобы DMA уже кормил FIFO.
+  pub fn prepare_dma(&self, n: u32) {
+    self.write_reg(BCC, n);
+    self.write_reg(MBC, n);
+    self.write_reg(MTC, n);
+    self.write_reg(NDMA_MODE_CTL, NDMA_DRQ_CONTROLLED);
+    self.write_reg(TCR, XCH | DHB | SS_OWNER); // старт; FIFO пока пуст — SPI ждёт данные
+  }
+
+  /// Готов ли burst (XCH сбросился = все байты отправлены).
+  pub fn burst_done(&self) -> bool {
+    self.read_reg(TCR) & XCH == 0
+  }
+
+  /// Дождаться завершения burst (когда DMA выкачал все данные и SPI отправил).
+  pub fn wait_burst_done(&self) {
+    while !self.burst_done() {
+      core::hint::spin_loop();
     }
   }
 }

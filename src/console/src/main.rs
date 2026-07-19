@@ -3,6 +3,7 @@
 
 pub mod ccu;
 pub mod display;
+pub mod dma;
 pub mod fb;
 pub mod gpio;
 pub mod spi;
@@ -15,6 +16,11 @@ use core::panic::PanicInfo;
 #[panic_handler]
 fn panic(_: &PanicInfo) -> ! {
   loop {}
+}
+
+/// Прочитать счётчик циклов (RISC-V mcycle CSR). Для замеров времени.
+fn cycles() -> u64 {
+  riscv::register::mcycle::read() as u64
 }
 
 #[riscv_rt::entry]
@@ -32,6 +38,11 @@ fn main() -> ! {
   let spi = spi::Spi::Spi0;
   spi.init();
   println!("spi0 init ok");
+
+  // Этап 6: включаем DMAC (один раз).
+  let dma = dma::Dma::Channel0;
+  dma.init();
+  println!("dma init ok");
 
   // Этап 5.5: framebuffer в RAM. Рисуем в массив, потом один flush на экран.
   // DCX на PE0, RESX на PE1.
@@ -67,11 +78,13 @@ fn main() -> ! {
   // Жёлтый пиксель по центру.
   fb::set_pixel(240, 240, 0xFF, 0xFF, 0x00);
 
-  println!("fb draw done, flushing...");
+  println!("fb draw done, flushing via DMA...");
 
-  // Один flush — весь буфер на экран.
-  display.flush_buffer(fb::raw());
-  println!("flush done");
+  // Один flush через DMA — весь буфер на экран. Замеряем время в циклах.
+  let t0 = cycles();
+  display.flush_buffer_dma(fb::raw());
+  let t1 = cycles();
+  println!("dma flush done: {} cycles", t1 - t0);
 
   loop {
     utils::delay(10_000_000);

@@ -48,4 +48,10 @@ macro_rules! println {
     }
     crate::uart::uart0_write(b'\n' as u32);
   }};
+  ($fmt:expr, $($arg:tt)*) => {{
+    use core::fmt::Write;
+    let mut w = crate::uart::UartWriter;
+    let _ = write!(w, $fmt, $($arg)*);
+    let _ = writeln!(w);
+  }};
 }
