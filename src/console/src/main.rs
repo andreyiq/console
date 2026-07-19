@@ -76,10 +76,11 @@ fn main() -> ! {
       fb::fill_rect((i as u16) * BAR_W, 0, BAR_W, BAR_H, r, g, b);
     }
     // Движущийся красный столб — видно обновление глазами.
-    let bx = (frame % 480) as u16;
+    let bx = ((frame * 8) % 480) as u16;
     fb::fill_rect(bx, 170, 20, 140, 0xFF, 0x00, 0x00);
 
-    // FPS в левом верхнем углу (цифры 4×, белые).
+    // FPS: чёрная подложка поверх полос + белые цифры (иначе белое по белому не видно).
+    fb::fill_rect(5, 5, 90, 30, 0x00, 0x00, 0x00);
     fb::draw_number(fps, 10, 10, 4, 0xFF, 0xFF, 0xFF);
 
     display.flush_buffer_dma(fb::raw());
@@ -90,5 +91,10 @@ fn main() -> ! {
       fps = (CPU_HZ / cpf) as u32;
     }
     frame = frame.wrapping_add(1);
+
+    // Раз в 30 кадров — дублируем FPS в UART (для контроля, если на экране не видно).
+    if frame % 30 == 0 {
+      println!("fps={} cpf={}", fps, cpf);
+    }
   }
 }
