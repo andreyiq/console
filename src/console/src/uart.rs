@@ -34,10 +34,10 @@ pub fn init_uart0() {
     UART_FCR.write_volatile(1);
     UART_HALT.write_volatile(1);
     UART_LCR.write_volatile(0x1 << 7); // DLAB=1
-    UART_DLL.write_volatile(13);  // divisor low
-    UART_DLH.write_volatile(0);  // divisor high
+    UART_DLL.write_volatile(13); // divisor low
+    UART_DLH.write_volatile(0); // divisor high
     UART_LCR.write_volatile(0x03); // DLAB=0, 8N1
-    // Set UART_HALT[HALT_TX] to 0 to enable TX transfer.
+                                   // Set UART_HALT[HALT_TX] to 0 to enable TX transfer.
     let mut v = UART_HALT.read_volatile();
     v &= !1;
     UART_HALT.write_volatile(v);
