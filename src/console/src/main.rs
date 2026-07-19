@@ -2,6 +2,7 @@
 #![no_main]
 
 pub mod ccu;
+pub mod display;
 pub mod gpio;
 pub mod spi;
 pub mod uart;
@@ -47,13 +48,13 @@ fn main() -> ! {
   spi.init();
   println!("spi0 init ok");
 
-  spi.cs_low();
-  for _ in 0..1000_000_0 {
-    spi.send_byte(0x55); // 01010101 — хорошо видно на анализаторе
-    utils::delay(100_000);
-  }
-  spi.cs_high();
-  println!("spi0 test done");
+  // Этап 4: ILI9488 — инициализация дисплея и заливка красным.
+  // DCX на PE0, RESX на PE1.
+  let display = display::Display::new(spi, gpio::PE0, gpio::PE1);
+  display.init();
+  println!("display init ok");
+  display.fill(0xF800); // красный RGB565
+  println!("display fill done");
 
   loop {
     utils::delay(10_000_000);

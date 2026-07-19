@@ -147,6 +147,8 @@ pub const PD11: Pin = Pin::new(Port::D, 11); // SPI1-CLK
 pub const PD12: Pin = Pin::new(Port::D, 12); // SPI1-MOSI
 pub const PD13: Pin = Pin::new(Port::D, 13); // SPI1-MISO
 
-// Port E: UART0
+// Port E: UART0 (PE2/PE3) + ILI9488 DC/RST (PE0/PE1)
+pub const PE0: Pin = Pin::new(Port::E, 0); // ILI9488 DCX (Data/Command)
+pub const PE1: Pin = Pin::new(Port::E, 1); // ILI9488 RESX (Reset)
 pub const PE2: Pin = Pin::new(Port::E, 2); // UART0-TX
 pub const PE3: Pin = Pin::new(Port::E, 3); // UART0-RX

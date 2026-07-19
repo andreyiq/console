@@ -37,7 +37,7 @@
 - `books/01-gpio.md` — Глава 1: GPIO (CFG/DAT/DRV/PULL, enum API, мигание PC2)
 - `books/02-ccu.md` — Глава 2: CCU (тактирование, reset, включение SPI0)
 - `books/03-spi.md` — Глава 3: SPI (протокол, регистры SPI0, отправка байта)
-- `books/04-ili9488.md` — Глава 4: ILI9488 (запланировано)
+- `books/04-ili9488.md` — Глава 4: ILI9488 (4-wire SPI, IM, init, MADCTL, RGB565, MemoryWrite)
 
 ## Структура проекта (целевая после чистки)
 ```
@@ -53,22 +53,25 @@ src/console/
     ├── main.rs         # минимальный старт
     ├── uart.rs         # UART0 для отладки
     ├── utils.rs        # delay + println
-    └── ccu.rs          # регистры CCU (расширяем по надобности)
+    ├── ccu.rs          # регистры CCU (enum Peripheral)
+    ├── gpio.rs         # generic Pin + enum Port/Func/Pull
+    ├── spi.rs          # enum Spi + SpiInfo
+    └── display.rs      # ILI9488 (Display struct)
 ```
 
 ## Дорожная карта
 - [x] Этап 0. Чистый старт: main + UART печатает "hello"
 - [x] Этап 1. GPIO: CFG/DAT/DRV/PULL. Мигаем PC2 (видно на анализаторе)
 - [x] Этап 2. CCU: тактирование и сброс периферии (включить SPI0)
-- [ ] Этап 3. SPI: GCR/TCR/FCR/MBC/MTC/BCC. Отправка байта (анализатор) ← текущий
-- [ ] Этап 4. ILI9488: init, D/C, заливка цветом (0x21, 0xC5/0x4D)
+- [x] Этап 3. SPI: GCR/TCR/FCR/MBC/MTC/BCC. Отправка байта (анализатор)
+- [x] Этап 4. ILI9488: init, D/C, заливка цветом (0x21, 0xC5/0x4D) ← текущий
 - [ ] Этап 5. Окно и пиксели: RGB565, set_window, MemoryWrite
 - [ ] Этап 6. Картинка: PNG → RGB565 массив, статичная картинка
 - [ ] Этап 7. DMA (опц.): port 22 (SPI0-TX), пересылка кадра
 - [ ] Этап 8. NES: вернуть runes, вывод кадра на ILI9488
 
 ## Текущий этап
-Этап 3: SPI — инициализация SPI0-контроллера, отправка тестовых байтов (0x55) на анализатор.
+Этап 4: ILI9488 — инициализация дисплея (init-последовательность из BOE3.5IPS), заливка экрана красным (RGB565 0xF800). DCX на PE0, RESX на PE1.
 
 ## Конвенции
 - `no_std`, `no_main`, `riscv_rt::entry`
