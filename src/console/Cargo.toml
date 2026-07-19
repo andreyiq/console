@@ -13,3 +13,4 @@ riscv-rt = "0.16.0"
 strip = false
 lto = true
 debuginfo = 2
+opt-level = 2
