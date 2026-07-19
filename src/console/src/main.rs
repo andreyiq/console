@@ -32,7 +32,13 @@ fn main() -> ! {
   // Этап 2: включаем тактирование SPI0 через CCU.
   let spi0 = ccu::Peripheral::Spi0;
   spi0.enable();
-  println!("ccu ok");
+  // Поднимаем SPI SCLK до ~20 МГц (PLL_PERI 600М / 15 / 1 = 40М модуль, /2 = 20М SCLK).
+  ccu::set_spi0_clock_pllperi_20mhz();
+  println!(
+    "ccu ok: pll_peri=0x{:08x} spi0_clk=0x{:08x}",
+    ccu::read_pll_peri(),
+    spi0.read_clk().unwrap_or(0)
+  );
 
   // Этап 3: инициализируем SPI0-контроллер.
   let spi = spi::Spi::Spi0;
