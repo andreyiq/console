@@ -3,6 +3,7 @@
 
 pub mod ccu;
 pub mod display;
+pub mod fb;
 pub mod gpio;
 pub mod spi;
 pub mod uart;
@@ -24,38 +25,22 @@ fn main() -> ! {
 
   // Этап 2: включаем тактирование SPI0 через CCU.
   let spi0 = ccu::Peripheral::Spi0;
-  let clk_before = spi0.read_clk().unwrap_or(0);
-  let bgr_before = spi0.read_bgr();
   spi0.enable();
-  let clk_after = spi0.read_clk().unwrap_or(0);
-  let bgr_after = spi0.read_bgr();
+  println!("ccu ok");
 
-  print!("SPI0_CLK before=");
-  utils::print_hex(clk_before);
-  print!(" after=");
-  utils::print_hex(clk_after);
-  println!("");
-
-  print!("SPI0_BGR before=");
-  utils::print_hex(bgr_before);
-  print!(" after=");
-  utils::print_hex(bgr_after);
-  println!("");
-
-  // Этап 3: инициализируем SPI0-контроллер и отправляем тестовые байты.
-  // На анализаторе (PC2 = CLK, PC4 = MOSI) должно быть видно 10 пакетов по 8 тактов.
+  // Этап 3: инициализируем SPI0-контроллер.
   let spi = spi::Spi::Spi0;
   spi.init();
   println!("spi0 init ok");
 
-  // Этап 5: рисование примитивов — тестовый паттерн.
+  // Этап 5.5: framebuffer в RAM. Рисуем в массив, потом один flush на экран.
   // DCX на PE0, RESX на PE1.
   let display = display::Display::new(spi, gpio::PE0, gpio::PE1);
   display.init();
   println!("display init ok");
 
   // Чёрный фон.
-  display.fill_rgb(0x00, 0x00, 0x00);
+  fb::clear(0x00, 0x00, 0x00);
 
   // 8 цветных полос в верхней половине (каждая 60×160 px).
   const BAR_W: u16 = 60;
@@ -71,20 +56,22 @@ fn main() -> ! {
     (0x00, 0x00, 0x00), // чёрный
   ];
   for (i, &(r, g, b)) in COLORS.iter().enumerate() {
-    display.fill_rect((i as u16) * BAR_W, 0, BAR_W, BAR_H, r, g, b);
+    fb::fill_rect((i as u16) * BAR_W, 0, BAR_W, BAR_H, r, g, b);
   }
 
   // Контур прямоугольника в нижней половине.
-  display.draw_rect(20, 180, 440, 120, 0xFF, 0xFF, 0xFF);
+  fb::draw_rect(20, 180, 440, 120, 0xFF, 0xFF, 0xFF);
+  // Диагональные линии.
+  fb::draw_h_line(20, 250, 440, 0xFF, 0x00, 0x00);
+  fb::draw_v_line(240, 180, 120, 0x00, 0xFF, 0x00);
+  // Жёлтый пиксель по центру.
+  fb::set_pixel(240, 240, 0xFF, 0xFF, 0x00);
 
-  // Диагональные линии (красная и зелёная).
-  display.draw_h_line(20, 250, 440, 0xFF, 0x00, 0x00);
-  display.draw_v_line(240, 180, 120, 0x00, 0xFF, 0x00);
+  println!("fb draw done, flushing...");
 
-  // Один пиксель по центру (жёлтый).
-  display.draw_pixel(240, 240, 0xFF, 0xFF, 0x00);
-
-  println!("display draw done");
+  // Один flush — весь буфер на экран.
+  display.flush_buffer(fb::raw());
+  println!("flush done");
 
   loop {
     utils::delay(10_000_000);

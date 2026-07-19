@@ -156,6 +156,21 @@ impl Display {
     );
   }
 
+  /// Отправить сырой буфер (RGB888, WIDTH×HEIGHT×3 байт) на весь экран.
+  /// Чанкуется по 64 байта (глубина TX FIFO) — каждый чанк отдельный burst.
+  pub fn flush_buffer(&self, buf: &[u8]) {
+    self.set_window(0, 0, WIDTH, HEIGHT);
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_byte(0x2C);
+    self.dc_data();
+    const CHUNK: usize = 64; // глубина TX FIFO
+    for chunk in buf.chunks(CHUNK) {
+      self.spi.send(chunk);
+    }
+    self.spi.cs_high();
+  }
+
   /// Залить прямоугольник цветом RGB888. Базовый примитив для всех остальных.
   ///
   /// Один set_window + одна транзакция Memory Write на весь прямоугольник —
