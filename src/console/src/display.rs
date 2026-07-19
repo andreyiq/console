@@ -1,4 +1,4 @@
-//! ILI9488 TFT-дисплей по SPI. 320×480, RGB565.
+//! ILI9488 TFT-дисплей по SPI. 480×320 (landscape), RGB888 (3 байта/пиксель).
 //!
 //! Драйвер обёртывает `Spi` и управляет двумя доп. пинами:
 //!   DC  (PE0) — Data/Command: 0 = команда, 1 = данные
@@ -156,25 +156,60 @@ impl Display {
     );
   }
 
-  /// Залить весь экран цветом RGB888 (r, g, b).
+  /// Залить прямоугольник цветом RGB888. Базовый примитив для всех остальных.
   ///
-  /// Медленно (побайтово через SPI) — для первого урока.
-  /// Ускорим в Главе 5 (буфер) и Главе 6 (DMA).
-  pub fn fill_rgb(&self, r: u8, g: u8, b: u8) {
-    self.set_window(0, 0, WIDTH, HEIGHT);
+  /// Один set_window + одна транзакция Memory Write на весь прямоугольник —
+  /// поэтому fill_rect на N пикселей работает сильно быстрее, чем N вызовов
+  /// draw_pixel (один set_window на весь блок vs один set_window на каждый пиксель).
+  pub fn fill_rect(&self, x: u16, y: u16, w: u16, h: u16, r: u8, g: u8, b: u8) {
+    if w == 0 || h == 0 {
+      return;
+    }
+    self.set_window(x, y, w, h);
 
-    // Memory Write — одна длинная транзакция: CS низко на все пиксели
     self.spi.cs_low();
     self.dc_command();
     self.spi.send_byte(0x2C);
     self.dc_data();
 
     let pixel = [r, g, b];
-    let total = WIDTH as u32 * HEIGHT as u32;
+    let total = w as u32 * h as u32;
     for _ in 0..total {
       self.spi.send(&pixel);
     }
     self.spi.cs_high();
+  }
+
+  /// Залить весь экран цветом RGB888.
+  pub fn fill_rgb(&self, r: u8, g: u8, b: u8) {
+    self.fill_rect(0, 0, WIDTH, HEIGHT, r, g, b);
+  }
+
+  /// Нарисовать один пиксель. Медленно (set_window на каждый пиксель) —
+  /// для отдельных точек. Для линий/фигур используй fill_rect/draw_*_line.
+  pub fn draw_pixel(&self, x: u16, y: u16, r: u8, g: u8, b: u8) {
+    self.fill_rect(x, y, 1, 1, r, g, b);
+  }
+
+  /// Горизонтальная линия длиной `len` от (x, y) вправо.
+  pub fn draw_h_line(&self, x: u16, y: u16, len: u16, r: u8, g: u8, b: u8) {
+    self.fill_rect(x, y, len, 1, r, g, b);
+  }
+
+  /// Вертикальная линия длиной `len` от (x, y) вниз.
+  pub fn draw_v_line(&self, x: u16, y: u16, len: u16, r: u8, g: u8, b: u8) {
+    self.fill_rect(x, y, 1, len, r, g, b);
+  }
+
+  /// Прямоугольник (контур) толщиной 1 px.
+  pub fn draw_rect(&self, x: u16, y: u16, w: u16, h: u16, r: u8, g: u8, b: u8) {
+    if w == 0 || h == 0 {
+      return;
+    }
+    self.draw_h_line(x, y, w, r, g, b); // верх
+    self.draw_h_line(x, y + h - 1, w, r, g, b); // низ
+    self.draw_v_line(x, y, h, r, g, b); // лево
+    self.draw_v_line(x + w - 1, y, h, r, g, b); // право
   }
 
   /// Залить весь экран цветом RGB565. (Совместимость со старым API.)
