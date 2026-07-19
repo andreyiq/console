@@ -20,14 +20,14 @@ pub fn init_uart0() {
     // Настраиваем порты
     let mut v = gpio::PE_CFG0.read_volatile();
     // Function 6 = UART0, 8 - PE2, 12 - PE3
-    set_bits(v, 6, 8, 4);
-    set_bits(v, 6, 12, 4);
+    v = set_bits(v, 6, 8, 4);
+    v = set_bits(v, 6, 12, 4);
     gpio::PE_CFG0.write_volatile(v);
 
     let mut v = gpio::PE_PULL0.read_volatile();
     // 4 - PE2, 6 - PE3
-    set_bits(v, gpio::Pull::Up as u32, 4, 2);
-    set_bits(v, gpio::Pull::Up as u32, 6, 2);
+    v = set_bits(v, gpio::Pull::Up as u32, 4, 2);
+    v = set_bits(v, gpio::Pull::Up as u32, 6, 2);
     gpio::PE_PULL0.write_volatile(v);
 
     // Baud 115200 при 24 MHz: divisor = 24000000/(16*115200) = 13

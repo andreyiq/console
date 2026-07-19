@@ -8,6 +8,7 @@ pub mod uart;
 pub mod utils;
 
 use core::panic::PanicInfo;
+use core::ptr::read_volatile;
 
 #[panic_handler]
 fn panic(_: &PanicInfo) -> ! {
@@ -19,6 +20,26 @@ fn main() -> ! {
   uart::init_uart0();
   utils::delay(100_000);
   println!("hello");
+
+  // Этап 2: включаем тактирование и снимаем reset для SPI0.
+  // Печатаем значения регистров до/после — убеждаемся что биты выставились.
+  let clk_before = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
+  let bgr_before = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
+  ccu::enable_spi0();
+  let clk_after = unsafe { read_volatile(ccu::SPI0_CLK_REG) };
+  let bgr_after = unsafe { read_volatile(ccu::SPI0_BGR_REG) };
+
+  print!("SPI0_CLK before=");
+  utils::print_hex(clk_before);
+  print!(" after=");
+  utils::print_hex(clk_after);
+  println!("");
+
+  print!("SPI0_BGR before=");
+  utils::print_hex(bgr_before);
+  print!(" after=");
+  utils::print_hex(bgr_after);
+  println!("");
 
   // Этап 1: мигаем PC2 (SPI0-CLK пин, сейчас как GPIO output).
   // На логическом анализаторе должно быть видно квадратную волну.
