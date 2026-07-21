@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-runes = "0.2.5"
 panic-halt = "1.0.0"
 riscv = "0.16.0"
 riscv-rt = "0.16.0"
@@ -14,3 +13,9 @@ strip = false
 lto = true
 debuginfo = 2
 opt-level = 2
+
+[features]
+default = []
+# hello-only: минимальный firmware для проверки UART (без nesrecomp/display).
+# Используется для бинарного поиска краша: cargo build --release --features hello-only
+hello-only = []

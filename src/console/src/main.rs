@@ -1,8 +1,6 @@
 #![no_std]
 #![no_main]
 
-extern crate alloc;
-
 #[macro_use]
 pub mod utils;
 pub mod ccu;
@@ -11,7 +9,7 @@ pub mod dma;
 pub mod fb;
 pub mod gpio;
 pub mod heap;
-pub mod nes;
+pub mod nesrecomp;
 pub mod spi;
 pub mod uart;
 
@@ -28,22 +26,25 @@ fn main() -> ! {
   utils::delay(100_000);
   println!("hello");
 
-  // Отладка: текущая конфигурация CPU clock (перед любыми изменениями).
-  println!(
-    "ccu: pll_cpu=0x{:08x} riscv_clk=0x{:08x} cpu_axi=0x{:08x} pll_peri=0x{:08x}",
-    ccu::read_pll_cpu(),
-    ccu::read_riscv_clk(),
-    ccu::read_cpu_axi(),
-    ccu::read_pll_peri()
-  );
-
-  // Оптимизация #1: гарантировать CPU @ 1008 МГц (если xfel не настроил).
-  ccu::ensure_cpu_clock_1008mhz();
-  println!(
-    "ccu: after ensure: pll_cpu=0x{:08x} riscv_clk=0x{:08x}",
-    ccu::read_pll_cpu(),
-    ccu::read_riscv_clk()
-  );
+  // PRG ROM integrity check в самом начале main (до любой инициализации).
+  extern "C" { static g_mario_prg: u8; }
+  let prg = core::ptr::addr_of!(g_mario_prg) as *const u8;
+  let mut hex = [0u8; 48];
+  let mut p = 0;
+  for i in 0..16 {
+    let b = unsafe { *prg.add(i) };
+    let hi = (b >> 4) & 0xF;
+    let lo = b & 0xF;
+    hex[p] = if hi < 10 { b'0' + hi } else { b'A' + hi - 10 };
+    hex[p+1] = if lo < 10 { b'0' + lo } else { b'A' + lo - 10 };
+    hex[p+2] = b' ';
+    p += 3;
+  }
+  let hex_str = unsafe { core::str::from_utf8_unchecked(&hex) };
+  let rv = unsafe { (*prg.add(0x7FFC) as u16) | ((*prg.add(0x7FFD) as u16) << 8) };
+  println!("EARLY PRG[0..16]={} reset_vec=0x{:04x}", hex_str, rv);
+  // Длинная задержка чтобы UART успел вывести до потока других сообщений.
+  utils::delay(3_000_000);
 
   // Этап 2: включаем тактирование SPI0 через CCU.
   let spi0 = ccu::Peripheral::Spi0;
@@ -76,18 +77,14 @@ fn main() -> ! {
   // чёрную рамку вокруг NES-кадра. Дальше NES будет делать partial flush
   // только области 256×240 (184 KB вместо 460 KB).
   fb::clear(0x00, 0x00, 0x00);
-  // Калибровка CPU clock: 460800 байт при 20 МГц SPI = 460800*8/20e6 = 0.18432 с.
-  // Измеряем mcycle вокруг flush → cycles / 0.18432 = реальная частота CPU.
-  let cal0 = nes::cycles();
   display.flush_buffer_dma(fb::raw());
-  let cal1 = nes::cycles();
-  let cpf = cal1 - cal0;
-  // cpu_hz = cpf / 0.18432 ≈ cpf * 5.425. Выводим cpf и оценку частоты.
-  let cpu_hz_est = cpf * 1000 / 184;
-  println!("border flushed (cal: cpf={} cpu_hz_est={}M)", cpf, cpu_hz_est / 1_000_000);
+  println!("border flushed");
 
-  // Этап 7: Klaus Dormann 6502 functional test — проверка CPU эмулятора.
-  let mut nes = nes::smol::Nes::new(&display);
-  nes.load_klaus_test(nes::smol::KLAUS_BIN);
-  nes.run_klaus_test();
+  // Этап 7: nesrecomp — статически рекомпилированный mario.
+  // RESET не возвращается — это главный цикл NES. Каждый VBlank C runner
+  // рендерит кадр и вызывает nesrecomp_on_frame → flush на дисплей.
+  // Display живёт вечно (main не возвращается) — продлеваем lifetime до 'static.
+  let display_ref: &'static display::Display = unsafe { &*(&display as *const display::Display) };
+  nesrecomp::init(display_ref);
+  nesrecomp::run();
 }

@@ -33,11 +33,6 @@ pub fn init_uart0() {
     let mut v = UART_HALT.read_volatile();
     v &= !1;
     UART_HALT.write_volatile(v);
-
-    // Step 3 Controller Parameter Configuration
-    // Set data width, stop bits, and even/odd parity type by writing the UART_LCR register.
-    // Reset, enable FIFO and set FIFO trigger condition by writing the UART_FCR register.
-    // Set the flow control parameter by writing the UART_MCR register.
   }
 }
 

@@ -243,6 +243,45 @@ impl Display {
     self.spi.cs_high();
   }
 
+  /// Запустить DMA flush без ожидания (pipeline). НЕ блокирует CPU.
+  /// Вызывать `flush_region_dma_finish()` позже (перед следующим `_start`),
+  /// чтобы дождаться завершения и поднять CS.
+  ///
+  /// Pipeline: пока DMA передаёт кадр N, CPU свободен для рендеринга кадра N+1
+  /// в ДРУГОЙ буфер. Общее время кадра = max(ppu, fl) вместо ppu + fl.
+  pub fn flush_region_dma_start(&self, buf: &[u8], x: u16, y: u16, w: u16, h: u16) {
+    let n = buf.len() as u32;
+    if n == 0 || w == 0 || h == 0 {
+      return;
+    }
+    self.set_window(x, y, w, h);
+
+    self.spi.cs_low();
+    self.dc_command();
+    self.spi.send_byte(0x2C); // Memory Write
+    self.dc_data();
+
+    self.spi.prepare_dma(n);
+
+    let dma = dma::Dma::Channel0;
+    dma.start(
+      CFG_DRAM_TO_SPI0_TX,
+      buf.as_ptr() as u32,
+      self.spi.txd_addr(),
+      n,
+    );
+    // НЕ ждём — CPU свободен. CS остаётся low до flush_region_dma_finish().
+  }
+
+  /// Дождаться завершения DMA flush и поднять CS.
+  /// Вызывать перед следующим `flush_region_dma_start()` (или в конце кадра).
+  pub fn flush_region_dma_finish(&self) {
+    let dma = dma::Dma::Channel0;
+    dma.wait_done();
+    self.spi.wait_burst_done();
+    self.spi.cs_high();
+  }
+
   /// Залить прямоугольник цветом RGB888. Базовый примитив для всех остальных.
   ///
   /// Один set_window + одна транзакция Memory Write на весь прямоугольник —
