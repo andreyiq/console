@@ -30,7 +30,7 @@ use runes::mos6502;
 use runes::ppu;
 
 use crate::display::Display;
-use crate::nes::input::AutoStart;
+use crate::nes::input::Buttons;
 use crate::nes::mapper0::Mapper0;
 use crate::nes::screen::{
   clear_flush, flush_needed, FbScreen, NES_H, NES_OFFSET_X, NES_OFFSET_Y, NES_W,
@@ -97,9 +97,11 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   // между CPU и PPU (через UnsafeCell внутри).
   let mapper = RefMapper::new(&mut m as &mut dyn Mapper);
 
-  // Input — автонажатие START (кнопок пока нет). Joystick реализует протокол
-  // опроса NES, счётчик кадров двигает главный цикл через `input::tick_frame`.
-  let p1 = AutoStart;
+  // Input — три кнопки на PE4/PE5/PE6 (влево, вправо, прыжок) + автонажатие
+  // START. Joystick реализует протокол опроса NES; пины читаются раз в кадр из
+  // `input::tick_frame`, который двигает главный цикл.
+  input::init();
+  let p1 = Buttons;
   let p1ctl = stdctl::Joystick::new(&p1);
 
   // Speaker — заглушка (нет аудиовыхода).
@@ -251,7 +253,7 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
         let instr_k = instr_acc / (LOG_EVERY as u64) / 1000;
         let ipc100 = if emu_acc > 0 { instr_acc * 100 / emu_acc } else { 0 };
         println!(
-          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} peak={} (tick={}ms step={}ms)",
+          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} peak={} btn={:02x} (tick={}ms step={}ms)",
           frame,
           fps,
           emu_ms,
@@ -260,6 +262,7 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
           instr_k,
           ipc100,
           speaker::take_peak(),
+          input::take_seen(),
           tick_ms,
           step_ms
         );

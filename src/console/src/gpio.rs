@@ -129,6 +129,30 @@ impl Pin {
     }
   }
 
+  /// Прочитать уровень на пине: `true` = 0 (низкий).
+  ///
+  /// Имеет смысл только для пина, настроенного на `Func::Input`. Кнопки у нас
+  /// замкнуты на GND и подтянуты вверх (`Pull::Up`), так что нажатая = low.
+  #[inline]
+  pub fn is_low(&self) -> bool {
+    unsafe { read_volatile(self.dat_addr()) & (1u32 << self.pin) == 0 }
+  }
+
+  /// Прочитать CFG-регистр пина целиком (отладка: проверить, что set_func лёг).
+  pub fn read_cfg(&self) -> u32 {
+    unsafe { read_volatile(self.cfg_addr()) }
+  }
+
+  /// Прочитать PULL-регистр пина целиком (отладка: проверить set_pull).
+  pub fn read_pull(&self) -> u32 {
+    unsafe { read_volatile(self.pull_addr()) }
+  }
+
+  /// Прочитать DAT-регистр порта целиком (отладка: уровни всех пинов сразу).
+  pub fn read_dat(&self) -> u32 {
+    unsafe { read_volatile(self.dat_addr()) }
+  }
+
   /// Установить pull-up/down. Внутри своего PULL-регистра пин занимает
   /// биты [2k+1 : 2k], где k = pin % 16.
   #[inline]
@@ -157,8 +181,12 @@ pub const PD12: Pin = Pin::new(Port::D, 12); // SPI1-MOSI
 pub const PD13: Pin = Pin::new(Port::D, 13); // SPI1-MISO
 pub const PD22: Pin = Pin::new(Port::D, 22); // PWM7 (звук), гребёнка P2 пин 19
 
-// Port E: UART0 (PE2/PE3) + ILI9488 DC/RST (PE0/PE1)
+// Port E: UART0 (PE2/PE3) + ILI9488 DC/RST (PE0/PE1) + кнопки (PE4..PE6)
 pub const PE0: Pin = Pin::new(Port::E, 0); // ILI9488 DCX (Data/Command)
 pub const PE1: Pin = Pin::new(Port::E, 1); // ILI9488 RESX (Reset)
 pub const PE2: Pin = Pin::new(Port::E, 2); // UART0-TX
 pub const PE3: Pin = Pin::new(Port::E, 3); // UART0-RX
+// Кнопки на гребёнке P3, сразу за PE2/PE3. Замкнуты на GND, подтянуты вверх.
+pub const PE4: Pin = Pin::new(Port::E, 4); // кнопка LEFT
+pub const PE5: Pin = Pin::new(Port::E, 5); // кнопка RIGHT
+pub const PE6: Pin = Pin::new(Port::E, 6); // кнопка A (прыжок)
