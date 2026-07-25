@@ -14,6 +14,7 @@ pub const SPI0_CLK_REG: *mut u32 = (CCU_BASE + 0x0940) as *mut u32;
 pub const SPI1_CLK_REG: *mut u32 = (CCU_BASE + 0x0944) as *mut u32;
 pub const SPI_BGR_REG: *mut u32 = (CCU_BASE + 0x096C) as *mut u32;
 pub const DMA_BGR_REG: *mut u32 = (CCU_BASE + 0x070C) as *mut u32; // 3.3.6.46 — такт DMAC от PSI_CLK
+pub const PWM_BGR_REG: *mut u32 = (CCU_BASE + 0x07AC) as *mut u32; // 3.3.6.50 — такт PWM
 pub const PLL_PERI_CTRL_REG: *mut u32 = (CCU_BASE + 0x0020) as *mut u32; // 3.3.6.3 — PLL_PERI
 
 /// Bit 31 в CLK_REG — одинаков для всех периферий с отдельным тактом.
@@ -26,6 +27,7 @@ pub enum Peripheral {
   Uart0,
   Uart1,
   Dmac,
+  Pwm,
   // будущие: I2c0, I2c1, Smhc0, ...
 }
 
@@ -72,6 +74,14 @@ impl Peripheral {
       Peripheral::Dmac => PeripheralInfo {
         clk_reg: None,
         bgr_reg: DMA_BGR_REG,
+        rst_bit: 1 << 16,
+        gating_bit: 1 << 0,
+      },
+      // У PWM свой тактовый мультиплексор внутри самого модуля (PCCR/PCGR),
+      // отдельного CLK_REG в CCU нет — только шина и reset.
+      Peripheral::Pwm => PeripheralInfo {
+        clk_reg: None,
+        bgr_reg: PWM_BGR_REG,
         rst_bit: 1 << 16,
         gating_bit: 1 << 0,
       },

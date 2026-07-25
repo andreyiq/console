@@ -30,12 +30,12 @@ use runes::mos6502;
 use runes::ppu;
 
 use crate::display::Display;
-use crate::nes::input::NoInput;
+use crate::nes::input::AutoStart;
 use crate::nes::mapper0::Mapper0;
 use crate::nes::screen::{
   clear_flush, flush_needed, FbScreen, NES_H, NES_OFFSET_X, NES_OFFSET_Y, NES_W,
 };
-use crate::nes::speaker::NoAudio;
+use crate::nes::speaker::PwmSpeaker;
 
 /// Прочитать счётчик циклов (RISC-V mcycle CSR). Для замеров времени.
 fn cycles() -> u64 {
@@ -97,12 +97,13 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   // между CPU и PPU (через UnsafeCell внутри).
   let mapper = RefMapper::new(&mut m as &mut dyn Mapper);
 
-  // Input — заглушка (нет кнопок). Joystick обёртка реализует протокол опроса NES.
-  let p1 = NoInput;
+  // Input — автонажатие START (кнопок пока нет). Joystick реализует протокол
+  // опроса NES, счётчик кадров двигает главный цикл через `input::tick_frame`.
+  let p1 = AutoStart;
   let p1ctl = stdctl::Joystick::new(&p1);
 
   // Speaker — заглушка (нет аудиовыхода).
-  let mut spk = NoAudio;
+  let mut spk = PwmSpeaker::new();
 
   // Screen — наш framebuffer в центре 480×320.
   let mut scr = FbScreen::new();
@@ -120,11 +121,7 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   cpu.powerup();
   println!("nes: powerup ok, starting loop");
 
-  // CPU_HZ — частота ядра C906. Проверена чтением регистров CCU через FEL
-  // после `xfel ddr f133`: PLL_CPU_CTRL=0xca002900 → N=42 → 24 МГц × 42 =
-  // 1008 МГц; RISC_CLK_REG=0x05000100 → источник PLL_CPU, M=1 → ядро 1008 МГц.
-  // (До ddr-init там 408 МГц — дефолт BROM; payload xfel сам поднимает PLL.)
-  const CPU_HZ: u64 = 1_008_000_000;
+  use crate::utils::CPU_HZ;
 
   /// Каждые сколько кадров печатать замер в UART. Строка ~45 байт, на 115200
   /// это ~4 мс — на медленном baseline (~1 FPS) погрешность <1%, но при
@@ -231,6 +228,7 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
       t_frame = t_end;
       i_frame = instrs();
       frame = frame.wrapping_add(1);
+      input::tick_frame();
 
       // Каждые LOG_EVERY кадров — лог в UART: средний FPS и разбивка кадра.
       // emu — эмуляция (CPU+PPU+APU), wait — простой в ожидании SPI.
@@ -253,8 +251,17 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
         let instr_k = instr_acc / (LOG_EVERY as u64) / 1000;
         let ipc100 = if emu_acc > 0 { instr_acc * 100 / emu_acc } else { 0 };
         println!(
-          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} (tick={}ms step={}ms)",
-          frame, fps, emu_ms, emu_us, wait_ms, instr_k, ipc100, tick_ms, step_ms
+          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} peak={} (tick={}ms step={}ms)",
+          frame,
+          fps,
+          emu_ms,
+          emu_us,
+          wait_ms,
+          instr_k,
+          ipc100,
+          speaker::take_peak(),
+          tick_ms,
+          step_ms
         );
         emu_acc = 0;
         wait_acc = 0;

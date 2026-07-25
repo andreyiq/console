@@ -27,10 +27,11 @@ pub enum Port {
 
 /// Функция пина (4 бита в Pn_CFG0). Значения — регистровые.
 ///
-/// ВАЖНО: варианты `Spi0`/`Spi1`/`Uart0` привязаны к конкретным портам:
+/// ВАЖНО: варианты `Spi0`/`Spi1`/`Uart0`/`Pwm7` привязаны к конкретным пинам:
 ///   `Spi0`  → PC (func=0b0010)
 ///   `Spi1`  → PD (func=0b0100)
 ///   `Uart0` → PE (func=0b0110)
+///   `Pwm7`  → PD22 (func=0b0101, таблица PD22_SELECT в user manual)
 /// Передача «не своего» варианта в пин другого порта скомпилируется,
 /// но настроит пин на чужую функцию (см. таблицу 9.7 в user manual).
 #[derive(Clone, Copy)]
@@ -40,6 +41,7 @@ pub enum Func {
   Output = 0b0001,
   Spi0 = 0b0010,
   Spi1 = 0b0100,
+  Pwm7 = 0b0101,
   Uart0 = 0b0110,
   IoDisable = 0b1111,
 }
@@ -78,26 +80,32 @@ impl Pin {
     }
   }
 
-  fn cfg0_addr(&self) -> *mut u32 {
-    (PIO_BASE + self.cfg0_offset()) as *mut u32
+  /// Адрес нужного CFG-регистра. По 4 бита на пин, значит в один 32-битный
+  /// регистр влезает 8 пинов: CFG0 — пины 0..7, CFG1 — 8..15 (+0x04),
+  /// CFG2 — 16..23 (+0x08), CFG3 — 24..31 (+0x0C).
+  fn cfg_addr(&self) -> *mut u32 {
+    (PIO_BASE + self.cfg0_offset() + (self.pin / 8) * 4) as *mut u32
   }
 
   fn dat_addr(&self) -> *mut u32 {
     (PIO_BASE + self.cfg0_offset() + 0x10) as *mut u32
   }
 
-  fn pull0_addr(&self) -> *mut u32 {
-    (PIO_BASE + self.cfg0_offset() + 0x24) as *mut u32
+  /// Адрес нужного PULL-регистра. По 2 бита на пин: PULL0 — пины 0..15,
+  /// PULL1 — 16..31 (+0x04).
+  fn pull_addr(&self) -> *mut u32 {
+    (PIO_BASE + self.cfg0_offset() + 0x24 + (self.pin / 16) * 4) as *mut u32
   }
 
-  /// Установить функцию пина. В Pn_CFG0 пин `n` занимает биты [4n+3 : 4n].
+  /// Установить функцию пина. Внутри своего CFG-регистра пин занимает
+  /// биты [4k+3 : 4k], где k = pin % 8.
   #[inline]
   pub fn set_func(&self, f: Func) {
-    let shift = self.pin * 4;
+    let shift = (self.pin % 8) * 4;
     let mask = 0xF << shift;
     unsafe {
-      let old = read_volatile(self.cfg0_addr());
-      write_volatile(self.cfg0_addr(), (old & !mask) | ((f as u32) << shift));
+      let old = read_volatile(self.cfg_addr());
+      write_volatile(self.cfg_addr(), (old & !mask) | ((f as u32) << shift));
     }
   }
 
@@ -121,14 +129,15 @@ impl Pin {
     }
   }
 
-  /// Установить pull-up/down. В Pn_PULL0 пин `n` занимает биты [2n+1 : 2n].
+  /// Установить pull-up/down. Внутри своего PULL-регистра пин занимает
+  /// биты [2k+1 : 2k], где k = pin % 16.
   #[inline]
   pub fn set_pull(&self, p: Pull) {
-    let shift = self.pin * 2;
+    let shift = (self.pin % 16) * 2;
     let mask = 0b11 << shift;
     unsafe {
-      let old = read_volatile(self.pull0_addr());
-      write_volatile(self.pull0_addr(), (old & !mask) | ((p as u32) << shift));
+      let old = read_volatile(self.pull_addr());
+      write_volatile(self.pull_addr(), (old & !mask) | ((p as u32) << shift));
     }
   }
 }
@@ -146,6 +155,7 @@ pub const PD10: Pin = Pin::new(Port::D, 10); // SPI1-CS
 pub const PD11: Pin = Pin::new(Port::D, 11); // SPI1-CLK
 pub const PD12: Pin = Pin::new(Port::D, 12); // SPI1-MOSI
 pub const PD13: Pin = Pin::new(Port::D, 13); // SPI1-MISO
+pub const PD22: Pin = Pin::new(Port::D, 22); // PWM7 (звук), гребёнка P2 пин 19
 
 // Port E: UART0 (PE2/PE3) + ILI9488 DC/RST (PE0/PE1)
 pub const PE0: Pin = Pin::new(Port::E, 0); // ILI9488 DCX (Data/Command)

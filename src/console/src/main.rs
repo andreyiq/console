@@ -10,6 +10,7 @@ pub mod dma;
 pub mod fb;
 pub mod gpio;
 pub mod nes;
+pub mod pwm;
 pub mod spi;
 pub mod uart;
 
@@ -78,6 +79,24 @@ fn main() -> ! {
   fb::clear(0x00, 0x00, 0x00);
   display.flush_buffer_dma(fb::raw());
   println!("border flushed");
+
+  // Этап 12: звук. Проверочный писк до старта эмулятора — если его слышно,
+  // цепочка PWM7 → PD22 → резистор → динамик рабочая, и дальше уже вопрос
+  // только к сэмплам APU. Ля первой октавы, 300 мс.
+  pwm::init();
+  let (pccr, pcgr, per, ppr) = pwm::read_regs();
+  println!(
+    "pwm init: pccr67=0x{:08x} pcgr=0x{:08x} per=0x{:08x} ppr=0x{:08x}",
+    pccr, pcgr, per, ppr
+  );
+  // Сначала глазами: 5 миганий синего DS2 (он висит на PD22 через 5.1К).
+  // Если диод мигает — PWM7 доходит до ножки, и вопрос только в акустике.
+  println!("pwm: blinking DS2 (blue led) 5 times...");
+  pwm::led_test(5);
+  // Потом ушами: ля первой октавы, секунда, полный размах.
+  println!("pwm: beep 440 Hz...");
+  pwm::beep(440, 1000);
+  println!("beep done");
 
   // Этап 7: NES-эмулятор. Не возвращается.
   nes::run(&display);

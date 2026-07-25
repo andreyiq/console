@@ -2,6 +2,12 @@
 
 use crate::uart::uart0_write;
 
+/// Частота ядра C906. Проверена чтением регистров CCU через FEL после
+/// `xfel ddr f133`: PLL_CPU_CTRL=0xca002900 → N=42 → 24 МГц × 42 = 1008 МГц;
+/// RISC_CLK_REG=0x05000100 → источник PLL_CPU, M=1 → ядро 1008 МГц.
+/// (До ddr-init там 408 МГц — дефолт BROM; payload xfel сам поднимает PLL.)
+pub const CPU_HZ: u64 = 1_008_000_000;
+
 /// Зацикленная задержка. Грубо: n итераций spin_loop.
 /// На ~1 GHz одна итерация ~1-2 такта, так что delay(1_000_000) ~ 1-2 ms.
 pub fn delay(n: u32) {
