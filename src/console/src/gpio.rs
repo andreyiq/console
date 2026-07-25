@@ -190,3 +190,4 @@ pub const PE3: Pin = Pin::new(Port::E, 3); // UART0-RX
 pub const PE4: Pin = Pin::new(Port::E, 4); // кнопка LEFT
 pub const PE5: Pin = Pin::new(Port::E, 5); // кнопка RIGHT
 pub const PE6: Pin = Pin::new(Port::E, 6); // кнопка A (прыжок)
+pub const PE7: Pin = Pin::new(Port::E, 7); // кнопка START
