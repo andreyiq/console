@@ -9,6 +9,7 @@ dependencies = [
  "panic-halt",
  "riscv 0.16.0",
  "riscv-rt",
+ "runes",
 ]
 
 [[package]]
@@ -141,6 +142,12 @@ name = "riscv-types"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3f2ad9f15a07f4a0e1677124f9120ce7e83ab7e1ca7186af0ca9da529b62e80"
+
+[[package]]
+name = "runes"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f059f467ad227f463768b20d3af0261ff18094278e66ebb8fd6323f35696bac"
 
 [[package]]
 name = "syn"

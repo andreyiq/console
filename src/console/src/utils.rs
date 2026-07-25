@@ -30,6 +30,8 @@ pub fn print_hex(n: u32) {
 }
 
 /// Печатает строку без перевода строки.
+/// Сейчас не используется (везде `println!`), но полезен для отладки.
+#[allow(unused_macros)]
 macro_rules! print {
   ($s:expr) => {{
     let message = $s;

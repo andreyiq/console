@@ -9,10 +9,24 @@ cargo build --release
 rust-objcopy -O binary ./target/riscv64gc-unknown-none-elf/release/console \
   ./target/riscv64gc-unknown-none-elf/release/firmware.bin
 
+# Захват UART запускаем ДО прошивки, иначе теряются сообщения загрузки
+# (ddr-init, hello, init железа) — они успевают уйти пока стартует cat.
+# На baseline ~1 FPS строка замера выходит раз в 10 секунд (LOG_EVERY=10
+# в nes/mod.rs), поэтому 5 секунд не хватало ни на одну. Переопределить:
+# UART_SECONDS=10 ./run_dma.sh
+SECS="${UART_SECONDS:-45}"
+LOG=./target/uart.log
+echo "=== uart0 capture (${SECS}s) -> $LOG ==="
+stty -F /dev/ttyACM0 115200 raw -echo
+timeout "$SECS" cat /dev/ttyACM0 > "$LOG" &
+CAT_PID=$!
+sleep 1
+
 echo "=== flash ==="
 xfel ddr f133
 xfel write 0x40000000 ./target/riscv64gc-unknown-none-elf/release/firmware.bin
 xfel exec 0x40000000
 
-echo "=== uart0 log (5s) ==="
-timeout 5 cat /dev/ttyACM0 || true
+echo "=== ждём ${SECS}s ==="
+wait "$CAT_PID" || true
+cat "$LOG"

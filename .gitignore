@@ -1,39 +1,18 @@
 # Rust build artifacts
 target/
 
-# Old code archive (kept locally for reference, not in git)
+# Old code archive + ROM'ы (kept locally for reference, not in git)
 src/console/archive/
 
 # Cursor IDE
 .cursor/
 
-# OpenSpec (not used in this project)
-openspec/
-
 # Logic analyzer exports (DSLogic/libsigrok)
 log.csv
 
-# nesrecomp C build artifacts (libmario.a, object files, host/qemu binaries)
-src/console/src/nesrecomp/*.o
-src/console/src/nesrecomp/libmario.a
-src/console/src/nesrecomp/libmario_qemu.a
-src/console/src/nesrecomp/mario_host
-src/console/src/nesrecomp/mario_qemu
-
-# nesrecomp debug screenshots
-src/console/src/nesrecomp/frame_*.ppm
-src/console/src/nesrecomp/frame_*.png
-
-# QEMU bare-metal project (separate, not in main repo)
-src/console_qemu/
-
-# Local path dependencies (kept locally, not in git)
-runes-local/
-x-nes-local/
+# Собранная прошивка
+*.bin
 
 # Backup files
 *.orig
 *.orig.sh
-
-# nesrecomp generated C code (regenerate via nesrecomp tool, see nesrecomp/README.md)
-src/console/src/nesrecomp/smb_generated/
