@@ -59,6 +59,12 @@ static READY_IDX: AtomicUsize = AtomicUsize::new(0);
 /// Флаг «кадр готов, пора flush». `render()` ставит true, main — false.
 static FLUSH_NEEDED: AtomicBool = AtomicBool::new(false);
 
+// Здесь временно жил `ABLATION` — переключатель режимов `put()` для замера
+// стоимости вывода пикселей. Замер сделан (результаты в AGENTS.md: всё тело
+// `put()` — 1.4 мс из 27), код убран: сама проверка режима стоила ~1 мс на
+// кадр. Если понадобится повторить — ветвление в `put()` + переключение
+// каждые N кадров из главного цикла.
+
 /// Указатель на начало буфера `i`.
 fn buf_ptr(i: usize) -> *mut u8 {
   unsafe { (core::ptr::addr_of_mut!(NES_BUF) as *mut u8).add(i * NES_BUF_SIZE) }
@@ -186,6 +192,13 @@ impl FbScreen {
 impl ppu::Screen for FbScreen {
   /// Один пиксель NES (x: 0..256, y: 0..240, color: индекс палитры 0..63).
   /// Пишем 3 байта RGB888 в активный буфер по индексу (y*256 + x)*3.
+  ///
+  /// Записи обычные, не `volatile`: буфер — простая RAM, а не регистры.
+  /// `volatile` тут только мешал бы компилятору их объединять и держать
+  /// значения в регистрах. Видимость для DMA обеспечивает не он, а
+  /// `cache::clean_dcache()` (там `fence rw, rw` + `dcache.call`), а от
+  /// выкидывания записей защищает то, что буфер потом читается через
+  /// `ready_raw()`.
   #[inline(always)]
   fn put(&mut self, x: u8, y: u8, color: u8) {
     let (r, g, b) = palette::rgb(color);
@@ -193,9 +206,9 @@ impl ppu::Screen for FbScreen {
     self.dirty = true;
     unsafe {
       let p = self.write.add(i);
-      write_volatile(p, r);
-      write_volatile(p.add(1), g);
-      write_volatile(p.add(2), b);
+      p.write(r);
+      p.add(1).write(g);
+      p.add(2).write(b);
     }
   }
 

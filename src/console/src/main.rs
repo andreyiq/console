@@ -47,9 +47,9 @@ fn main() -> ! {
   let spi0 = ccu::Peripheral::Spi0;
   spi0.enable();
   // SPI SCLK. M=15 → 20 МГц (штатный максимум ILI9488, 73.7 мс на кадр),
-  // M=8 → 37.5 МГц (39.3 мс на кадр). См. таблицу в ccu.rs.
-  // 37.5 МГц — разгон относительно datasheet, проверяем на глаз и анализатором.
-  ccu::set_spi0_clock_pllperi(8);
+  // M=8 → 37.5 МГц (39.3 мс), M=6 → 50 МГц (29.5 мс). См. таблицу в ccu.rs.
+  // 50 МГц — разгон ×2.5 относительно datasheet, проверяем на глаз.
+  ccu::set_spi0_clock_pllperi(6);
   println!(
     "ccu ok: pll_peri=0x{:08x} spi0_clk=0x{:08x}",
     ccu::read_pll_peri(),

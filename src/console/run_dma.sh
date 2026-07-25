@@ -16,6 +16,14 @@ rust-objcopy -O binary ./target/riscv64gc-unknown-none-elf/release/console \
 # UART_SECONDS=10 ./run_dma.sh
 SECS="${UART_SECONDS:-45}"
 LOG=./target/uart.log
+
+# Ждём FEL ДО старта захвата, иначе окно захвата тратится на ожидание платы.
+echo "=== ждём FEL (жми reset с зажатой кнопкой BOOT) ==="
+for _ in $(seq 1 150); do
+  xfel version >/dev/null 2>&1 && break
+  sleep 1
+done
+
 echo "=== uart0 capture (${SECS}s) -> $LOG ==="
 stty -F /dev/ttyACM0 115200 raw -echo
 timeout "$SECS" cat /dev/ttyACM0 > "$LOG" &

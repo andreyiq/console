@@ -42,6 +42,19 @@ fn cycles() -> u64 {
   riscv::register::mcycle::read() as u64
 }
 
+/// Прочитать minstret (CSR 0xb02) — число выполненных инструкций.
+///
+/// Вместе с `cycles()` даёт IPC. Это ключевая цифра для выбора оптимизации:
+/// низкий IPC значит ядро стоит на промахах кэша (лечится раскладкой данных),
+/// высокий — мы честно выполняем слишком много инструкций (лечится алгоритмом).
+fn instrs() -> u64 {
+  let v: u64;
+  unsafe {
+    core::arch::asm!("csrr {}, 0xb02", out(reg) v, options(nomem, nostack));
+  }
+  v
+}
+
 /// Запустить NES-эмулятор. Инициализация железа (UART/CCU/SPI/DMA/Display)
 /// уже должна быть выполнена вызывающим. Функция не возвращается.
 pub fn run(display: &Display) -> ! {
@@ -125,6 +138,8 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   // попадало время одной инструкции + flush, и цифра была бессмысленно
   // завышенной.)
   let mut t_frame = cycles();
+  // Инструкции на начало кадра — для IPC той же области, что и `emu`.
+  let mut i_frame = instrs();
   // Начало текущего окна замера (LOG_EVERY кадров). FPS считаем по реальному
   // прошедшему времени, а не по сумме emu+wait: между ними есть ещё оверлей
   // и настройка DMA, они тоже входят в кадр.
@@ -132,20 +147,48 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   // Разбивка: emu — эмуляция, wait — простой в ожидании прошлого DMA.
   let mut emu_acc: u64 = 0;
   let mut wait_acc: u64 = 0;
+  // Инструкции, выполненные в эмуляции (та же область, что `emu_acc`).
+  let mut instr_acc: u64 = 0;
   // Идёт ли сейчас неблокирующий перенос кадра на дисплей.
   let mut dma_in_flight = false;
+  // Разбивка эмуляции: tick — прокрутка bus.tick(), step — cpu.step().
+  //
+  // ВНИМАНИЕ: границу CPU/PPU это НЕ разделяет, замерено — `tick=2ms
+  // step=24ms` из 26. В runes каждое `mem.read`/`mem.write` внутри
+  // инструкции само зовёт `bus.tick()`, поэтому PPU и APU крутятся внутри
+  // `cpu.step()`, а leftover-цикл почти всегда пустой. Чтобы понять, сколько
+  // стоит именно PPU, нужен другой подход (например ablation: заглушить
+  // `FbScreen::put` и сравнить) — снаружи runes это не видно.
+  //
+  // Стоит ~2 чтения mcycle на инструкцию, ~0.5 мс из 26. Держим выключенным.
+  const PROFILE_EMU: bool = false;
+  let mut tick_acc: u64 = 0;
+  let mut step_acc: u64 = 0;
+
   loop {
+    let t_a = if PROFILE_EMU { cycles() } else { 0 };
+
     // Докручиваем leftover циклы предыдущей инструкции — bus.tick() гонит
     // PPU (3 тика на CPU-цикл) и APU. PPU в процессе зовёт scr.put().
     while cpu.cycle > 0 {
       cpu.mem.bus.tick();
     }
+
+    let t_b = if PROFILE_EMU { cycles() } else { 0 };
+
     // Выполняем одну инструкцию 6502.
     cpu.step();
+
+    if PROFILE_EMU {
+      let t_c = cycles();
+      tick_acc += t_b - t_a;
+      step_acc += t_c - t_b;
+    }
 
     // PPU вызовет render() когда кадр готов — atomic-флаг.
     if flush_needed() {
       let t_emu_end = cycles();
+      let i_emu_end = instrs();
 
       // 1. Дождаться прошлого переноса. Это единственное место, где мы
       //    блокируемся: пока шёл SPI, PPU уже отрисовал следующий кадр.
@@ -184,7 +227,9 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
       let t_end = cycles();
       emu_acc += t_emu_end - t_frame;
       wait_acc += t_wait_end - t_emu_end;
+      instr_acc += i_emu_end - i_frame;
       t_frame = t_end;
+      i_frame = instrs();
       frame = frame.wrapping_add(1);
 
       // Каждые LOG_EVERY кадров — лог в UART: средний FPS и разбивка кадра.
@@ -199,12 +244,23 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
         if total > 0 {
           fps = (CPU_HZ * (LOG_EVERY as u64) / total) as u32;
         }
+        let tick_ms = tick_acc / (LOG_EVERY as u64) / per_ms;
+        let step_ms = step_acc / (LOG_EVERY as u64) / per_ms;
+        // emu в микросекундах: разница между режимами ablation — единицы мс,
+        // в целых мс её не видно.
+        let emu_us = emu_acc / (LOG_EVERY as u64) * 1000 / per_ms;
+        // Инструкций на кадр (тысячами) и IPC×100 в области эмуляции.
+        let instr_k = instr_acc / (LOG_EVERY as u64) / 1000;
+        let ipc100 = if emu_acc > 0 { instr_acc * 100 / emu_acc } else { 0 };
         println!(
-          "nes: frame {} fps={} emu={}ms wait={}ms",
-          frame, fps, emu_ms, wait_ms
+          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} (tick={}ms step={}ms)",
+          frame, fps, emu_ms, emu_us, wait_ms, instr_k, ipc100, tick_ms, step_ms
         );
         emu_acc = 0;
         wait_acc = 0;
+        instr_acc = 0;
+        tick_acc = 0;
+        step_acc = 0;
         t_bench = t_end;
       }
     }

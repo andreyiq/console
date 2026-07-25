@@ -13,4 +13,4 @@ riscv-rt = "0.16.0"
 strip = false
 lto = true
 debug = 2 # был невалидный ключ `debuginfo` — cargo его молча игнорировал
-opt-level = 2
+opt-level = 3
