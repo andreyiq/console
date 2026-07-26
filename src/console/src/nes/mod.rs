@@ -35,7 +35,7 @@ use crate::nes::mapper0::Mapper0;
 use crate::nes::screen::{
   clear_flush, flush_needed, FbScreen, NES_H, NES_OFFSET_X, NES_OFFSET_Y, NES_W,
 };
-use crate::nes::speaker::PwmSpeaker;
+use crate::nes::speaker::CodecSpeaker;
 
 /// Прочитать счётчик циклов (RISC-V mcycle CSR). Для замеров времени.
 fn cycles() -> u64 {
@@ -104,8 +104,8 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
   let p1 = Buttons;
   let p1ctl = stdctl::Joystick::new(&p1);
 
-  // Speaker — заглушка (нет аудиовыхода).
-  let mut spk = PwmSpeaker::new();
+  // Speaker — аудиокодек F133: HPOUTL/R → PAM8301 на плате → гребёнка P6.
+  let mut spk = CodecSpeaker::new();
 
   // Screen — наш framebuffer в центре 480×320.
   let mut scr = FbScreen::new();
@@ -178,6 +178,12 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
     // Выполняем одну инструкцию 6502.
     cpu.step();
 
+    // Долить FIFO кодека. Здесь, а не внутри `queue()`: APU выдаёт сэмплы
+    // рывками по целому кадру, а FIFO вмещает 5 мс, поэтому доливать надо
+    // равномерно по ходу эмуляции (см. `speaker.rs`). Стоит одно чтение
+    // регистра, если места в FIFO нет.
+    speaker::pump();
+
     if PROFILE_EMU {
       let t_c = cycles();
       tick_acc += t_b - t_a;
@@ -197,7 +203,9 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
       // (false бывает только на самом первом кадре — дальше мы всегда
       //  запускаем новый перенос в конце этого же блока)
       if dma_in_flight {
-        display.flush_region_dma_finish();
+        // Ждём с откачкой звука: иначе на эти ~2 мс выход PWM замирает и в
+        // звуке появляется провал раз в кадр.
+        display.flush_region_dma_finish_polling(speaker::pump);
       }
       let t_wait_end = cycles();
 
@@ -231,6 +239,9 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
       i_frame = instrs();
       frame = frame.wrapping_add(1);
       input::tick_frame();
+      // Замер темпа выработки сэмплов за прошедший кадр — от него зависит
+      // шаг пересчёта в частоту кодека, то есть высота звука (см. `speaker.rs`).
+      speaker::retune();
 
       // Каждые LOG_EVERY кадров — лог в UART: средний FPS и разбивка кадра.
       // emu — эмуляция (CPU+PPU+APU), wait — простой в ожидании SPI.
@@ -252,8 +263,13 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
         // Инструкций на кадр (тысячами) и IPC×100 в области эмуляции.
         let instr_k = instr_acc / (LOG_EVERY as u64) / 1000;
         let ipc100 = if emu_acc > 0 { instr_acc * 100 / emu_acc } else { 0 };
+        // Звук: rate — измеренный темп выработки сэмплов APU (кодек играет
+        // ровно 24 кГц, разница снимается пересчётом в speaker.rs), fill —
+        // заполнение буфера, ur/or — опустошения и потерянные сэмплы.
+        // В норме ur=0 or=0 rs=0, fill около 512.
+        let (snd_rate, snd_fill, snd_ur, snd_or, snd_rs) = speaker::take_stats();
         println!(
-          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} peak={} btn={:02x} (tick={}ms step={}ms)",
+          "nes: frame {} fps={} emu={}ms ({}us) wait={}ms instr={}k ipc={} peak={} btn={:02x} (tick={}ms step={}ms) snd={}Hz fill={} ur={} or={} rs={}",
           frame,
           fps,
           emu_ms,
@@ -264,7 +280,12 @@ fn run_with_mapper<M: Mapper>(mut m: M, display: &Display) -> ! {
           speaker::take_peak(),
           input::take_seen(),
           tick_ms,
-          step_ms
+          step_ms,
+          snd_rate,
+          snd_fill,
+          snd_ur,
+          snd_or,
+          snd_rs
         );
         emu_acc = 0;
         wait_acc = 0;

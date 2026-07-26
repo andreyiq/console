@@ -5,6 +5,7 @@
 pub mod utils;
 pub mod cache;
 pub mod ccu;
+pub mod codec;
 pub mod display;
 pub mod dma;
 pub mod fb;
@@ -12,6 +13,7 @@ pub mod gpio;
 pub mod nes;
 pub mod pwm;
 pub mod spi;
+pub mod tone;
 pub mod uart;
 
 use core::panic::PanicInfo;
@@ -80,23 +82,44 @@ fn main() -> ! {
   display.flush_buffer_dma(fb::raw());
   println!("border flushed");
 
-  // Этап 12: звук. Проверочный писк до старта эмулятора — если его слышно,
-  // цепочка PWM7 → PD22 → резистор → динамик рабочая, и дальше уже вопрос
-  // только к сэмплам APU. Ля первой октавы, 300 мс.
+  // Этап 12: PWM7 на PD22. Как аудиовыход больше не используется (звук ушёл
+  // на кодек, см. ниже), но пин остался: на нём висит синий DS2 через 5.1К, и
+  // мигание — самая быстрая проверка, что до ножки вообще доходит сигнал.
   pwm::init();
   let (pccr, pcgr, per, ppr) = pwm::read_regs();
   println!(
     "pwm init: pccr67=0x{:08x} pcgr=0x{:08x} per=0x{:08x} ppr=0x{:08x}",
     pccr, pcgr, per, ppr
   );
-  // Сначала глазами: 5 миганий синего DS2 (он висит на PD22 через 5.1К).
-  // Если диод мигает — PWM7 доходит до ножки, и вопрос только в акустике.
   println!("pwm: blinking DS2 (blue led) 5 times...");
   pwm::led_test(5);
-  // Потом ушами: ля первой октавы, секунда, полный размах.
-  println!("pwm: beep 440 Hz...");
-  pwm::beep(440, 1000);
-  println!("beep done");
+
+  // Этап 14: аудиокодек. Настоящий 16-битный ЦАП вместо PWM: HPOUTL/R →
+  // развязка C54/C15 → PAM8301 (U10) на плате → гребёнка P6 «AUDIO», куда
+  // припаян динамик. Печатаем регистры — по ним видно, поднялся ли PLL_AUDIO1
+  // (бит 28 = LOCK) и включился ли выходной каскад.
+  codec::init();
+  let (dpc, fifoc, fifos, dac, ramp, hp1, hp2, power, pll, clk) = codec::read_regs();
+  println!(
+    "codec: dpc=0x{:08x} fifoc=0x{:08x} fifos=0x{:08x} dac=0x{:08x}",
+    dpc, fifoc, fifos, dac
+  );
+  println!(
+    "codec: ramp=0x{:08x} hp1=0x{:08x} hp2=0x{:08x} power=0x{:08x} pll_audio1=0x{:08x} dac_clk=0x{:08x}",
+    ramp, hp1, hp2, power, pll, clk
+  );
+  // Забирает ли ЦАП сэмплы. Ждём ~24000; ноль означает, что цифровая часть
+  // стоит, и искать надо в тактировании, а не в аналоге.
+  println!("codec: fifo drain rate = {} Hz (ожидаем ~24000)", codec::measure_rate());
+  // Тестовых сигналов при загрузке нет: слушать их на каждой прошивке
+  // невыносимо. Когда нужно проверить тракт до эмулятора, раскомментируй —
+  // сетку отсчётов там держит FIFO кодека, то есть дрожания вывода нет по
+  // построению, и если там чисто, а в игре нет, виновата выдача сэмплов APU.
+  //
+  //   tone::quality_test();   // свип + фортепиано: оценка динамика
+  //   tone::level_test();     // 1 кГц на 0 / -9 / -18 дБ: ищем перегрузку
+  //   tone::compare_waves();  // синус / меандр / импульс: акустика или код
+  //   tone::melody();         // ноты: только «звук есть, высота верная»
 
   // Этап 7: NES-эмулятор. Не возвращается.
   nes::run(&display);

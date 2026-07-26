@@ -40,7 +40,13 @@ pub fn uart0_write(v: u32) {
   unsafe {
     UART_THR.write_volatile(v);
     // FIXME Step 2 Check TX_FIFO status by reading UART_USR[TFNF]. If the bit is 1, data can continue to be written; if the bit is 0, wait for data transfer, and data cannot continue to write until FIFO is not full.
-    while (UART_USR.read_volatile() & 0b10) == 0 {}
+    while (UART_USR.read_volatile() & 0b10) == 0 {
+      // Пока ждём FIFO — доливаем звук. Строка замера это ~70 байт, на 115200
+      // это почти 6 мс, а FIFO кодека вмещает 5.3 мс: без этого вызова каждая
+      // печать оставляла бы слышимую заминку. Зависимость низкого уровня от
+      // `nes` тут сознательная: другого потребителя звука в проекте нет.
+      crate::nes::speaker::pump();
+    }
   }
 }
 

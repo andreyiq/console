@@ -3,6 +3,10 @@ https://github.com/devdotnetorg/Allwinner-SoC
 
 https://notes.mcejp.com/posts/Allwinner-D1s-F133-notes.html
 
+# Аудиокодек D1/F133: единственный рабочий референс, в mainline драйвера нет.
+# Ветка riscv/d1-wip, файл sound/soc/sunxi/sun20i-codec.c
+https://github.com/smaeul/linux/tree/riscv/d1-wip
+
 https://github.com/xboot/xfel
 https://github.com/SdtElectronics/Xassette-Asterisk
 
