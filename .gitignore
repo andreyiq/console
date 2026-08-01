@@ -16,3 +16,6 @@ log.csv
 # Backup files
 *.orig
 *.orig.sh
+
+# KiCad генерируемый кэш футпринтов
+fp-info-cache
