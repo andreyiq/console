@@ -191,8 +191,8 @@ def main():
 	(title_block
 		(title "{TITLE}")
 		(rev "{REV}")
-		(comment 1 "Требования: hw/TZ.md   Числа и распиновка: hw/BOARD.md   Выбор микросхем: hw/CHIPS.md")
-		(comment 2 "Соединения — глобальными метками. Порядок сборки блоков — BOARD.md §9")
+		(comment 1 "Требования: hw/TZ.md   Числа и распиновка: hw/console/blocks/   Выбор микросхем: hw/CHIPS.md")
+		(comment 2 "Соединения — глобальными метками. Порядок сборки блоков — hw/console/README.md")
 	)
 	(lib_symbols
 {symdef}

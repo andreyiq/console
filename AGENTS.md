@@ -49,6 +49,7 @@ START физической кнопки не имеет: жмётся сам н�
 - `docs/mangopi/f133_user_manual_v1.0.txt` — основной референс (CCU/PIO/SPI/DMA)
 - `docs/mangopi/f133_datasheet_v1.2.pdf` — datasheet
 - `docs/display/ili9488/` — datasheet, схема, init-код
+- `docs/chips/` — даташиты микросхем и разъёмов платы v2 (см. `hw/CHIPS.md`)
 - `docs/display/ili9488/BOE3.5IPS-ILI9488.TXT` — init-последовательность
 - `docs/display/ili9488/invert the colors.txt` — 0x21 для IPS-инверсии
 - `docs/display/ili9488/VCOM--uniformity of glow and burnout.txt` — 0xC5 с 0x4D (VCOM = -0.79688V)
