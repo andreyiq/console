@@ -17,5 +17,14 @@ log.csv
 *.orig
 *.orig.sh
 
-# KiCad генерируемый кэш футпринтов
+# KiCad: кэш, локальные настройки, автобэкапы, файлы блокировки
 fp-info-cache
+*.kicad_prl
+*-backups/
+*.lck
+*-bak
+*.kicad_sch-bak
+*.kicad_pcb-bak
+
+# Python
+__pycache__/
