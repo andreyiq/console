@@ -1122,7 +1122,7 @@
 					(effects (font (size 1.27 1.27)))
 				)
 			)
-			(pin no_connect line
+			(pin power_in line
 				(at 17.78 59.69 270)
 				(length 2.54)
 				(name "VCC-TVIN"
