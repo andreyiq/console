@@ -188,6 +188,8 @@ class Sheet:
 
     def wire(self, *pts):
         for a, b in zip(pts, pts[1:]):
+            if a == b:      # выводы совпали — провод между ними не нужен
+                continue
             key = f"w/{a[0]:g},{a[1]:g}/{b[0]:g},{b[1]:g}"
             self.items.append(
                 f'\t(wire\n\t\t(pts (xy {a[0]:g} {a[1]:g}) '
@@ -239,7 +241,7 @@ def buck(s, X, Y, rail, en_label, refs, r1, r2, c22pf, purpose):
     # вход: VSYS, развязка CIN
     s.power("parts:VSYS", (X - 25.4, Y - 12.7))
     s.wire((X - 25.4, Y - 12.7), (X - 25.4, Y - 2.54), ch.pin("4"))
-    cinp = s.sym("Device:C", cin, "22u", X - 25.4, Y + 1.27, 0, src="§2.4",
+    cinp = s.sym("Device:C", cin, "22u", X - 25.4, Y + 1.27, 0, src="02-power.md §2.4",
                  rdy=1.27, vdy=4.45)
     s.junction((X - 25.4, Y - 2.54))
     s.wire(cinp.pin("2"), (X - 25.4, Y + 7.62))
@@ -266,10 +268,10 @@ def buck(s, X, Y, rail, en_label, refs, r1, r2, c22pf, purpose):
             continue
         s.junction((tap, Y - 2.54))
 
-    s.sym("Device:C", cout, "22u", X + 33.02, Y + 1.27, 0, src="§2.4")
+    s.sym("Device:C", cout, "22u", X + 33.02, Y + 1.27, 0, src="02-power.md §2.4")
     s.wire((X + 33.02, Y + 5.08), (X + 33.02, Y + 7.62))
     s.power("power:GND", (X + 33.02, Y + 7.62))
-    s.sym("Device:C", c01, "0.1u", X + 40.64, Y + 1.27, 0, src="§3, §4")
+    s.sym("Device:C", c01, "0.1u", X + 40.64, Y + 1.27, 0, src="02-power.md §3, §4")
     s.wire((X + 40.64, Y + 5.08), (X + 40.64, Y + 7.62))
     s.power("power:GND", (X + 40.64, Y + 7.62))
 
@@ -289,7 +291,7 @@ def buck(s, X, Y, rail, en_label, refs, r1, r2, c22pf, purpose):
 
     if c22pf:
         s.sym("Device:C", c22pf, "22p", X + 20.32, Y + 1.27, 0,
-              src="§2.4, §7.5", rdx=-2.54, rdy=5.72, vdx=-2.54,
+              src="02-power.md §2.4, §7.5", rdx=-2.54, rdy=5.72, vdx=-2.54,
               vdy=8.26, just="right")
         s.junction((X + 20.32, Y + 5.08))
 
@@ -369,7 +371,7 @@ def charger(s):
     s.junction((374.65, 30.48))
     s.junction((382.27, 30.48))
 
-    s.sym("Device:C", "C12", "10u", 374.65, 34.29, 0, src="§2.5",
+    s.sym("Device:C", "C12", "10u", 374.65, 34.29, 0, src="02-power.md §2.5",
           rdx=-2.54, vdx=-2.54, just="right")
     s.wire((374.65, 38.1), (374.65, 40.64))
     s.power("power:GND", (374.65, 40.64))
@@ -379,10 +381,12 @@ def charger(s):
 
     # индикаторы заряда. Выводы CHRG и STDBY стоят через 2.54 мм — корпуса
     # светодиодов туда не встают, поэтому нижний отнесён ниже проводом.
-    for y, dref, rref, val in ((48.26, "D1", "R12", "CHRG"),
-                               (58.42, "D2", "R13", "STDBY")):
-        d = s.sym("Device:LED", dref, val, 378.46, y, 180, src="§2.5", **hor)
-        r = s.sym("Device:R", rref, "1k", 370.84, y, 90, src="§2.5", **hor)
+    # В номинале светодиода — цвет: функцию и так видно по выводу микросхемы
+    # рядом, а вот по какому цвету паять, кроме как отсюда, узнать неоткуда.
+    for y, dref, rref, val in ((48.26, "D1", "R12", "красный"),
+                               (58.42, "D2", "R13", "зелёный")):
+        d = s.sym("Device:LED", dref, val, 378.46, y, 180, src="02-power.md §2.5", **hor)
+        r = s.sym("Device:R", rref, "1k", 370.84, y, 90, src="02-power.md §2.5", **hor)
         if y == 48.26:
             s.wire(u5.pin("7"), d.pin("1"))
             s.wire(r.pin("1"), (367.03, 30.48))
@@ -397,7 +401,7 @@ def charger(s):
     s.junction((414.02, 43.18))
     s.power("parts:VSYS", (414.02, 35.56))
     s.wire((414.02, 43.18), (414.02, 35.56))
-    s.sym("Device:C", "C13", "10u", 414.02, 46.99, 0, src="§2.5",
+    s.sym("Device:C", "C13", "10u", 414.02, 46.99, 0, src="02-power.md §2.5",
           rdx=-2.54, vdx=-2.54, just="right")
     s.wire((414.02, 50.8), (414.02, 53.34))
     s.power("power:GND", (414.02, 53.34))
@@ -415,7 +419,7 @@ def charger(s):
 
     # ток заряда
     s.wire(u5.pin("2"), (406.4, 58.42), (414.02, 58.42))
-    s.sym("Device:R", "R11", "1.1k", 414.02, 62.23, 0, src="§2.5")
+    s.sym("Device:R", "R11", "1.1k", 414.02, 62.23, 0, src="02-power.md §2.5")
     s.wire((414.02, 66.04), (414.02, 68.58))
     s.power("power:GND", (414.02, 68.58))
 
