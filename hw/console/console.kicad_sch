@@ -4364,7 +4364,7 @@
 	)
 	(rectangle
 		(start 20 140)
-		(end 218 266)
+		(end 214 266)
 		(stroke (width 0.2) (type dash))
 		(fill (type none))
 		(uuid "b4115a2e-99ec-5627-b429-d87827ef0f41")
