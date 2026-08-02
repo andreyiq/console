@@ -63,11 +63,11 @@ def crystal(s, cx, lib_id, ref, value, left_label, right_label,
         s.wire(q.pin("2"), (cx, y + 10.16))
         s.power("power:GND", (cx, y + 10.16))
 
-    # резистор смещения — параллельно кварцу, сверху, не монтируется
+    # резистор смещения — параллельно кварцу, сверху
     if bias:
         ref_r, val_r = bias
         r = s.sym("Device:R", ref_r, val_r, cx, y - 11.43, 90, src=src,
-                  dnp=True, rdx=7.62, rdy=-1.27, vdx=7.62, vdy=1.905)
+                  rdx=7.62, rdy=-1.27, vdx=7.62, vdy=1.905)
         for pin, x in ((r.pin("1"), cx - 3.81), (r.pin("2"), cx + 3.81)):
             s.wire(pin, (x, pin[1]), (x, y))
             s.junction((x, y))      # тут сходятся вывод кварца и два провода
@@ -114,7 +114,7 @@ def main():
     crystal(s, 121.92, "Device:Crystal", "Y2", "32.768 кГц",
             "X32KOUT", "X32KIN", ("C17", "C18"), f"{DOC} §6.3",
             "Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm",
-            bias=("R20", "10M"))
+            bias=("R20", "680k"))
     s.note("32.768 кГц: 22/2 + 1.1 = 12.1 пФ при CL 12.5 (§6.3)",
            (99.06, 287.02), 1.4)
 
@@ -123,7 +123,7 @@ def main():
            (160.02, 325.12), 1.4)
     s.note("Ёмкости обоих кварцев — NP0/C0G, не X7R (§7.2)",
            (35.56, 325.12), 1.4)
-    s.note("R20 не монтируется — место, если генератор не заведётся (§5)",
+    s.note("R20 задаёт рабочую точку DCXO: 680k по MangoPi, у Xassette 10M (§5)",
            (99.06, 331.47), 1.4)
 
     write(s)

@@ -10469,7 +10469,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "bee76ee1-95b4-529a-ac36-d6c1b361adb6")
 		(property "Reference" "R20"
 			(at 129.54 289.56 270)
@@ -10478,7 +10478,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10M"
+		(property "Value" "680k"
 			(at 129.54 292.735 270)
 			(effects
 				(font (size 1.27 1.27))
@@ -10862,11 +10862,11 @@
 		(effects (font (size 1.4 1.4) (italic yes)) (justify left bottom))
 		(uuid "7ebb8dbc-c53a-5a79-87b0-9c182d872de5")
 	)
-	(text "R20 не монтируется — место, если генератор не заведётся (§5)"
+	(text "R20 задаёт рабочую точку DCXO: 680k по MangoPi, у Xassette 10M (§5)"
 		(exclude_from_sim yes)
 		(at 99.06 331.47 0)
 		(effects (font (size 1.4 1.4) (italic yes)) (justify left bottom))
-		(uuid "bfd4d8c4-f85a-564f-93d0-17ed14707a1f")
+		(uuid "3ed29e98-dc8b-5020-bda6-5c453e2f3ce7")
 	)
 	(sheet_instances
 		(path "/"
