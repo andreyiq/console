@@ -123,16 +123,27 @@ class Sheet:
     `block` — номер блока: он же задаёт пространство имён UUID, поэтому блоки
     не могут случайно выдать одинаковый идентификатор.
     `frame` — прямоугольник блока из tools/scaffold.py, по нему чистится старое
-    содержимое при повторном запуске.
+    содержимое при повторном запуске. Блок может добавить себе ещё зоны
+    методом `zone()`: обвязка выводов F133 лежит вокруг корпуса, далеко от
+    рамки, и без отдельных зон повторный запуск плодил бы дубли. Зоны делаем
+    узкими — по одной на вывод, — чтобы блок не стирал чужое: у соседнего
+    вывода будет рисовать уже другой блок.
+
+    `protect` — ссылки, которые не выкидываются, даже если попали в зону.
+    Символ F133 стоит ровно там, и потерять его при перезапуске нельзя.
     """
 
-    def __init__(self, root_uuid, block, frame):
+    def __init__(self, root_uuid, block, frame, protect=("U1",)):
         self.root = root_uuid
         self.block = block
-        self.frame = frame
+        self.frames = [frame] if isinstance(frame, tuple) else list(frame)
+        self.protect = set(protect)
         self.ns = uuid.UUID(f"6f9b1c2e-0000-4000-8000-{block:012d}")
         self.items = []
         self.used = []
+
+    def zone(self, x1, y1, x2, y2):
+        self.frames.append((x1, y1, x2, y2))
 
     def uid(self, key):
         return str(uuid.uuid5(self.ns, key))
@@ -270,11 +281,21 @@ def top_items(text):
 
 
 def inside(chunk, frame):
+    """Лежит ли элемент в зоне — по точке привязки, а не по подписям.
+
+    У символа своя `(at ...)` стоит раньше свойств, и берём именно её: поля
+    `Reference`/`Value` отъезжают от детали на 5 мм и больше, а зоны у выводов
+    F133 узкие — по одной на вывод. Считать элемент чужим из-за уехавшей
+    подписи нельзя: тогда он не будет вычищен и при перезапуске задвоится.
+    """
     x1, y1, x2, y2 = frame
-    for xs, ys in re.findall(r"\((?:at|xy) (-?[\d.]+) (-?[\d.]+)", chunk):
-        if not (x1 <= float(xs) <= x2 and y1 <= float(ys) <= y2):
-            return False
-    return True
+    if re.match(r"\((?:wire|bus)\b", chunk):
+        pts = re.findall(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", chunk)
+    else:
+        m = re.search(r"\(at (-?[\d.]+) (-?[\d.]+)", chunk)
+        pts = [m.groups()] if m else []
+    return bool(pts) and all(x1 <= float(a) <= x2 and y1 <= float(b) <= y2
+                             for a, b in pts)
 
 
 def root_uuid():
@@ -291,11 +312,16 @@ def write(s):
     text = SCH.read_text()
     kept, dropped = [], 0
     for kind, chunk in top_items(text):
+        mine = any(inside(chunk, f) for f in s.frames)
+        if mine and kind == "symbol" and re.search(
+                r'\(property "Reference" "(%s)"'
+                % "|".join(re.escape(r) for r in s.protect), chunk):
+            mine = False          # F133 стоит в зоне блока, но не его деталь
         if kind in ("symbol", "wire", "junction", "global_label",
-                    "label", "no_connect", "bus") and inside(chunk, s.frame):
+                    "label", "no_connect", "bus") and mine:
             dropped += 1
             continue
-        if kind == "text" and inside(chunk, s.frame) and "БЛОК" not in chunk \
+        if kind == "text" and mine and "БЛОК" not in chunk \
                 and not re.search(r'\(text "%d\.' % s.block, chunk):
             dropped += 1
             continue

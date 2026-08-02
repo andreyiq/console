@@ -531,10 +531,10 @@
 						(effects (font (size 1.27 1.27)))
 					)
 				)
-				(pin no_connect line
+				(pin passive line
 					(at -7.62 -59.69 90)
 					(length 2.54)
-					(name "NC"
+					(name "NC/DZQ"
 						(effects (font (size 1.27 1.27)))
 					)
 					(number "47"
@@ -1131,7 +1131,7 @@
 						(effects (font (size 1.27 1.27)))
 					)
 				)
-				(pin power_in line
+				(pin no_connect line
 					(at 17.78 59.69 270)
 					(length 2.54)
 					(name "VCC-TVIN"
@@ -4428,7 +4428,7 @@
 	)
 	(rectangle
 		(start 226 278)
-		(end 368 344)
+		(end 372 348)
 		(stroke (width 0.2) (type dash))
 		(fill (type none))
 		(uuid "6f3f4f61-aa8d-536c-842b-90d21e3dcfb5")
@@ -10867,6 +10867,4827 @@
 		(at 99.06 331.47 0)
 		(effects (font (size 1.4 1.4) (italic yes)) (justify left bottom))
 		(uuid "3ed29e98-dc8b-5020-bda6-5c453e2f3ce7")
+	)
+	(wire
+		(pts (xy 234.95 213.36) (xy 229.87 213.36))
+		(stroke (width 0) (type default))
+		(uuid "6b7d6e26-2e48-566d-bf2a-9565b34d5180")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 229.87 213.36 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "02587526-4be0-5962-b9fa-dbbebf6d31f7")
+	)
+	(wire
+		(pts (xy 234.95 215.9) (xy 229.87 215.9))
+		(stroke (width 0) (type default))
+		(uuid "b616f242-baee-543a-978d-64dfca0d10a7")
+	)
+	(global_label "REFCLK"
+		(shape bidirectional)
+		(at 229.87 215.9 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "b5963acb-8bb4-563a-abb3-2d3565e83ac5")
+	)
+	(wire
+		(pts (xy 234.95 218.44) (xy 229.87 218.44))
+		(stroke (width 0) (type default))
+		(uuid "d752214c-1715-58cc-b5ce-a1cbc30b4851")
+	)
+	(global_label "DXOUT"
+		(shape bidirectional)
+		(at 229.87 218.44 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "c180864b-d658-5af7-8d54-e22a3094dd76")
+	)
+	(wire
+		(pts (xy 234.95 220.98) (xy 229.87 220.98))
+		(stroke (width 0) (type default))
+		(uuid "8abbec91-a914-56ad-8899-f5a07066ad54")
+	)
+	(global_label "DXIN"
+		(shape bidirectional)
+		(at 229.87 220.98 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "425b1185-6b7c-5057-9b0f-7e8cda56590c")
+	)
+	(wire
+		(pts (xy 234.95 223.52) (xy 229.87 223.52))
+		(stroke (width 0) (type default))
+		(uuid "ec3ad68a-1cfa-59dc-94b8-c63009f1c0e7")
+	)
+	(global_label "X32KOUT"
+		(shape bidirectional)
+		(at 229.87 223.52 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "78d2da4f-a4a4-5ccc-b82a-10528d68b8b8")
+	)
+	(wire
+		(pts (xy 234.95 226.06) (xy 229.87 226.06))
+		(stroke (width 0) (type default))
+		(uuid "99667687-acb5-59fe-b575-c2e1f8add3d9")
+	)
+	(global_label "X32KIN"
+		(shape bidirectional)
+		(at 229.87 226.06 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "fc418802-8007-5657-a431-810f76e49a32")
+	)
+	(wire
+		(pts (xy 234.95 228.6) (xy 229.87 228.6))
+		(stroke (width 0) (type default))
+		(uuid "2afb45aa-7cae-5f6b-96d2-d24d07bc120e")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 229.87 228.6 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "69405ce5-92a8-5023-a266-b9cfddb397bf")
+	)
+	(wire
+		(pts (xy 234.95 231.14) (xy 229.87 231.14))
+		(stroke (width 0) (type default))
+		(uuid "72e4058b-c57f-57d3-a29d-3784bf1257e1")
+	)
+	(global_label "RESET"
+		(shape bidirectional)
+		(at 229.87 231.14 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "2417c49a-58db-5de9-843b-8714908b1204")
+	)
+	(wire
+		(pts (xy 234.95 236.22) (xy 229.87 236.22))
+		(stroke (width 0) (type default))
+		(uuid "e9388336-45ef-55a4-9ae0-bd318c224ac9")
+	)
+	(global_label "LDOA-OUT"
+		(shape bidirectional)
+		(at 229.87 236.22 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "8c839fb8-c5ff-5f15-970b-fe1a7a3f089c")
+	)
+	(wire
+		(pts (xy 234.95 238.76) (xy 229.87 238.76))
+		(stroke (width 0) (type default))
+		(uuid "308f6243-023d-5de5-bd36-1590f2b83d5a")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 229.87 238.76 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "e3060470-fc15-5196-9f44-2ba5e88323c3")
+	)
+	(wire
+		(pts (xy 234.95 241.3) (xy 229.87 241.3))
+		(stroke (width 0) (type default))
+		(uuid "b8530dd5-1958-5f98-9c38-88b9df61056a")
+	)
+	(global_label "LDOB-OUT"
+		(shape bidirectional)
+		(at 229.87 241.3 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "7128d8ba-3914-51a5-acad-5672c1aa8a5e")
+	)
+	(wire
+		(pts (xy 251.46 262.89) (xy 251.46 267.97))
+		(stroke (width 0) (type default))
+		(uuid "d082bfd7-259d-5d91-a361-28dc9758f7a3")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 251.46 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "b0b84cc9-7b36-5e3c-81f8-de65e00b4c29")
+	)
+	(wire
+		(pts (xy 284.48 262.89) (xy 284.48 267.97))
+		(stroke (width 0) (type default))
+		(uuid "98066ddf-1613-5934-82eb-84aa531b1d67")
+	)
+	(global_label "+0V9"
+		(shape bidirectional)
+		(at 284.48 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "34f7ebc7-4da3-51e6-adfc-e9b45efb653c")
+	)
+	(wire
+		(pts (xy 289.56 262.89) (xy 289.56 267.97))
+		(stroke (width 0) (type default))
+		(uuid "d9e8df25-429e-5fbc-8edf-9e7cd595c193")
+	)
+	(global_label "DZQ"
+		(shape bidirectional)
+		(at 289.56 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "4e4cfce7-cd5a-538d-ad4a-e6a3fae875b7")
+	)
+	(wire
+		(pts (xy 292.1 262.89) (xy 292.1 267.97))
+		(stroke (width 0) (type default))
+		(uuid "88292b59-4f95-5173-adac-38ded27401c2")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 292.1 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "ea40331b-72d0-5355-a467-5ff74b0b28dc")
+	)
+	(wire
+		(pts (xy 294.64 262.89) (xy 294.64 267.97))
+		(stroke (width 0) (type default))
+		(uuid "12505abb-0b95-5dba-b095-3803d8370529")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 294.64 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "a9ddc2be-1172-5f0f-a480-0e9feb1348ef")
+	)
+	(wire
+		(pts (xy 297.18 262.89) (xy 297.18 267.97))
+		(stroke (width 0) (type default))
+		(uuid "46686cfe-26c1-5cc5-9d51-c01e925b1860")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 297.18 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "a15a0674-f3ab-5753-9a0e-6664aa2f2123")
+	)
+	(wire
+		(pts (xy 302.26 262.89) (xy 302.26 267.97))
+		(stroke (width 0) (type default))
+		(uuid "13252165-6734-5565-ae04-89ba167ac939")
+	)
+	(global_label "+0V9"
+		(shape bidirectional)
+		(at 302.26 267.97 270)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "66f95e1a-1b7b-53df-b209-95959f98e304")
+	)
+	(wire
+		(pts (xy 359.41 248.92) (xy 364.49 248.92))
+		(stroke (width 0) (type default))
+		(uuid "e5d27fc3-d921-5fba-88e0-eb34e646c7c8")
+	)
+	(global_label "+1V8"
+		(shape bidirectional)
+		(at 364.49 248.92 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "8f2bc57c-8035-5b9f-ae2e-ab32f5c0e291")
+	)
+	(wire
+		(pts (xy 359.41 246.38) (xy 364.49 246.38))
+		(stroke (width 0) (type default))
+		(uuid "5d801cad-3917-5b10-aede-898c349c5b02")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 364.49 246.38 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "d57793d8-bec0-5c5d-93c5-cfbf89503b76")
+	)
+	(wire
+		(pts (xy 359.41 215.9) (xy 364.49 215.9))
+		(stroke (width 0) (type default))
+		(uuid "dfe2ea45-d5c0-5e01-9fce-736fe7d912fa")
+	)
+	(global_label "VCC-TVOUT"
+		(shape bidirectional)
+		(at 364.49 215.9 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "3dc9a2c5-b188-519b-bfc9-4429de8e0304")
+	)
+	(wire
+		(pts (xy 359.41 203.2) (xy 364.49 203.2))
+		(stroke (width 0) (type default))
+		(uuid "2ec8b208-44a4-5bd9-8597-ff0b91ba8ef9")
+	)
+	(global_label "+0V9"
+		(shape bidirectional)
+		(at 364.49 203.2 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "a3abfa43-0388-554b-8707-ba74d379ad20")
+	)
+	(wire
+		(pts (xy 359.41 198.12) (xy 364.49 198.12))
+		(stroke (width 0) (type default))
+		(uuid "735373da-5b9e-54eb-8e3c-95f52c9b48a8")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 364.49 198.12 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "611f4539-a7c8-539a-a8d6-075ec3ff62cc")
+	)
+	(wire
+		(pts (xy 359.41 180.34) (xy 364.49 180.34))
+		(stroke (width 0) (type default))
+		(uuid "183a108c-fec2-5bdf-8fb6-2be466ff3628")
+	)
+	(global_label "AVCC"
+		(shape bidirectional)
+		(at 364.49 180.34 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "622cbaa0-ffec-5368-a3ab-67ae2aaf65a0")
+	)
+	(wire
+		(pts (xy 359.41 177.8) (xy 364.49 177.8))
+		(stroke (width 0) (type default))
+		(uuid "10b3da10-1d7e-5273-b69b-ef0e181dd2dd")
+	)
+	(global_label "VRA2"
+		(shape bidirectional)
+		(at 364.49 177.8 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "824093fb-9699-5507-8f69-df5de1acf76f")
+	)
+	(wire
+		(pts (xy 359.41 175.26) (xy 364.49 175.26))
+		(stroke (width 0) (type default))
+		(uuid "2226b8a3-3ed4-5fc8-ad33-660a66bba34f")
+	)
+	(global_label "AGND"
+		(shape bidirectional)
+		(at 364.49 175.26 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "d2239511-b74a-5cc5-b322-264a1dd9ef94")
+	)
+	(wire
+		(pts (xy 359.41 172.72) (xy 364.49 172.72))
+		(stroke (width 0) (type default))
+		(uuid "456ce563-c772-5d34-a8ab-e9f5dfe08305")
+	)
+	(global_label "VRA1"
+		(shape bidirectional)
+		(at 364.49 172.72 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "3002f37d-69cd-53a8-a128-2eb1c3995ad3")
+	)
+	(wire
+		(pts (xy 345.44 143.51) (xy 345.44 138.43))
+		(stroke (width 0) (type default))
+		(uuid "2f397db2-e6cd-58d9-a10a-47fdb4c8b9ad")
+	)
+	(global_label "AVCC"
+		(shape bidirectional)
+		(at 345.44 138.43 90)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "2d8e503a-5618-561f-bc5f-21e2fca690e3")
+	)
+	(wire
+		(pts (xy 287.02 143.51) (xy 287.02 138.43))
+		(stroke (width 0) (type default))
+		(uuid "e5985168-bdc8-5af4-8c0f-3757fc3ab88f")
+	)
+	(global_label "+0V9"
+		(shape bidirectional)
+		(at 287.02 138.43 90)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "68f9075b-398a-5bec-8b29-b387115523d1")
+	)
+	(wire
+		(pts (xy 284.48 143.51) (xy 284.48 138.43))
+		(stroke (width 0) (type default))
+		(uuid "b4d2e8b2-0404-52ba-9774-feb71f328935")
+	)
+	(global_label "+0V9"
+		(shape bidirectional)
+		(at 284.48 138.43 90)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "d9baa28e-71c5-57c3-b3ec-e4c29003a9b8")
+	)
+	(wire
+		(pts (xy 254 143.51) (xy 254 138.43))
+		(stroke (width 0) (type default))
+		(uuid "c50a594c-9bf4-54be-b56a-e0f99ef42cab")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 254 138.43 90)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "017a9830-584b-524e-ac54-5f1aba4509b0")
+	)
+	(wire
+		(pts (xy 248.92 143.51) (xy 248.92 138.43))
+		(stroke (width 0) (type default))
+		(uuid "aa9fd3d6-29d8-5657-8d8d-866656f2b7fd")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 248.92 138.43 90)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "fdb6b84f-e167-53d1-9a02-7ab6e304db19")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 236.22 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ce6fc5a8-8d68-5c57-bd0f-a94641604091")
+		(property "Reference" "#PWR800"
+			(at 236.22 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 236.22 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR800")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 284.48) (xy 236.22 287.02))
+		(stroke (width 0) (type default))
+		(uuid "4c6e37fd-008d-51f3-b35c-4dd6008ef263")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 236.22 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c70dca4-0e5f-5bbb-b26f-fd40465a4afc")
+		(property "Reference" "C801"
+			(at 238.25 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "10u"
+			(at 238.25 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 236.22 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 объём рельсы"
+			(at 236.22 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C801")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 294.64) (xy 236.22 297.18))
+		(stroke (width 0) (type default))
+		(uuid "789cbbf3-16c5-57e2-958b-e7a424e81ef9")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 236.22 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c7e72c9-8cde-555a-b26d-510b81d7d6ab")
+		(property "Reference" "#PWR801"
+			(at 236.22 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 236.22 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR801")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 246.38 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3fd614ef-bf93-5ba4-a2aa-f9d11da7ff20")
+		(property "Reference" "#PWR802"
+			(at 246.38 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 246.38 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR802")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 284.48) (xy 246.38 287.02))
+		(stroke (width 0) (type default))
+		(uuid "a9763396-d265-5b48-b2ea-902ffc4d2712")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 246.38 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "708bd914-e65d-59d8-9f19-aa83a7a99ffe")
+		(property "Reference" "C802"
+			(at 248.41 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 248.41 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 246.38 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 34"
+			(at 246.38 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C802")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 294.64) (xy 246.38 297.18))
+		(stroke (width 0) (type default))
+		(uuid "d76ea574-7057-57d8-83ea-60a001147472")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 246.38 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c92277c-31e9-5332-9048-05c31195532e")
+		(property "Reference" "#PWR803"
+			(at 246.38 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 246.38 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR803")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 256.54 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5e1f7e00-71c6-5bea-bd6e-d75dfe8851c9")
+		(property "Reference" "#PWR804"
+			(at 256.54 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 256.54 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR804")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 284.48) (xy 256.54 287.02))
+		(stroke (width 0) (type default))
+		(uuid "c5806e22-778e-5751-8fab-25350e07707a")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 256.54 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3210d30f-3235-5032-b9eb-3cfab4852329")
+		(property "Reference" "C803"
+			(at 258.57 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 258.57 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 256.54 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 66"
+			(at 256.54 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C803")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 294.64) (xy 256.54 297.18))
+		(stroke (width 0) (type default))
+		(uuid "f76bb7e5-f0a6-55e3-b2ac-64a9d41948c0")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 256.54 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f2020324-c911-5e2c-81e4-3de1e552196d")
+		(property "Reference" "#PWR805"
+			(at 256.54 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 256.54 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR805")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 266.7 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6935986e-de82-5f68-8077-eefb5075e576")
+		(property "Reference" "#PWR806"
+			(at 266.7 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 266.7 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR806")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 284.48) (xy 266.7 287.02))
+		(stroke (width 0) (type default))
+		(uuid "96cad016-1f71-586c-905d-7c74b7cd6cce")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 266.7 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "612fc2e1-60d9-5883-992d-1d592b3893a0")
+		(property "Reference" "C804"
+			(at 268.73 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 268.73 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 266.7 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 83"
+			(at 266.7 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C804")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 294.64) (xy 266.7 297.18))
+		(stroke (width 0) (type default))
+		(uuid "2ae56e01-38d8-5bc6-8247-597aaaa42d7c")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 266.7 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a917ba47-a7bd-58e5-aefd-76c8eae13aa2")
+		(property "Reference" "#PWR807"
+			(at 266.7 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 266.7 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR807")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 276.86 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "914bbcb9-5c29-5337-b840-3d80a16e30f6")
+		(property "Reference" "#PWR808"
+			(at 276.86 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 276.86 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR808")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 284.48) (xy 276.86 287.02))
+		(stroke (width 0) (type default))
+		(uuid "4d890bc6-a30f-580d-9838-6066d1af29e9")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 276.86 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bcc65aed-1fb4-575d-80e8-fdc6bacfd99f")
+		(property "Reference" "C805"
+			(at 278.89 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 278.89 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 276.86 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 128"
+			(at 276.86 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C805")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 294.64) (xy 276.86 297.18))
+		(stroke (width 0) (type default))
+		(uuid "ae8b94a3-3ff1-5acf-ba09-94c0f8cabbb9")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 276.86 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "740ec69a-ce94-511b-bd95-dbe1a9daf228")
+		(property "Reference" "#PWR809"
+			(at 276.86 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 276.86 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR809")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 236.22 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "dc521773-351f-541e-9ffb-0001c1ea2e89")
+		(property "Reference" "#PWR810"
+			(at 236.22 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 236.22 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR810")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 307.34) (xy 236.22 309.88))
+		(stroke (width 0) (type default))
+		(uuid "cce91ffe-490d-5695-8693-95d0109e5acf")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 236.22 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2595d896-d3ff-54c2-b997-eb89bc5e9106")
+		(property "Reference" "C806"
+			(at 238.25 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "10u"
+			(at 238.25 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 236.22 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 объём рельсы"
+			(at 236.22 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C806")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 317.5) (xy 236.22 320.04))
+		(stroke (width 0) (type default))
+		(uuid "885e3cd9-1840-5ce2-a6bd-b7b369d26c2c")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 236.22 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "84fdb0ec-727b-5221-98f2-bb2683242ff3")
+		(property "Reference" "#PWR811"
+			(at 236.22 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 236.22 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR811")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 246.38 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4ab758e8-2f17-5e41-b2f8-4cf978d3c9f2")
+		(property "Reference" "#PWR812"
+			(at 246.38 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 246.38 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR812")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 307.34) (xy 246.38 309.88))
+		(stroke (width 0) (type default))
+		(uuid "90523ec1-5981-5665-8807-8173e1520f47")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 246.38 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "42c8eb86-f822-55aa-a736-2731a95f943d")
+		(property "Reference" "C807"
+			(at 248.41 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 248.41 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 246.38 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 20"
+			(at 246.38 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C807")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 317.5) (xy 246.38 320.04))
+		(stroke (width 0) (type default))
+		(uuid "beaaddc6-1e6b-518e-a949-e58faf1b4103")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 246.38 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6b94c6d9-24d7-51d5-b1e2-bfcfbe4e6a6c")
+		(property "Reference" "#PWR813"
+			(at 246.38 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 246.38 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR813")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 256.54 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cf9a642a-9bc8-50c7-ab48-785e75947cf8")
+		(property "Reference" "#PWR814"
+			(at 256.54 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 256.54 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR814")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 307.34) (xy 256.54 309.88))
+		(stroke (width 0) (type default))
+		(uuid "133ca718-1abf-54f0-8ab0-5bec3a9cede2")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 256.54 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "813d394b-a530-5b09-a447-468f2043597e")
+		(property "Reference" "C808"
+			(at 258.57 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 258.57 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 256.54 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 26"
+			(at 256.54 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C808")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 317.5) (xy 256.54 320.04))
+		(stroke (width 0) (type default))
+		(uuid "1d4ed0c4-170f-57c9-8077-83370fa8634b")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 256.54 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1af0272a-2bb1-555c-a44c-0ecc462df02c")
+		(property "Reference" "#PWR815"
+			(at 256.54 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 256.54 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR815")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 266.7 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e9b51b60-7cbe-55c5-9a62-98bf7b904587")
+		(property "Reference" "#PWR816"
+			(at 266.7 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 266.7 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR816")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 307.34) (xy 266.7 309.88))
+		(stroke (width 0) (type default))
+		(uuid "b53d999b-745a-5387-ad3c-0fc77a539d5d")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 266.7 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9883e01e-508c-5df2-b697-51771cb1217e")
+		(property "Reference" "C809"
+			(at 268.73 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 268.73 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 266.7 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 48"
+			(at 266.7 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C809")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 317.5) (xy 266.7 320.04))
+		(stroke (width 0) (type default))
+		(uuid "1d2ed43e-3e0a-52e1-bdef-9ea740e54614")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 266.7 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6e5d0575-bb03-5b20-a233-5db15e0d27bc")
+		(property "Reference" "#PWR817"
+			(at 266.7 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 266.7 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR817")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 276.86 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c34cd8a2-0811-5a52-bdbb-a4bf85116dfa")
+		(property "Reference" "#PWR818"
+			(at 276.86 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 276.86 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR818")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 307.34) (xy 276.86 309.88))
+		(stroke (width 0) (type default))
+		(uuid "3148d83c-4330-5f34-a640-82e71190cc02")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 276.86 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4dbb7b46-b234-5906-a473-d53bc6eae726")
+		(property "Reference" "C810"
+			(at 278.89 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 278.89 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 276.86 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 49"
+			(at 276.86 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C810")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 317.5) (xy 276.86 320.04))
+		(stroke (width 0) (type default))
+		(uuid "bf74adb4-a9ff-5263-b90e-f169e9af03e3")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 276.86 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "033da524-b838-59fa-9fdb-e229c6e217a7")
+		(property "Reference" "#PWR819"
+			(at 276.86 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 276.86 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR819")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 287.02 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7bb49efc-7151-5d5f-bb80-1bc7467b0d50")
+		(property "Reference" "#PWR820"
+			(at 287.02 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 287.02 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR820")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 307.34) (xy 287.02 309.88))
+		(stroke (width 0) (type default))
+		(uuid "11d786f1-6bc8-58d9-8353-9dedf5c07c69")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 287.02 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4e830aaa-dd43-5154-9c0b-15dea536e93a")
+		(property "Reference" "C811"
+			(at 289.05 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 289.05 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 287.02 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 50"
+			(at 287.02 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C811")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 317.5) (xy 287.02 320.04))
+		(stroke (width 0) (type default))
+		(uuid "35337cc2-c532-5f5b-a0f0-1af3f1531c9d")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 287.02 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4fdd994f-78de-5beb-8645-6c8a30ab2a0e")
+		(property "Reference" "#PWR821"
+			(at 287.02 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 287.02 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR821")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 297.18 307.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c157c062-7e82-5e5b-aa92-324a10ac11ff")
+		(property "Reference" "#PWR822"
+			(at 297.18 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 297.18 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 297.18 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 297.18 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR822")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 297.18 307.34) (xy 297.18 309.88))
+		(stroke (width 0) (type default))
+		(uuid "85b46c88-a20b-5754-aa1b-28e23b4699e2")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 297.18 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c399bf3a-9d5f-56fb-99c5-ec198a3a2942")
+		(property "Reference" "C812"
+			(at 299.21 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 299.21 315.595 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 297.18 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 65"
+			(at 297.18 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C812")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 297.18 317.5) (xy 297.18 320.04))
+		(stroke (width 0) (type default))
+		(uuid "982e2447-fe11-5dd0-9bb3-5e411279f0a1")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 297.18 320.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "444358a6-fbea-58e8-9ac4-4131a8e3a1c8")
+		(property "Reference" "#PWR823"
+			(at 297.18 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 297.18 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 297.18 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 297.18 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR823")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 236.22 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "72e29750-011c-53c2-bd4f-494b97e109f3")
+		(property "Reference" "#PWR824"
+			(at 236.22 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 236.22 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR824")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 331.47) (xy 236.22 334.01))
+		(stroke (width 0) (type default))
+		(uuid "8632922b-a3dc-575a-9e87-12bea2e3d514")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 236.22 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "236d64de-db8e-5b28-a921-651071cac988")
+		(property "Reference" "C813"
+			(at 238.25 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "10u"
+			(at 238.25 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 236.22 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 объём рельсы"
+			(at 236.22 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C813")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 236.22 341.63) (xy 236.22 344.17))
+		(stroke (width 0) (type default))
+		(uuid "98e41c78-3c03-5252-9a87-24477ebf33b1")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 236.22 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a4c3297e-c71e-5dd5-8fdf-ca31f1b29d45")
+		(property "Reference" "#PWR825"
+			(at 236.22 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 236.22 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 236.22 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR825")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 246.38 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4deecc87-a743-5f83-bb6f-830fdf366d9f")
+		(property "Reference" "#PWR826"
+			(at 246.38 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 246.38 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR826")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 331.47) (xy 246.38 334.01))
+		(stroke (width 0) (type default))
+		(uuid "a0149c9b-5280-54eb-b335-a07ebb58f4ae")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 246.38 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "43f06654-2eee-54e2-893f-add2565691ae")
+		(property "Reference" "C814"
+			(at 248.41 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 248.41 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 246.38 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 46"
+			(at 246.38 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C814")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 246.38 341.63) (xy 246.38 344.17))
+		(stroke (width 0) (type default))
+		(uuid "ed12db0d-1b7e-500a-b1fd-1f8d6d147f76")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 246.38 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1c5743bd-fc03-509b-a8c2-3821ed47f514")
+		(property "Reference" "#PWR827"
+			(at 246.38 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 246.38 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 246.38 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR827")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 256.54 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "349955c9-cb97-5cb8-a0ff-842be70e3aad")
+		(property "Reference" "#PWR828"
+			(at 256.54 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 256.54 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR828")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 331.47) (xy 256.54 334.01))
+		(stroke (width 0) (type default))
+		(uuid "9ec6142a-2209-5f23-b9dd-628b4ef086cc")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 256.54 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6577a294-18d6-5ca6-8ee0-303b00b6be2a")
+		(property "Reference" "C815"
+			(at 258.57 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 258.57 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 256.54 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 51"
+			(at 256.54 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C815")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 256.54 341.63) (xy 256.54 344.17))
+		(stroke (width 0) (type default))
+		(uuid "ac3fcce3-42d6-5b0c-b6e2-dbb1b412837d")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 256.54 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0dccafb6-845f-5df4-8858-41a3bcfa167a")
+		(property "Reference" "#PWR829"
+			(at 256.54 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 256.54 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 256.54 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR829")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 266.7 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cb0ab403-db1d-5484-908b-97a0907854bb")
+		(property "Reference" "#PWR830"
+			(at 266.7 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 266.7 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR830")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 331.47) (xy 266.7 334.01))
+		(stroke (width 0) (type default))
+		(uuid "7d887f04-451d-53d1-8b3a-5ebdce3921e5")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 266.7 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8cbf515b-85c4-58b7-80c4-52e8db5997f6")
+		(property "Reference" "C816"
+			(at 268.73 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 268.73 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 266.7 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 81"
+			(at 266.7 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C816")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 266.7 341.63) (xy 266.7 344.17))
+		(stroke (width 0) (type default))
+		(uuid "3d15a84f-60ec-5428-9fd8-2b55a8959711")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 266.7 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b8413106-52a0-57fc-b9a3-887ed3674b81")
+		(property "Reference" "#PWR831"
+			(at 266.7 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 266.7 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 266.7 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 266.7 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR831")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 276.86 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a3d4664f-0715-5faa-95cb-aca742a145c8")
+		(property "Reference" "#PWR832"
+			(at 276.86 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 276.86 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR832")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 331.47) (xy 276.86 334.01))
+		(stroke (width 0) (type default))
+		(uuid "016235c8-eb98-5a33-8fad-24a95b130b8e")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 276.86 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "48090ff3-5b18-522f-a838-7905705b491d")
+		(property "Reference" "C817"
+			(at 278.89 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 278.89 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 276.86 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 116"
+			(at 276.86 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C817")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 276.86 341.63) (xy 276.86 344.17))
+		(stroke (width 0) (type default))
+		(uuid "defbca8b-71ef-585f-9508-def66702a8bb")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 276.86 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1c07753f-c591-5e22-b34c-80a421888047")
+		(property "Reference" "#PWR833"
+			(at 276.86 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 276.86 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 276.86 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR833")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "parts:+0V9")
+		(at 287.02 331.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a7891b1d-e4ec-5472-8203-4f37f694db24")
+		(property "Reference" "#PWR834"
+			(at 287.02 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+0V9"
+			(at 287.02 326.39 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR834")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 331.47) (xy 287.02 334.01))
+		(stroke (width 0) (type default))
+		(uuid "1a9d7c2e-044b-5114-afda-1ce3dd30efa9")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 287.02 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d2b470a4-b1c4-53fc-9120-15c35416766c")
+		(property "Reference" "C818"
+			(at 289.05 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 289.05 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 287.02 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 117"
+			(at 287.02 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C818")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 341.63) (xy 287.02 344.17))
+		(stroke (width 0) (type default))
+		(uuid "2ab7ee91-691f-5fba-9c7d-9b1ea7bf6d0a")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 287.02 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e759ef2b-a397-5b4d-b077-7812abfa26fc")
+		(property "Reference" "#PWR835"
+			(at 287.02 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 287.02 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR835")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 287.02 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bc90f20e-a0e8-5aa7-b957-f058a2dc1a4e")
+		(property "Reference" "#PWR836"
+			(at 287.02 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 287.02 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR836")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 284.48) (xy 287.02 287.02))
+		(stroke (width 0) (type default))
+		(uuid "c45ee4a3-8df0-5667-a323-79a8dda98e5f")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 287.02 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "25d04923-a2b0-596f-a68e-f25cee96530f")
+		(property "Reference" "C819"
+			(at 289.05 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "2.2u"
+			(at 289.05 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 287.02 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 29"
+			(at 287.02 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C819")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 287.02 294.64) (xy 287.02 297.18))
+		(stroke (width 0) (type default))
+		(uuid "babc9fda-953d-521f-9f28-01defa697b51")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 287.02 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e8913201-707a-5501-b0a1-e682d83f32fa")
+		(property "Reference" "#PWR837"
+			(at 287.02 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 287.02 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 287.02 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 287.02 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR837")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 302.26 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3b1a094d-27b6-5cae-bb79-6d0cf3afecfd")
+		(property "Reference" "#PWR838"
+			(at 302.26 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 302.26 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 302.26 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4"
+			(at 302.26 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR838")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 302.26 284.48) (xy 302.26 287.02))
+		(stroke (width 0) (type default))
+		(uuid "0fd83d3e-5cec-51d5-85dd-cc90297e0e19")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 302.26 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c2f3aadf-59c6-54dc-977a-bae86da7b2ba")
+		(property "Reference" "R801"
+			(at 304.29 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0"
+			(at 304.29 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 302.26 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4"
+			(at 302.26 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R801")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 302.26 294.64) (xy 302.26 297.18))
+		(stroke (width 0) (type default))
+		(uuid "50eb9b0d-c553-5cf0-80c6-8519f60fee7d")
+	)
+	(global_label "VCC-TVOUT"
+		(shape bidirectional)
+		(at 302.26 297.18 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "0ff8cb44-71c0-5dbc-a104-a7810a610c38")
+	)
+	(wire
+		(pts (xy 302.26 297.18) (xy 302.26 299.72))
+		(stroke (width 0) (type default))
+		(uuid "9b623446-3558-5219-bd11-d3526e00df58")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 302.26 299.72 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b730570e-3a3b-50ba-9fe7-f582bb526022")
+		(property "Reference" "#PWR839"
+			(at 302.26 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 302.26 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 302.26 299.72 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4"
+			(at 302.26 299.72 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR839")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VCC-TVOUT"
+		(shape bidirectional)
+		(at 314.96 284.48 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "04387715-2e80-5b77-8950-4b7566434775")
+	)
+	(wire
+		(pts (xy 314.96 284.48) (xy 314.96 287.02))
+		(stroke (width 0) (type default))
+		(uuid "f8400b4c-f7b0-5cff-971e-30002f5f6ec6")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 314.96 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "90ade948-387f-532e-aec3-bbe397476bd0")
+		(property "Reference" "C820"
+			(at 316.99 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 316.99 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 314.96 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2 вывод 77"
+			(at 314.96 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C820")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 314.96 294.64) (xy 314.96 297.18))
+		(stroke (width 0) (type default))
+		(uuid "5639c287-68aa-5611-b722-2a93e9b8bd7d")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 314.96 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "61514048-6381-5ebb-831d-e5e0d1c29360")
+		(property "Reference" "#PWR840"
+			(at 314.96 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 314.96 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 314.96 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 314.96 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR840")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "LDOA-OUT"
+		(shape bidirectional)
+		(at 327.66 284.48 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "3a77947a-feda-59b4-a8a7-4316d54f7d59")
+	)
+	(wire
+		(pts (xy 327.66 284.48) (xy 327.66 287.02))
+		(stroke (width 0) (type default))
+		(uuid "bb839b91-1d86-5479-b864-10fce4c96a67")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 327.66 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5be240c2-4138-5452-a968-91c950c94bbe")
+		(property "Reference" "C821"
+			(at 329.69 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "2.2u"
+			(at 329.69 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 327.66 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4 вывод 28"
+			(at 327.66 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C821")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 327.66 294.64) (xy 327.66 297.18))
+		(stroke (width 0) (type default))
+		(uuid "efee1559-6a6c-57d4-be4d-e82cc0fd73fc")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 327.66 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8db75bc7-55a9-5c69-bcd4-7faeefbbf908")
+		(property "Reference" "#PWR841"
+			(at 327.66 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 327.66 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 327.66 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 327.66 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR841")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "LDOB-OUT"
+		(shape bidirectional)
+		(at 340.36 284.48 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "0334c092-5d89-515d-b13b-184893f8f8e3")
+	)
+	(wire
+		(pts (xy 340.36 284.48) (xy 340.36 287.02))
+		(stroke (width 0) (type default))
+		(uuid "bd510441-ec1e-52ac-a2be-981f311a2edd")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 340.36 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b771f723-2c25-5e66-9204-a914937a7a4f")
+		(property "Reference" "C822"
+			(at 342.39 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "2.2u"
+			(at 342.39 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 340.36 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4 вывод 30"
+			(at 340.36 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C822")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 340.36 294.64) (xy 340.36 297.18))
+		(stroke (width 0) (type default))
+		(uuid "07880a1c-5042-591c-9c24-bbb726237495")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 340.36 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d02156ef-a9ae-5c2f-b0f4-a048d63469a4")
+		(property "Reference" "#PWR842"
+			(at 340.36 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 340.36 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 340.36 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 340.36 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR842")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "REFCLK"
+		(shape bidirectional)
+		(at 353.06 284.48 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "411e0455-9b87-5dc8-abe7-8b4211535ded")
+	)
+	(wire
+		(pts (xy 353.06 284.48) (xy 353.06 289.56))
+		(stroke (width 0) (type default))
+		(uuid "2223e1e8-2361-519f-97d5-4b6b9c4f4af3")
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 353.06 289.56 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a174cd84-2db9-5e71-9913-fc96d6b5ce2c")
+		(property "Reference" "TP801"
+			(at 353.06 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Value" "REFCLK"
+			(at 355.6 291.465 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 353.06 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.5"
+			(at 353.06 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "TP801")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "DZQ"
+		(shape bidirectional)
+		(at 365.76 284.48 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "cdcfc423-48a9-560a-923d-e48feea21bd6")
+	)
+	(wire
+		(pts (xy 365.76 284.48) (xy 365.76 287.02))
+		(stroke (width 0) (type default))
+		(uuid "4a1d835d-1771-5dfc-9f06-b5d90bcb9ebe")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 365.76 290.83 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "481c8e16-d06b-5ef4-b815-06a3dd51ad3e")
+		(property "Reference" "R802"
+			(at 367.79 289.56 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "240"
+			(at 367.79 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 365.76 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.4 вывод 47"
+			(at 365.76 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R802")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 365.76 294.64) (xy 365.76 297.18))
+		(stroke (width 0) (type default))
+		(uuid "d2b0a128-8bff-5a69-8e9b-6ff9f23c6e66")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 365.76 297.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "46bf7c0f-e7d8-5bab-a308-20c2289756f7")
+		(property "Reference" "#PWR843"
+			(at 365.76 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 365.76 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 365.76 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.2"
+			(at 365.76 297.18 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR843")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+1V8")
+		(at 307.34 306.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0adf653c-9a90-5d9f-a569-26be32867567")
+		(property "Reference" "#PWR844"
+			(at 307.34 300.99 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+1V8"
+			(at 307.34 300.99 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 307.34 306.07 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 307.34 306.07 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR844")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 307.34 306.07) (xy 307.34 308.61))
+		(stroke (width 0) (type default))
+		(uuid "77a62e36-aef8-50bb-8e66-00a70d2b9fb2")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 307.34 312.42 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3d279d3f-a334-5cde-b2d3-acac4a7fbb75")
+		(property "Reference" "R803"
+			(at 309.37 311.15 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0"
+			(at 309.37 314.325 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 307.34 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 307.34 312.42 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R803")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 307.34 316.23) (xy 307.34 318.77))
+		(stroke (width 0) (type default))
+		(uuid "477c4c71-2fec-5337-a15a-13a48bd1e684")
+	)
+	(wire
+		(pts (xy 307.34 318.77) (xy 320.04 318.77))
+		(stroke (width 0) (type default))
+		(uuid "b84ade91-a3ac-5721-8eb9-51d8ee63a1a9")
+	)
+	(wire
+		(pts (xy 320.04 318.77) (xy 326.39 318.77))
+		(stroke (width 0) (type default))
+		(uuid "6f12a91e-294e-5617-8794-ed7d8f04f316")
+	)
+	(wire
+		(pts (xy 326.39 318.77) (xy 332.74 318.77))
+		(stroke (width 0) (type default))
+		(uuid "a252f008-7954-5d33-b2c8-437e28983571")
+	)
+	(junction
+		(at 307.34 318.77)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "0d1dc5ba-9037-520e-87e9-30491364a57e")
+	)
+	(junction
+		(at 326.39 318.77)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "03800dad-166a-5506-9bb8-6ee14bea20ba")
+	)
+	(junction
+		(at 320.04 318.77)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2d3ba02d-b62a-5008-9523-2a0b67101976")
+	)
+	(global_label "AVCC"
+		(shape bidirectional)
+		(at 332.74 318.77 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "c19d13cc-cfd4-59f1-92e1-2e8e2fa9dbc5")
+	)
+	(wire
+		(pts (xy 326.39 318.77) (xy 326.39 313.69))
+		(stroke (width 0) (type default))
+		(uuid "26848d2d-ed7b-5bde-a355-14a321562c37")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 326.39 313.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "84dff6d2-58bd-5735-acdf-b4a9089be9c2")
+		(property "Reference" "#PWR845"
+			(at 326.39 308.61 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 326.39 308.61 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 326.39 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 326.39 313.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR845")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VRA1"
+		(shape bidirectional)
+		(at 345.44 318.77 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "8a43487e-e2ce-58ab-bb9f-31f2551d6a85")
+	)
+	(global_label "VRA2"
+		(shape bidirectional)
+		(at 358.14 318.77 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "421c8e26-d58d-571e-9645-3fa746331b14")
+	)
+	(wire
+		(pts (xy 307.34 318.77) (xy 307.34 321.31))
+		(stroke (width 0) (type default))
+		(uuid "579280df-beea-550f-acd9-1853b5f15da3")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 307.34 325.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fad70a6b-b4b9-55b1-9385-ae17d61727a1")
+		(property "Reference" "C823"
+			(at 309.37 323.85 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "2.2u"
+			(at 309.37 327.025 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 307.34 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3 объём аналога"
+			(at 307.34 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C823")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 307.34 328.93) (xy 307.34 331.47))
+		(stroke (width 0) (type default))
+		(uuid "415e58c3-6446-5e3e-87be-8a9b67b01e96")
+	)
+	(wire
+		(pts (xy 320.04 318.77) (xy 320.04 321.31))
+		(stroke (width 0) (type default))
+		(uuid "66b9f6d2-2bb1-5c0a-bbab-3ba9fa0943d8")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 320.04 325.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6c94b9bb-fc91-5440-b0ce-e3f1f2f65e13")
+		(property "Reference" "C824"
+			(at 322.07 323.85 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 322.07 327.025 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 320.04 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3 вывод 89"
+			(at 320.04 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C824")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 320.04 328.93) (xy 320.04 331.47))
+		(stroke (width 0) (type default))
+		(uuid "798468f9-8755-5d83-9c3d-8705b3ce8d6f")
+	)
+	(wire
+		(pts (xy 332.74 318.77) (xy 332.74 321.31))
+		(stroke (width 0) (type default))
+		(uuid "ac59c6b4-1b43-5629-b836-d7ac249888b4")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 332.74 325.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "655db347-d6ee-531d-a088-a9dcb02d5810")
+		(property "Reference" "C825"
+			(at 334.77 323.85 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 334.77 327.025 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 332.74 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3 вывод 97"
+			(at 332.74 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C825")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 332.74 328.93) (xy 332.74 331.47))
+		(stroke (width 0) (type default))
+		(uuid "29ed34fb-8f90-57b4-ada9-d43fb97bc50a")
+	)
+	(wire
+		(pts (xy 345.44 318.77) (xy 345.44 321.31))
+		(stroke (width 0) (type default))
+		(uuid "f9f081e8-ee87-5f72-8638-31a6fc445bc7")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 345.44 325.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ed811b10-208e-58dc-89d5-22de5e29d245")
+		(property "Reference" "C826"
+			(at 347.47 323.85 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.47u"
+			(at 347.47 327.025 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 345.44 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3 вывод 92"
+			(at 345.44 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C826")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 345.44 328.93) (xy 345.44 331.47))
+		(stroke (width 0) (type default))
+		(uuid "dde38cb7-c800-5722-9bb0-618e9b5016e2")
+	)
+	(wire
+		(pts (xy 358.14 318.77) (xy 358.14 321.31))
+		(stroke (width 0) (type default))
+		(uuid "c0a9398a-a9a3-520f-ab7f-a53593e572b0")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 358.14 325.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d05aa793-55d3-50e9-9eed-f5361db7f765")
+		(property "Reference" "C827"
+			(at 360.17 323.85 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0.47u"
+			(at 360.17 327.025 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 358.14 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3 вывод 90"
+			(at 358.14 325.12 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C827")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 358.14 328.93) (xy 358.14 331.47))
+		(stroke (width 0) (type default))
+		(uuid "8d27c1bd-be31-504e-a23c-c7c55398d9a6")
+	)
+	(wire
+		(pts (xy 307.34 331.47) (xy 320.04 331.47))
+		(stroke (width 0) (type default))
+		(uuid "078fa270-d74b-5c56-b78b-97dbbc5e684e")
+	)
+	(wire
+		(pts (xy 320.04 331.47) (xy 332.74 331.47))
+		(stroke (width 0) (type default))
+		(uuid "14665d09-b5db-5a98-a644-a602028cd5e1")
+	)
+	(wire
+		(pts (xy 332.74 331.47) (xy 339.09 331.47))
+		(stroke (width 0) (type default))
+		(uuid "2e21c7ac-59ed-599e-b443-4f12d9d477f1")
+	)
+	(wire
+		(pts (xy 339.09 331.47) (xy 345.44 331.47))
+		(stroke (width 0) (type default))
+		(uuid "c2c3c59e-0fa2-5caa-a824-bbd2a7dbd82c")
+	)
+	(wire
+		(pts (xy 345.44 331.47) (xy 358.14 331.47))
+		(stroke (width 0) (type default))
+		(uuid "889fd1fe-70f0-5cda-8116-b4c808614876")
+	)
+	(junction
+		(at 320.04 331.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4acadd9c-d00b-5d39-aeac-84fd1ba7fe71")
+	)
+	(junction
+		(at 332.74 331.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3ceb9f96-37e0-5f16-bc70-d473546d22d0")
+	)
+	(junction
+		(at 345.44 331.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "36e92b1f-de4d-56c0-afeb-570a01b60537")
+	)
+	(junction
+		(at 339.09 331.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5493ea67-e0ef-5c6d-8e62-2164bdf17349")
+	)
+	(global_label "AGND"
+		(shape bidirectional)
+		(at 358.14 331.47 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "b3fbb2b6-09c1-5c7c-9911-41fc90c50609")
+	)
+	(wire
+		(pts (xy 339.09 331.47) (xy 339.09 336.55))
+		(stroke (width 0) (type default))
+		(uuid "7ca9958d-fda2-5e85-8a7d-299fd2b91c28")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 339.09 336.55 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "074baa1c-6e41-561d-b6f5-9ca24c8adaae")
+		(property "Reference" "#PWR846"
+			(at 339.09 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 339.09 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 339.09 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 339.09 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR846")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 320.04 331.47) (xy 320.04 334.01))
+		(stroke (width 0) (type default))
+		(uuid "431d2f65-3953-5ebd-96c0-e0b7ef8b5452")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 320.04 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "08f512cc-04a5-5780-a4c2-378f81b463b1")
+		(property "Reference" "R804"
+			(at 322.07 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "0"
+			(at 322.07 339.725 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 320.04 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 320.04 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R804")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 320.04 341.63) (xy 320.04 344.17))
+		(stroke (width 0) (type default))
+		(uuid "ff497c5f-d783-51a0-aa03-67a58474e3cc")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 320.04 344.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "084581d5-5440-582f-877d-09dd724f0153")
+		(property "Reference" "#PWR847"
+			(at 320.04 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 320.04 349.25 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 320.04 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.3"
+			(at 320.04 344.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR847")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 297.18 284.48 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "61484b7d-748a-5942-bd8c-8c5f5ea3d4e6")
+		(property "Reference" "#PWR848"
+			(at 297.18 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 297.18 279.4 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 297.18 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.5"
+			(at 297.18 284.48 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR848")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 297.18 284.48) (xy 297.18 290.83))
+		(stroke (width 0) (type default))
+		(uuid "ebc8250c-e286-599d-a1d0-7c7dc5c96b8a")
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 297.18 290.83 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a044f3c7-7c84-57e4-82a0-fe9e82a9a566")
+		(property "Reference" "TP802"
+			(at 297.18 295.91 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Value" "GND"
+			(at 299.72 292.735 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 297.18 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "08-decoupling.md §6.5"
+			(at 297.18 290.83 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "TP802")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(sheet_instances
 		(path "/"

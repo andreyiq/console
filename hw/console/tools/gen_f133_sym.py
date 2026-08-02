@@ -59,7 +59,10 @@ PINS = [
     (35, "PE2", "B"), (36, "PE11", "B"), (37, "PE10", "B"), (38, "PE9", "B"),
     (39, "PE8", "B"), (40, "PE7", "B"), (41, "PE6", "B"), (42, "PE5", "B"),
     (43, "PE4", "B"), (44, "PE0", "B"), (45, "PE1", "B"),
-    (46, "VDD-SYS0", "W"), (47, "NC", "N"),
+    # 47: даташит (Table 4-2, секция «NC») говорит NC, но обе референсные платы
+    # вешают на него 240 Ω на землю и называют DZQ. Тип passive, чтобы резистор
+    # можно было нарисовать; разбор — blocks/08-decoupling.md §5, вывод 2.
+    (46, "VDD-SYS0", "W"), (47, "NC/DZQ", "P"),
     (48, "VCC-DRAM0", "W"), (49, "VCC-DRAM1", "W"), (50, "VDD18-DRAM", "W"),
     (51, "VDD-SYS1", "W"),
     (52, "PD22", "B"), (53, "PD21", "B"), (54, "PD20", "B"),
@@ -85,10 +88,13 @@ PINS = [
     (102, "TP-X1", "I"), (103, "TP-X2", "I"), (104, "TP-Y1", "I"),
     (105, "TP-Y2", "I"),
     (106, "NC0", "N"),
-    # 108..111 — сигналы CVBS IN, «Only for F133-B» (даташит, сноска 1), у нас NC.
-    # 107 — питание этого блока, сноска на него не распространяется: Table 5-2
-    # даёт для него 1.8 В, и обе референсные платы вывод подключают.
-    (107, "VCC-TVIN", "W"), (108, "TVIN0", "N"), (109, "TVIN1", "N"),
+    # 107..111 — блок CVBS IN. Секция Table 4-2 называется «CVBS IN (Only for
+    # F133-B) (1)», и сноска (1) на стр. 27 перечисляет выводы поимённо:
+    # «For F133-A, these pins (107, 108, 109, 110, 111) are NC» — питание
+    # блока в списке наравне с сигналами. Обе референсные платы вывод 107
+    # питают, но обе рисовались и под F133-B. Разбор — blocks/08-decoupling.md
+    # §2.4 и §5.
+    (107, "VCC-TVIN", "N"), (108, "TVIN0", "N"), (109, "TVIN1", "N"),
     (110, "TVIN-VRP", "N"), (111, "TVIN-VRN", "N"),
     (112, "USB1-DP", "B"), (113, "USB1-DM", "B"),
     (114, "USB0-DM", "B"), (115, "USB0-DP", "B"),
@@ -336,6 +342,45 @@ def main():
     out = Path(__file__).resolve().parent.parent / "lib" / "console.kicad_sym"
     out.write_text(text)
     print(f"{out}: {len(PINS)} выводов, корпус {w:g} × {h:g} мм")
+    sync_schematic()
+
+
+def sync_schematic():
+    """Обновить копию символа внутри console.kicad_sch.
+
+    KiCad держит в самой схеме копию каждого символа (секция `lib_symbols`),
+    и библиотеку при открытии не перечитывает. Значит правка распиновки,
+    не доехавшая до схемы, разъезжается молча: в библиотеке вывод 107 уже NC,
+    а на листе всё ещё питание. Поэтому генератор чинит обе копии сразу.
+    """
+    import kicadsch
+
+    kicadsch._LIB_CACHE.clear()
+    body = kicadsch.symbol_def("console:F133-A")
+    body = "\n".join("\t" + ln if ln.strip() else ln for ln in body.split("\n"))
+
+    sch = kicadsch.SCH
+    text = sch.read_text()
+    start = text.index('(symbol "console:F133-A"')
+    depth, i = 0, start
+    while True:
+        c = text[i]
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        elif c == '"':
+            i += 1
+            while text[i] != '"':
+                i += 2 if text[i] == "\\" else 1
+        i += 1
+    if text[start:i + 1] == body.strip():
+        print(f"{sch.name}: копия символа уже совпадает")
+        return
+    sch.write_text(text[:start] + body.strip() + text[i + 1:])
+    print(f"{sch.name}: копия символа обновлена")
 
 
 if __name__ == "__main__":

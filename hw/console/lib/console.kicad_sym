@@ -522,10 +522,10 @@
 					(effects (font (size 1.27 1.27)))
 				)
 			)
-			(pin no_connect line
+			(pin passive line
 				(at -7.62 -59.69 90)
 				(length 2.54)
-				(name "NC"
+				(name "NC/DZQ"
 					(effects (font (size 1.27 1.27)))
 				)
 				(number "47"
@@ -1122,7 +1122,7 @@
 					(effects (font (size 1.27 1.27)))
 				)
 			)
-			(pin power_in line
+			(pin no_connect line
 				(at 17.78 59.69 270)
 				(length 2.54)
 				(name "VCC-TVIN"
