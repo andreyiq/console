@@ -200,6 +200,17 @@ python3 hw/console/tools/mangopi_net.py --page 3 --label VCC-DRAM  # цепь п
 ## Проверка
 
 ```
+python3 hw/console/tools/audit.py
+```
+
+Шестнадцать проверок, каждая печатает, сколько объектов посмотрела. Половину
+из них ERC не делает вовсе: Т-образное соединение без точки, метка не на
+проводе, наложенные провода, деталь без поля `Источник`, корпус без площадки
+под вывод символа, похожие имена цепей. Сейчас все шестнадцать дают ноль.
+
+Отдельно то же самое руками:
+
+```
 kicad-cli sch erc           -o /tmp/erc.rpt      hw/console/console.kicad_sch
 kicad-cli sch export netlist -o /tmp/console.net  hw/console/console.kicad_sch
 kicad-cli sch export pdf     -o /tmp/console.pdf  hw/console/console.kicad_sch
