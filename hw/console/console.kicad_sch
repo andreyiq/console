@@ -8227,6 +8227,13 @@
 				(hide yes)
 			)
 		)
+		(property "Источник" "CHIPS.md §1; распиновка — Table 4-2"
+			(at 297.18 203.2 0)
+			(effects
+				(font (size 1.27 1.27))
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "994431e5-d722-5744-afbf-b4d00e37f00b")
 		)
@@ -16552,7 +16559,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "2.2k"
 			(at 60.96 220.345 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -16760,7 +16767,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "2.2k"
 			(at 111.76 220.345 0)
 			(effects
 				(font (size 1.27 1.27))

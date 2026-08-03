@@ -161,7 +161,7 @@ def f133_instance(x, y, pins, box_left, box_top):
 		(on_board yes)
 		(dnp no)
 		(uuid "{uid('sym/U1')}")
-{prop("Reference", "U1", fx, fy - 6.35)}{prop("Value", "F133-A", x, y, justify=None)}{prop("Footprint", "console:eLQFP-128_14x14_Pitch0.4mm_EPAD_5.72mm", x, y - 3.81, hide=True, justify=None)}{pin_lines}		(instances
+{prop("Reference", "U1", fx, fy - 6.35)}{prop("Value", "F133-A", x, y, justify=None)}{prop("Footprint", "console:eLQFP-128_14x14_Pitch0.4mm_EPAD_5.72mm", x, y - 3.81, hide=True, justify=None)}{prop("Источник", "CHIPS.md §1; распиновка — Table 4-2", x, y, hide=True, justify=None)}{pin_lines}		(instances
 			(project "{PROJECT}"
 				(path "/{uid('root')}"
 					(reference "U1")

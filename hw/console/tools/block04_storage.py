@@ -92,19 +92,22 @@ def series(s):
         s.glabel(right, (X_LAB_R, y), 0)
 
 
-def column(s, x, y_top, rail, ref, net, sect, dnp=False):
-    """Столбик «рельса — резистор 10k — метка», шаг столбиков 25.4.
+def column(s, x, y_top, rail, ref, net, sect, dnp=False, val="10k"):
+    """Столбик «рельса — резистор — метка», шаг столбиков 25.4.
 
     У подтяжки вниз столбик перевёрнут: символ земли рисуется остриём вниз, и
     сверху колонки он читается как ошибка. Метка горизонтальная — вертикальная
     у KiCad растёт вверх, прямо в резистор.
+
+    Номинал параметром: у страпов вниз он другой, и причина не косметическая
+    (§6.4) — 10k там не пересиливает внутреннюю подтяжку `PC4`/`PC5`.
     """
     y_r, y_bot = y_top + 7.62, y_top + 15.24
     down = rail.endswith("GND")
     y_rail, y_lab = (y_bot, y_top) if down else (y_top, y_bot)
     s.power(rail, (x, y_rail))
     s.wire((x, y_top), (x, y_r - 3.81))
-    s.sym("Device:R", ref, "10k", x, y_r, 0, src=f"{DOC} {sect}",
+    s.sym("Device:R", ref, val, x, y_r, 0, src=f"{DOC} {sect}",
           rdx=-2.54, vdx=-2.54, just="right", dnp=dnp)
     s.wire((x, y_r + 3.81), (x, y_bot))
     s.glabel(net, (x, y_lab), 180)
@@ -131,15 +134,22 @@ def straps(s):
     `Pin_Boot_Select[1:0]` = `01`, то есть SD → SPI NOR → прочее. Два других
     места стоят под смену приоритета пайкой, как у Xassette; в схеме они
     помечены DNP.
+
+    **Подтяжки вниз — 2.2k, а не 10k.** У `PC4` и `PC5` внутренняя подтяжка
+    вверх включена сразу после сброса (Table 4-2 «Reset State PU», регистр
+    `PC_PULL0` по умолчанию `0x0000_0540`), и её сопротивление 12…18 кΩ
+    (Table 5-4). С 10k вниз вывод сел бы на 1.3 В при пороге `VIL` 0.99 В —
+    ноль бы не читался. Разбор с числами — 04-storage.md §6.4.
     """
     cols = [
-        ("R408", "power:+3V3", "SPI0-MOSI", False),   # BOOT-SEL0 = 1
-        ("R409", "power:GND", "SPI0-MOSI", True),
-        ("R410", "power:+3V3", "SPI0-MISO", True),
-        ("R411", "power:GND", "SPI0-MISO", False),    # BOOT-SEL1 = 0
+        ("R408", "power:+3V3", "SPI0-MOSI", False, "10k"),   # BOOT-SEL0 = 1
+        ("R409", "power:GND", "SPI0-MOSI", True, "2.2k"),
+        ("R410", "power:+3V3", "SPI0-MISO", True, "10k"),
+        ("R411", "power:GND", "SPI0-MISO", False, "2.2k"),   # BOOT-SEL1 = 0
     ]
-    for i, (ref, rail, net, dnp) in enumerate(cols):
-        column(s, COL0 + i * COL_STEP, 210.82, rail, ref, net, "§6.4", dnp)
+    for i, (ref, rail, net, dnp, val) in enumerate(cols):
+        column(s, COL0 + i * COL_STEP, 210.82, rail, ref, net, "§6.4", dnp,
+               val)
 
 
 def caps(s):
