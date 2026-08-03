@@ -46,6 +46,8 @@ FP = {
     "Connector:TestPoint": "TestPoint:TestPoint_Pad_D1.5mm",
     "Connector:Conn_01x02_Pin":
         "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+    "Connector:Conn_01x04_Pin":
+        "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical",
 }
 
 
