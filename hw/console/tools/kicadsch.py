@@ -227,6 +227,17 @@ class Sheet:
             f'\t\t(color 0 0 0 0)\n'
             f'\t\t(uuid "{self.uid("j/%g,%g" % at)}")\n\t)\n')
 
+    def no_connect(self, at):
+        """Крестик «вывод намеренно не подключён».
+
+        Без него ERC ругается на каждый такой вывод, и настоящие находки
+        тонут в шуме. У разъёма дисплея так помечены тачскрин и два вывода,
+        которые спека велит оставить в воздухе.
+        """
+        self.items.append(
+            f'\t(no_connect\n\t\t(at {at[0]:g} {at[1]:g})\n'
+            f'\t\t(uuid "{self.uid("nc/%g,%g" % at)}")\n\t)\n')
+
     def glabel(self, text, at, rot=0):
         self.items.append(
             f'\t(global_label "{text}"\n\t\t(shape bidirectional)\n'
