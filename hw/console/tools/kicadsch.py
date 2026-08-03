@@ -59,13 +59,8 @@ def lib_path(lib):
     return local if local.exists() else SYS / f"{lib}.kicad_sym"
 
 
-def symbol_def(lib_id):
-    """Текст (symbol "lib:name" ...) для секции lib_symbols схемы."""
-    if lib_id in _LIB_CACHE:
-        return _LIB_CACHE[lib_id]
-    lib, name = lib_id.split(":")
-    text = lib_path(lib).read_text()
-    start = text.index(f'(symbol "{name}"')
+def _block_at(text, start):
+    """Конец s-выражения, начинающегося в позиции start."""
     depth, i = 0, start
     while True:
         c = text[i]
@@ -74,14 +69,65 @@ def symbol_def(lib_id):
         elif c == ")":
             depth -= 1
             if depth == 0:
-                break
+                return i + 1
         elif c == '"':
             i += 1
             while text[i] != '"':
                 i += 2 if text[i] == "\\" else 1
         i += 1
-    body = text[start:i + 1].replace(f'(symbol "{name}"',
-                                     f'(symbol "{lib_id}"', 1)
+
+
+def _raw(lib, name):
+    """Текст (symbol "name" ...) как он лежит в библиотеке."""
+    text = lib_path(lib).read_text()
+    start = text.index(f'(symbol "{name}"')
+    return text[start:_block_at(text, start)]
+
+
+def _props(body):
+    """[(начало, конец, имя)] свойств первого уровня в теле символа."""
+    out, i = [], 0
+    while True:
+        j = body.find('(property "', i)
+        if j < 0:
+            return out
+        end = _block_at(body, j)
+        out.append((j, end, body[j + 11:body.index('"', j + 11)]))
+        i = end
+
+
+def _merge(parent, child, name):
+    """Развернуть производный символ в самодостаточный.
+
+    KiCad хранит вариант корпуса одной строкой «наследует такого-то», а в
+    секции lib_symbols схемы определение обязано быть полным — родителя там
+    нет, и без склейки символ приезжает без выводов и без графики. Берём у
+    родителя всё, у наследника — только свойства, которые он переопределил.
+    """
+    pname = re.match(r'\(symbol "([^"]+)"', parent).group(1)
+    # Вложенные (symbol "X_0_1") KiCad ищет по префиксу имени родителя: если
+    # оставить их с именем донора, символ грузится без графики и без выводов, а
+    # весь файл — с ошибкой разбора. Поэтому переименовываются и они.
+    out = parent.replace(f'(symbol "{pname}', f'(symbol "{name}')
+    for a, b, key in _props(child):
+        prop = child[a:b]
+        for c, d, k in _props(out):
+            if k == key:
+                out = out[:c] + prop + out[d:]
+                break
+    return out
+
+
+def symbol_def(lib_id):
+    """Текст (symbol "lib:name" ...) для секции lib_symbols схемы."""
+    if lib_id in _LIB_CACHE:
+        return _LIB_CACHE[lib_id]
+    lib, name = lib_id.split(":")
+    body = _raw(lib, name)
+    m = re.search(r'\(extends "([^"]+)"\)', body)
+    if m:
+        body = _merge(_raw(lib, m.group(1)), body, name)
+    body = body.replace(f'(symbol "{name}"', f'(symbol "{lib_id}"', 1)
     _LIB_CACHE[lib_id] = body
     return body
 
@@ -319,6 +365,14 @@ def write(s):
     Рамка блока и его заголовок сохраняются — их ставит tools/scaffold.py.
     Всё остальное, что лежит внутри рамки, выкидывается: поэтому скрипт
     блока можно гонять сколько угодно раз, и соседние блоки не страдают.
+
+    Оговорка про `lib_symbols`: секция только **дополняется**. Определение,
+    которое там уже лежит, не переписывается никогда — иначе правка чужого
+    символа приезжала бы вместе с правкой одного блока. Обратная сторона: если
+    определение символа поменялось (например, стало разворачиваться
+    наследование), старое надо выкинуть из схемы руками, перезапуск блока его
+    не тронет. Проверено дорого: KiCad на битом символе отвечает только
+    «не удалось загрузить схему», без имени и без строки.
     """
     text = SCH.read_text()
     kept, dropped = [], 0
