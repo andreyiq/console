@@ -1,21 +1,34 @@
 #!/usr/bin/env python3
 """Уложить на плату медь из `.ses` — ответа freerouting.
 
-Своё старое кладём заново каждый раз: скрипт сначала снимает с платы все
-дорожки и все переходные, кроме сшивочных по земле (их ставит
-`pcb06_planes.py`, и они к трассировке отношения не имеют), а потом кладёт то,
-что пришло. Так его можно гонять сколько угодно раз подряд, и результат
-зависит только от входного `.ses`.
+Кладём заново каждый раз: скрипт сначала снимает с платы всю медь — и дорожки,
+и переходные, — а потом кладёт то, что пришло. Так его можно гонять сколько
+угодно раз подряд, и результат зависит только от входного `.ses`.
 
-Единицы в `.ses` — микрометры, ось Y направлена вверх, в KiCad вниз; отсюда
-смена знака. Проверено на размещении: `U1` стоит на плате в (148.0, 75.0) мм,
-в `.dsn` записан как (148000, −75000).
+Сшивку по земле он тоже сносит, и это нарочно: землю трассировщик разводит
+наравне с прочим, свои переходные ставит сам, и отличить их от заклёпок
+`pcb06_planes.py` уже нельзя — при повторном приёме те бы просто копились.
+Поэтому порядок такой: `pcb08_ses.py`, затем `pcb06_planes.py` — он вернёт
+заливки и досыпет сшивку по оставшемуся свободному полю.
+
+Единицы сверяем по самому файлу, и не от лени. KiCad пишет в `.dsn`
+микрометры, а freerouting возвращает `.ses` в десятых долях микрометра — при
+одном и том же заголовке `(resolution um 10)`. Разница ровно вдесятеро, и
+дорожки от неё ложатся далеко за плату, но при этом выглядят складно: ошибка
+видна только если посмотреть на числа.
+
+Поэтому масштаб не угадывается, а измеряется: в `.ses` есть посадка деталей,
+их места мы знаем точно, отсюда и множитель. Если детали дадут разные
+множители — скрипт остановится, а не положит криво.
+
+Ось Y в обоих файлах направлена вверх, в KiCad вниз, отсюда смена знака.
 
 Ширина дорожки берётся из самого `.ses`: freerouting возвращает ту, которую мы
 задали ему в правилах, и спорить с ней тут не о чем.
 
-Запускать: `python3 pcb08_ses.py <файл.ses>`, потом `pcb09_gnd.py` — добить
-землю там, где дорожки отрезали куски передней заливки.
+Запускать: `python3 pcb08_ses.py <файл.ses>`, потом `pcb06_planes.py` и
+`pcb09_gnd.py` — вернуть заливки со сшивкой и добить землю там, где дорожки
+отрезали куски заливки от остального.
 """
 import re
 import sys
@@ -36,9 +49,29 @@ def mm(v):
     return pcbnew.FromMM(v)
 
 
-def xy(x, y):
-    """Точка `.ses` (микрометры, Y вверх) в координатах платы."""
-    return pcbnew.VECTOR2I(mm(x / 1000.0), mm(-y / 1000.0))
+def scale_of(text, board):
+    """Сколько миллиметров в единице `.ses` — по посадке деталей.
+
+    Берём каждую деталь, чьё место знаем, и делим: миллиметры платы на
+    единицы файла. Все ответы обязаны совпасть.
+    """
+    got = {}
+    for ref, x, y in re.findall(r"\(place (\S+) (-?[\d.]+) (-?[\d.]+)", text):
+        f = board.FindFootprintByReference(ref)
+        if f is None or abs(float(x)) < 1.0:
+            continue
+        got[ref] = pcbnew.ToMM(f.GetPosition().x) / float(x)
+    if not got:
+        raise SystemExit("в .ses нет ни одной знакомой детали — масштаб не проверить")
+    lo, hi = min(got.values()), max(got.values())
+    if hi - lo > 1e-9:
+        raise SystemExit(f"детали дают разный масштаб: от {lo} до {hi}")
+    return lo
+
+
+def xy(x, y, k):
+    """Точка `.ses` (Y вверх) в координатах платы."""
+    return pcbnew.VECTOR2I(mm(x * k), mm(-y * k))
 
 
 def via_size(padstack):
@@ -55,13 +88,8 @@ def via_size(padstack):
 
 
 def clear(board):
-    """Снять прежнюю трассировку, оставив сшивку по земле."""
-    gnd = board.FindNet("GND").GetNetCode()
-    doomed = []
-    for t in board.GetTracks():
-        if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd:
-            continue
-        doomed.append(t)
+    """Снять с платы всю медь трассировки — дорожки и переходные."""
+    doomed = list(board.GetTracks())
     for t in doomed:
         board.RemoveNative(t)
     return len(doomed)
@@ -70,9 +98,11 @@ def clear(board):
 def main():
     if len(sys.argv) != 2:
         sys.exit("нужен путь к .ses")
-    items = dsn.parse_ses(Path(sys.argv[1]).read_text())
+    text = Path(sys.argv[1]).read_text()
+    items = dsn.parse_ses(text)
 
     board = pcbnew.LoadBoard(str(BOARD))
+    k = scale_of(text, board)
     nets = {n.GetNetname(): n for n in board.GetNetsByName().values()}
     dropped = clear(board)
 
@@ -86,7 +116,7 @@ def main():
         if kind == "via":
             pad, drill = via_size(layer)
             v = pcbnew.PCB_VIA(board)
-            v.SetPosition(xy(*pts[0]))
+            v.SetPosition(xy(*pts[0], k))
             v.SetWidth(mm(pad))
             v.SetDrill(mm(drill))
             v.SetNet(n)
@@ -101,9 +131,9 @@ def main():
             if a == b:
                 continue
             t = pcbnew.PCB_TRACK(board)
-            t.SetStart(xy(*a))
-            t.SetEnd(xy(*b))
-            t.SetWidth(mm(width / 1000.0))
+            t.SetStart(xy(*a, k))
+            t.SetEnd(xy(*b, k))
+            t.SetWidth(mm(width * k))
             t.SetLayer(LAYER[layer])
             t.SetNet(n)
             board.Add(t)
@@ -111,6 +141,7 @@ def main():
 
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     board.Save(str(BOARD))
+    print(f"масштаб .ses: 1 единица = {k} мм")
     print(f"снято прежней меди: {dropped}; положено отрезков: {wires}, "
           f"переходных: {vias}")
     if unknown:

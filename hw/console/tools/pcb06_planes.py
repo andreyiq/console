@@ -70,12 +70,15 @@ def board_outline(inset):
 def wipe(board):
     """Убрать свои зоны и сшивку — всё, что цепь GND и не имеет соседей."""
     gnd = board.FindNet("GND")
-    for z in list(board.Zones()):
-        if z.GetNetname() == "GND":
-            board.Remove(z)
-    for t in list(board.GetTracks()):
-        if isinstance(t, pcbnew.PCB_VIA) and t.GetNetname() == "GND":
-            board.Remove(t)
+    # списки собираем до первого удаления, а удаляем через `RemoveNative`:
+    # обычный `Remove` отдаёт объект питону и ломает всё, что создаётся после —
+    # `ZONE.Outline()` начинает возвращать сырой SwigPyObject (10-mech.md §8.2)
+    zones = [z for z in board.Zones() if z.GetNetname() == "GND"]
+    stitch = [t for t in board.GetTracks()
+              if isinstance(t, pcbnew.PCB_VIA) and t.GetNetname() == "GND"
+              and t.IsLocked()]
+    for item in zones + stitch:
+        board.RemoveNative(item)
     return gnd
 
 
@@ -102,6 +105,7 @@ def via(board, net, x, y):
     v.SetDrill(mm(VIA_DRILL))
     v.SetNet(net)
     v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+    v.SetLocked(True)      # метка «это наша заклёпка», по ней же и снимаем
     board.Add(v)
     return v
 
@@ -158,6 +162,14 @@ def near_wire(x, y, segs):
 
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
+
+    # всё, что надо посмотреть на плате, смотрим до первой правки
+    busy = occupied(board)
+    segs = wires(board)
+    u1 = board.FindFootprintByReference("U1")
+    ex = pcbnew.ToMM(u1.GetPosition().x) - OX
+    ey = pcbnew.ToMM(u1.GetPosition().y) - OY
+
     gnd = wipe(board)
     if gnd is None:
         raise SystemExit("цепь GND на плате не найдена")
@@ -166,17 +178,12 @@ def main():
     plane(board, pcbnew.F_Cu, gnd, EDGE)
 
     # сшивка термопада — под корпусом, до посадки чипа (10-mech.md §7)
-    u1 = board.FindFootprintByReference("U1")
-    ex = pcbnew.ToMM(u1.GetPosition().x) - OX
-    ey = pcbnew.ToMM(u1.GetPosition().y) - OY
     n_epad = 0
     for dx, dy in EPAD_GRID:
         via(board, gnd, ex + dx, ey + dy)
         n_epad += 1
 
     # сшивка по свободному полю
-    busy = occupied(board)
-    segs = wires(board)
     n_grid = 0
     y = STITCH_STEP
     while y < BOARD_H:
