@@ -68,10 +68,8 @@ BATT_X, BATT_Y = 92.0, 15.0
 
 # Крепёж M2: четыре по углам и два посередине длинных сторон — 156 мм с
 # вырезом под панель посередине иначе играет.
-# Нижний средний сдвинут с 78 на 102: на 78 он попадал ровно туда, где
-# розетка USB-C должна пролезть между площадками SELECT и START на лице.
 HOLES = [(5.0, 5.0), (78.0, 5.0), (151.0, 5.0),
-         (5.0, 69.0), (102.0, 69.0), (151.0, 69.0)]
+         (5.0, 69.0), (78.0, 69.0), (151.0, 69.0)]
 HOLE_FP = "MountingHole_2.2mm_M2"
 HOLE_LIB = "/usr/share/kicad/footprints/MountingHole.pretty"
 
@@ -180,7 +178,7 @@ def mechanics(board):
 
     rect(board, lay, wd, PANEL_X, PANEL_Y, PANEL_W, PANEL_H)
     text(board, lay, PANEL_X + 1.0, PANEL_Y - 1.6,
-         "панель 84.07 x 54.56, стекло на 1.4 над платой", 1.2)
+         "панель 84.07 x 54.56, стекло на 2.0 над платой", 1.2)
 
     rect(board, lay, wd, AA_X, AA_Y, AA_W, AA_H)
     text(board, lay, AA_X + 1.0, AA_Y + 2.4, "видимая область 73.44 x 48.96", 1.2)
@@ -198,7 +196,7 @@ def mechanics(board):
 
     rect(board, lay, wd, BATT_X, BATT_Y, BATT_W, BATT_H)
     text(board, lay, BATT_X + 1.0, BATT_Y + BATT_H - 1.6,
-         "банка 60 x 45 x 3 на изнанке — деталей не ставить", 1.2)
+         "банка 60 x 45 x 3 — одна на всей изнанке", 1.2)
 
     # кнопки: габарит корпуса и толкатель, чтобы видеть коллизии на глаз
     for cx, cy in CLUSTERS:
