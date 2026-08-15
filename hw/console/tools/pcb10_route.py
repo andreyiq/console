@@ -386,7 +386,7 @@ def main():
             pos = p.GetPosition()
             by_net.setdefault((code, name), []).append(
                 (pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
-    wires, mine = [], []
+    wires, mine, seen_copper = [], [], {}
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
             pos = t.GetPosition()
@@ -403,6 +403,13 @@ def main():
                       pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY,
                       0 if t.GetLayer() == pcbnew.F_Cu else 1,
                       pcbnew.ToMM(t.GetWidth())))
+        # Своя медь прошлого захода — это СОЕДИНЁННОЕ, а не только помеха.
+        # Пока она числилась одной помехой, каждый следующий заход тянул
+        # вторую дорожку от той же площадки рядом с первой: меди вчетверо
+        # больше, неподключённых столько же.
+        seen_copper.setdefault(t.GetNetCode(), set()).update(
+            (to_cell(pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY),
+             to_cell(pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY)))
 
     keepouts = []
     for z in list(board.Zones()) + [z for f in board.GetFootprints()
@@ -466,7 +473,7 @@ def main():
             # достигнутой в ноль шагов: путь пустой, счётчик растёт, на плату
             # не ложится ничего. Разводка «удавалась» полностью и не давала
             # ни одной дорожки.
-            own = {cells[0]}
+            own = set(seen_copper.get(code, ())) | {cells[0]}
             while rest:
                 rest.sort(key=lambda r: min(math.dist(pts[r], pts[c])
                                             for c in connected))
