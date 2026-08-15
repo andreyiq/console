@@ -229,6 +229,7 @@ python3 hw/console/tools/pcb00_sync.py       # корпуса под то, чт�
 python3 hw/console/tools/pcb02_place.py      # посадка механики, с блокировкой
 python3 hw/console/tools/pcb03_blocks.py     # черновая раскладка блоков
 python3 hw/console/tools/pcb04_fine.py      # точная посадка, где место задано
+python3 hw/console/tools/pcb05_text.py      # ссылки на Fab, шелкографии нет
 ```
 
 Все шесть шагов идемпотентны и не трогают чужого: `pcb01` заново кладёт только
@@ -243,9 +244,14 @@ python3 hw/console/tools/pcb04_fine.py      # точная посадка, гд�
 Проверка платы:
 
 ```
-kicad-cli pcb drc --severity-error --severity-warning -o /tmp/drc.rpt \
-    hw/console/console.kicad_pcb
+python3 hw/console/tools/audit_pcb.py
 ```
+
+Семнадцать проверок того, чего нет в DRC: зона банки, развязка у своих выводов,
+минимальное сверло, что под панелью на лице только разъём шлейфа, раскладка
+баков по даташиту, состав платы против схемы цепь за цепью. DRC она вызывает
+сама и печатает сводкой. Каждая проверка показывает, сколько объектов
+посмотрела, — иначе не отличить «чисто» от «сломано».
 
 ## Проверка
 

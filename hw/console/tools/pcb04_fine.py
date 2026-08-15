@@ -109,6 +109,11 @@ def size(fp):
     этого разъезжается и детали налезают друг на друга — так и было, пока не
     стали снимать габарит на нуле и возвращать поворот обратно.
     """
+    # Кэш courtyard пересчитываем явно: после `SetPosition` KiCad помечает
+    # его недействительным, но не строит заново, и `GetCourtyard()` отдаёт
+    # пустой полигон. Проверка тогда молча пропускает деталь и рапортует
+    # ноль — ровно так подсунутая внахлёст пара конденсаторов не нашлась.
+    fp.BuildCourtyardCaches()
     was = fp.GetOrientation()
     fp.SetOrientationDegrees(0)
     lay = pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd
@@ -256,6 +261,8 @@ def usb(board):
 
 
 def overlaps(board):
+    for f in board.GetFootprints():
+        f.BuildCourtyardCaches()
     boxes = []
     for f in board.GetFootprints():
         for lay in (pcbnew.F_CrtYd, pcbnew.B_CrtYd):

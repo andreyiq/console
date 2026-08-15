@@ -129,7 +129,13 @@ def block_of():
 
 
 def size(fp):
-    """Габарит courtyard в мм; если его нет — по габаритной рамке."""
+    """Габарит courtyard в мм; если его нет — по габаритной рамке.
+
+    Кэш пересчитываем явно: после `SetPosition` KiCad помечает его
+    недействительным, но заново не строит, и `GetCourtyard()` отдаёт пустой
+    полигон — деталь тогда молча выпадает из проверки на пересечения.
+    """
+    fp.BuildCourtyardCaches()
     cy = fp.GetCourtyard(pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd)
     bb = cy.BBox() if cy.OutlineCount() else fp.GetBoundingBox(False, False)
     return pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())
@@ -180,6 +186,8 @@ def pack(board, refs, x1, y1, x2, y2):
 
 
 def overlaps(board):
+    for f in board.GetFootprints():
+        f.BuildCourtyardCaches()
     boxes = []
     for f in board.GetFootprints():
         for lay in (pcbnew.F_CrtYd, pcbnew.B_CrtYd):
