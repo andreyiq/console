@@ -361,9 +361,25 @@ def check_crystals(board):
         d = min(math.hypot(mm(q.GetPosition().x - P[pin].x),
                            mm(q.GetPosition().y - P[pin].y))
                 for q in f.Pads() for pin in pins if pin in P)
-        if d > 25.0:
+        # 12 мм, а не «лишь бы на плате». Порог 25 стоял с потолка и пропустил
+        # кварцы, уехавшие к краю платы на два сантиметра: место у корпуса
+        # никто не занял, а проверка этого не заметила.
+        if d > 12.0:
             bad.append(f"{ref} в {d:.1f} мм от своих выводов")
     return n, bad
+
+
+def check_flash(board):
+    """18. Флешка SPI NOR рядом со своими выводами F133 (14…19 `PC`)."""
+    u1 = board.FindFootprintByReference("U1")
+    f = board.FindFootprintByReference("U401")
+    if u1 is None or f is None:
+        return 0, ["U1 или U401 нет на плате"]
+    P = {p.GetNumber(): p.GetPosition() for p in u1.Pads()}
+    d = min(math.hypot(mm(q.GetPosition().x - P[str(pin)].x),
+                       mm(q.GetPosition().y - P[str(pin)].y))
+            for q in f.Pads() for pin in range(14, 20))
+    return 1, [] if d <= 12.0 else [f"U401 в {d:.1f} мм от выводов 14…19"]
 
 
 def check_flush(board):
@@ -399,6 +415,7 @@ CHECKS = [
     ("площадок J601", "разъём шлейфа развёрнут неверно", check_j601),
     ("баков", "раскладка против даташита", check_buck),
     ("кварцев", "далеко от своих выводов", check_crystals),
+    ("флешек", "далеко от своих выводов", check_flash),
     ("торцевых разъёмов", "не у реза", check_flush),
 ]
 
