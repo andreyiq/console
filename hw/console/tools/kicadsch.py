@@ -43,6 +43,10 @@ FP = {
     "Device:R": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
     "Device:C": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
     "Device:LED": "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder",
+    # Дроссель — один на все три бака, 02-power.md §6.1. Посадка сверена с
+    # «Recommended Land Pattern» даташита Sunlord SWPA: b = 0.8, c = 2.7,
+    # зазор a = 1.5 — совпадает с футпринтом KiCad до десятой.
+    "Device:L": "Inductor_SMD:L_Sunlord_SWPA3015S",
     "Connector:TestPoint": "TestPoint:TestPoint_Pad_D1.5mm",
     "Connector:Conn_01x02_Pin":
         "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",

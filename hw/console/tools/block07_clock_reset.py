@@ -93,9 +93,13 @@ def reset(s):
     s.wire((X, y + 7.62), (X, y + 10.16))
     s.power("power:GND", (X, y + 10.16))
 
-    sw = s.sym("Switch:SW_Push", "SW2", "RESET", 180.34, y + 7.62, 90,
+    sw = s.sym("Jumper:SolderJumper_2_Open", "JP1", "RESET", 180.34, y + 7.62, 90,
                src="ТЗ, «Кнопки служебные»",
-               fp="Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92",
+               # Не кнопка, а пара площадок под пинцет. Сброс кнопкой избыточен:
+               # движок снимает `EN` со всех трёх баков разом, а это жёстче, чем
+               # импульс на выводе 27. Серийные консоли кнопки сброса не носят
+               # вовсе. Разбор — 03-usb.md §1.
+               fp="Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm",
                rdx=2.54, rdy=-1.27, vdx=2.54, vdy=1.905)
     s.wire((180.34, y), sw.pin("2"))
     s.wire(sw.pin("1"), (180.34, y + 15.24))

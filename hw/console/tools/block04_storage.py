@@ -53,26 +53,32 @@ def flash(s):
 
 
 def card(s):
-    """Слот microSD: метки на все контакты, включая лапки корпуса (§6.3).
+    """Слот microSD `Hirose DM3AT-SF-PEJM5`: метки на все контакты (§6.3).
 
-    Символ `Micro_SD_Card_Det1` совпадает с нашим слотом один в один: восемь
-    контактов, отдельный `DET` (это контакт `Cd` чертежа) и `SHIELD` — лапки,
-    к которым и замыкается ключ детектора.
+    Детектор здесь — **изолированный ключ на двух выводах**, 9 и 10, а не
+    контакт, замкнутый на корпус. Каталог Hirose (`docs/chips/
+    microSD-socket_DM3-series_Hirose.pdf`, стр. 3, врезка «Card detection
+    switch») даёт состояния прямым текстом: **без карты — Open, карта
+    вставлена — Closed**. Поэтому 9 идёт на `SDC0-DET` с подтяжкой `R407`
+    10k вверх, 10 — на землю: `DET` = 0 означает «карта на месте».
 
-    Корпус пустой намеренно: в библиотеке KiCad нет посадочного места под этот
-    слот (у Hirose и Molex две площадки детектора, у Wuerth и Molex-47219 ни
-    одной), рисуется по чертежу перед разводкой — 04-storage.md §7.8.
+    Лапки корпуса — отдельный вывод 11, тоже на землю: у DM3AT четыре точки
+    крепления и они же экран (каталог, «4-connection points of the metal cover
+    … assures secure connection of the ground circuit and provides EMI
+    protection»).
     """
     x, y = 177.8, 226.06
-    j = s.sym("Connector:Micro_SD_Card_Det1", "J401", "microSD push-push",
-              x, y, 0, src=f"{DOC} §6.3", lcsc="C393941", fp="",
+    j = s.sym("Connector:Micro_SD_Card_Det_Hirose_DM3AT", "J401",
+              "DM3AT-SF-PEJM5", x, y, 0, src=f"{DOC} §6.3", lcsc="C114218",
+              fp="Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5",
               rdx=-22.86, rdy=-19.05, vdx=-22.86, vdy=-16.51)
 
     for num, net in (("1", "SDC0-D2"), ("2", "SDC0-D3"), ("3", "SDC0-CMD"),
                      ("4", "+3V3"), ("5", "SD-CLK"), ("6", "GND"),
-                     ("7", "SDC0-D0"), ("8", "SDC0-D1"), ("9", "SDC0-DET")):
+                     ("7", "SDC0-D0"), ("8", "SDC0-D1"), ("9", "SDC0-DET"),
+                     ("10", "GND")):
         s.glabel(net, j.pin(num), 180)
-    s.glabel("GND", j.pin("10"), 0)
+    s.glabel("GND", j.pin("11"), 0)
 
 
 def series(s):

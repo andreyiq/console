@@ -8053,6 +8053,751 @@
 			)
 			(embedded_fonts no)
 		)
+	(symbol "Switch:SW_SPDT"
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "SW"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SW_SPDT"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 -7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Switch, single pole double throw"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "switch single-pole double-throw spdt ON-ON"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SW_SPDT_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.651 0.254) (xy 1.651 2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 -2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SW_SPDT_1_1"
+				(rectangle
+					(start -3.175 3.81)
+					(end 3.175 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 2.54)
+					(name "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	(symbol "Connector:Micro_SD_Card_Det_Hirose_DM3AT"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -16.51 17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Micro_SD_Card_Det_Hirose_DM3AT"
+				(at 16.51 17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify right)
+				)
+			)
+			(property "Footprint" ""
+				(at 52.07 17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.hirose.com/product/en/download_file/key_name/DM3/category/Catalog/doc_file_id/49662/?file_category_id=4&item_id=195&is_series=1"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Micro SD Card Socket with card detection pins"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector SD microsd"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "microSD*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Micro_SD_Card_Det_Hirose_DM3AT_0_1"
+				(polyline
+					(pts
+						(xy -8.89 -8.89) (xy -8.89 11.43) (xy -1.27 11.43) (xy 2.54 15.24) (xy 3.81 15.24) (xy 3.81 13.97)
+						(xy 6.35 13.97) (xy 7.62 15.24) (xy 20.32 15.24) (xy 20.32 -8.89) (xy -8.89 -8.89)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -7.62 10.795)
+					(end -5.08 9.525)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 8.255)
+					(end -5.08 6.985)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 5.715)
+					(end -5.08 4.445)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 3.175)
+					(end -5.08 1.905)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 0.635)
+					(end -5.08 -0.635)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 -1.905)
+					(end -5.08 -3.175)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 -4.445)
+					(end -5.08 -5.715)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -7.62 -6.985)
+					(end -5.08 -8.255)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 16.51 15.24) (xy 16.51 16.51) (xy -19.05 16.51) (xy -19.05 -16.51) (xy 16.51 -16.51) (xy 16.51 -8.89)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Micro_SD_Card_Det_Hirose_DM3AT_1_1"
+				(pin bidirectional line
+					(at -22.86 10.16 0)
+					(length 3.81)
+					(name "DAT2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -22.86 7.62 0)
+					(length 3.81)
+					(name "DAT3/CD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -22.86 5.08 0)
+					(length 3.81)
+					(name "CMD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -22.86 2.54 0)
+					(length 3.81)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -22.86 0 0)
+					(length 3.81)
+					(name "CLK"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -22.86 -2.54 0)
+					(length 3.81)
+					(name "VSS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -22.86 -5.08 0)
+					(length 3.81)
+					(name "DAT0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -22.86 -7.62 0)
+					(length 3.81)
+					(name "DAT1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 -10.16 0)
+					(length 3.81)
+					(name "DET_A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 -12.7 0)
+					(length 3.81)
+					(name "DET_B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 20.32 -12.7 180)
+					(length 3.81)
+					(name "SHIELD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	(symbol "Jumper:SolderJumper_2_Open"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "JP"
+				(at 0 2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SolderJumper_2_Open"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Solder Jumper, 2-pole, open"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "solder jumper SPST"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SolderJumper*Open*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SolderJumper_2_Open_0_1"
+				(polyline
+					(pts
+						(xy -0.254 1.016) (xy -0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.254 -1.016)
+					(mid -1.2656 0)
+					(end -0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.254 -1.016)
+					(mid -1.2656 0)
+					(end -0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(arc
+					(start 0.254 1.016)
+					(mid 1.2656 0)
+					(end 0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0.254 1.016)
+					(mid 1.2656 0)
+					(end 0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 1.016) (xy 0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SolderJumper_2_Open_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(rectangle
 		(start 20 20)
@@ -9982,7 +10727,7 @@
 				(font (size 1.27 1.27))
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_Sunlord_SWPA3015S"
 			(at 267.97 39.37 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -10841,7 +11586,7 @@
 				(font (size 1.27 1.27))
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_Sunlord_SWPA3015S"
 			(at 267.97 72.39 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -11700,7 +12445,7 @@
 				(font (size 1.27 1.27))
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_Sunlord_SWPA3015S"
 			(at 267.97 105.41 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -12383,8 +13128,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Switch:SW_SPST")
-		(at 330.2 38.1 0)
+		(lib_id "Switch:SW_SPDT")
+		(at 330.2 38.1 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12392,20 +13137,18 @@
 		(dnp no)
 		(uuid "f40396b7-ca6c-5e81-b440-786c788c8484")
 		(property "Reference" "SW1"
-			(at 325.12 33.02 0)
+			(at 330.2 31.75 0)
 			(effects
 				(font (size 1.27 1.27))
-				(justify left)
 			)
 		)
 		(property "Value" "Движок"
-			(at 325.12 45.09 0)
+			(at 330.2 45.09 0)
 			(effects
 				(font (size 1.27 1.27))
-				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_SPDT_Shouhan_MSK12C02"
 			(at 330.2 38.1 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -12431,9 +13174,13 @@
 		)
 	)
 	(wire
-		(pts (xy 325.12 30.48) (xy 325.12 38.1))
+		(pts (xy 325.12 30.48) (xy 325.12 35.56))
 		(stroke (width 0) (type default))
-		(uuid "acad2b03-366a-542a-95f1-9ae1245a5e37")
+		(uuid "803be688-0f6c-5644-9696-7ffcd274d858")
+	)
+	(no_connect
+		(at 325.12 40.64)
+		(uuid "3e4bd739-db8e-5eb3-a09a-b445b9f918d5")
 	)
 	(wire
 		(pts (xy 335.28 33.02) (xy 335.28 35.56))
@@ -12935,7 +13682,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias"
+		(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm"
 			(at 396.24 48.26 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -15328,27 +16075,16 @@
 		(effects (font (size 1.27 1.27)) (justify left))
 		(uuid "7ae1beef-3ce5-5891-9ba8-7699545024ac")
 	)
-	(global_label "SPI0-MOSI"
-		(shape bidirectional)
-		(at 474.98 102.87 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2a97d8b8-7e12-5469-a193-fb7f88abf0ff")
-	)
-	(wire
-		(pts (xy 474.98 102.87) (xy 486.41 102.87))
-		(stroke (width 0) (type default))
-		(uuid "e35259dc-14c2-52f2-9eb5-143fd23ddcb0")
-	)
 	(symbol
-		(lib_id "Switch:SW_Push")
+		(lib_id "Jumper:SolderJumper_2_Open")
 		(at 486.41 107.95 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "a75dccbc-6a4e-536b-b845-6dd11293e07a")
-		(property "Reference" "SW301"
+		(uuid "ca5171ba-a786-5238-a741-5c37816f35f6")
+		(property "Reference" "JP301"
 			(at 488.95 106.68 270)
 			(effects
 				(font (size 1.27 1.27))
@@ -15362,7 +16098,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm"
 			(at 486.41 107.95 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -15381,16 +16117,32 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "SW301")
+					(reference "JP301")
 					(unit 1)
 				)
 			)
 		)
 	)
+	(global_label "SPI0-MOSI"
+		(shape bidirectional)
+		(at 474.98 102.87 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "2a97d8b8-7e12-5469-a193-fb7f88abf0ff")
+	)
 	(wire
-		(pts (xy 486.41 113.03) (xy 486.41 115.57))
+		(pts (xy 474.98 102.87) (xy 486.41 102.87))
 		(stroke (width 0) (type default))
-		(uuid "9d2402e5-14b3-57d7-b642-2548ea1da66d")
+		(uuid "e35259dc-14c2-52f2-9eb5-143fd23ddcb0")
+	)
+	(wire
+		(pts (xy 486.41 102.87) (xy 486.41 104.14))
+		(stroke (width 0) (type default))
+		(uuid "f2bff12a-6baa-5be9-a248-ca7f7aaa5dcd")
+	)
+	(wire
+		(pts (xy 486.41 111.76) (xy 486.41 115.57))
+		(stroke (width 0) (type default))
+		(uuid "6c38f7fb-d070-5ee9-975e-b8cb9b4c5686")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -15623,7 +16375,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Micro_SD_Card_Det1")
+		(lib_id "Connector:Micro_SD_Card_Det_Hirose_DM3AT")
 		(at 177.8 226.06 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -15638,14 +16390,14 @@
 				(justify left)
 			)
 		)
-		(property "Value" "microSD push-push"
+		(property "Value" "DM3AT-SF-PEJM5"
 			(at 154.94 209.55 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5"
 			(at 177.8 226.06 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -15661,7 +16413,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C393941"
+		(property "LCSC" "C114218"
 			(at 177.8 226.06 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -15731,6 +16483,12 @@
 		(at 154.94 238.76 180)
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "a21ac91d-a76d-591a-9422-085190307007")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 154.94 236.22 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "eb03a26c-6b68-5485-b71e-ea524b5f774c")
 	)
 	(global_label "GND"
 		(shape bidirectional)
@@ -18271,7 +19029,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_FFC-FPC:Hirose_FH12-40S-0.5SH_1x40-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "console:FH12-40S-0.5SH_ContactsReversed"
 			(at 546.1 285.75 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -18279,7 +19037,7 @@
 				(hide yes)
 			)
 		)
-		(property "Источник" "06-display.md §6.1"
+		(property "Источник" "06-display.md §6.1, §7.2"
 			(at 546.1 285.75 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -19385,14 +20143,14 @@
 				(justify left)
 			)
 		)
-		(property "Value" "N-MOSFET"
+		(property "Value" "AO3400A"
 			(at 468.63 322.58 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
 			(at 462.28 322.58 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -20666,15 +21424,15 @@
 		)
 	)
 	(symbol
-		(lib_id "Switch:SW_Push")
+		(lib_id "Jumper:SolderJumper_2_Open")
 		(at 180.34 309.88 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "738a46aa-a4e4-551a-837c-e26a9209fbcc")
-		(property "Reference" "SW2"
+		(uuid "9cfde75c-2601-5828-99b6-44bf31e21b32")
+		(property "Reference" "JP1"
 			(at 182.88 308.61 270)
 			(effects
 				(font (size 1.27 1.27))
@@ -20688,7 +21446,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm"
 			(at 180.34 309.88 0)
 			(effects
 				(font (size 1.27 1.27))
@@ -20707,21 +21465,21 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "SW2")
+					(reference "JP1")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 180.34 302.26) (xy 180.34 304.8))
+		(pts (xy 180.34 302.26) (xy 180.34 306.07))
 		(stroke (width 0) (type default))
-		(uuid "32af03cc-61b0-5dc8-b7b7-82be0cbc5f56")
+		(uuid "1d9d0475-7a3d-563e-8606-77ee42d6778b")
 	)
 	(wire
-		(pts (xy 180.34 314.96) (xy 180.34 317.5))
+		(pts (xy 180.34 313.69) (xy 180.34 317.5))
 		(stroke (width 0) (type default))
-		(uuid "a14af5eb-15d1-5257-a935-9e89e764788b")
+		(uuid "d174368c-3af4-5173-a6dc-57166400a1a3")
 	)
 	(symbol
 		(lib_id "power:GND")
