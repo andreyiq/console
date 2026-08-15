@@ -174,7 +174,7 @@ def pad_box(p):
             pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY)
 
 
-def build(board, pads, vias, keepouts):
+def build(board, pads, vias, keepouts, wires=()):
     g = Grid()
     # поле за контуром платы
     for i in range(NX):
@@ -213,6 +213,16 @@ def build(board, pads, vias, keepouts):
     for code, x, y in vias:
         r = 0.45          # переходная 0.9, см. pcb06_planes.py
         g.fill_box(x - r, y - r, x + r, y + r, code)
+    for code, x1, y1, x2, y2, L, w in wires:
+        # Чужая медь, уже лежащая на плате: лучи из-под F133 и то, что развёл
+        # freerouting. Идём по отрезку с шагом в клетку — габаритный
+        # прямоугольник у косой дорожки захватывает вчетверо больше места.
+        n = max(1, int(math.dist((x1, y1), (x2, y2)) / STEP))
+        for k in range(n + 1):
+            x = x1 + (x2 - x1) * k / n
+            y = y1 + (y2 - y1) * k / n
+            g.fill_box(x - w / 2, y - w / 2, x + w / 2, y + w / 2, code, layer=L)
+            g.add_copper(*to_cell(x, y), L, code)
     return g
 
 
@@ -295,17 +305,21 @@ def simplify(path):
     return out
 
 
-def lay_rec(out, path, width):
-    """Записать путь в список (а не на плату): проходов несколько, кладём лучший."""
+def lay_rec(out, path, width, code):
+    """Записать путь в список (а не на плату): проходов несколько, кладём лучший.
+
+    Номер цепи записывается здесь же. Пока его не было, укладка на плату
+    молча не делала ничего — при том что счётчик рапортовал успех.
+    """
     pts = simplify(path)
     vias = 0
     for a, b in zip(pts, pts[1:]):
         if a[2] != b[2]:
-            out.append(("via", to_mm(a[0], a[1]), None, width, a[2], None))
+            out.append(("via", to_mm(a[0], a[1]), None, width, a[2], code))
             vias += 1
         else:
             out.append(("seg", to_mm(a[0], a[1]), to_mm(b[0], b[1]),
-                        width, a[2], None))
+                        width, a[2], code))
     return vias
 
 
@@ -319,10 +333,11 @@ def lay(board, path, net, g, width=TRACK):
             v = pcbnew.PCB_VIA(board)
             x, y = to_mm(a[0], a[1])
             v.SetPosition(pcbnew.VECTOR2I(mm(OX + x), mm(OY + y)))
-            v.SetWidth(mm(0.9))
-            v.SetDrill(mm(0.5))
+            v.SetWidth(mm(0.7))
+            v.SetDrill(mm(0.4))
             v.SetNet(net)
             v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+            v.SetLocked(True)
             board.Add(v)
             g.fill_box(x, y, x, y, net.GetNetCode(), pad=VIA_PAD_CELLS)
             vias += 1
@@ -351,6 +366,7 @@ def main():
     # же процессе pcbnew не переживает — отдаёт сырой SwigPyObject, — а
     # `Remove` ломает контейнеры. Поэтому один проход: собрали, почистили,
     # разложили.
+    wanted = set(sys.argv[1:])
     pads, vias, by_net = [], [], {}
     for f in board.GetFootprints():
         for p in f.Pads():
@@ -362,11 +378,23 @@ def main():
             pos = p.GetPosition()
             by_net.setdefault((code, name), []).append(
                 (pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
+    wires, mine = [], []
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
             pos = t.GetPosition()
             vias.append((t.GetNetCode(),
                          pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
+            continue
+        name = t.GetNetname()
+        if wanted and name in wanted and not t.IsLocked():
+            mine.append(t)          # своё прежнее — снимем и проложим заново
+            continue
+        a, b = t.GetStart(), t.GetEnd()
+        wires.append((t.GetNetCode(),
+                      pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY,
+                      pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY,
+                      0 if t.GetLayer() == pcbnew.F_Cu else 1,
+                      pcbnew.ToMM(t.GetWidth())))
 
     keepouts = []
     for z in list(board.Zones()) + [z for f in board.GetFootprints()
@@ -382,18 +410,20 @@ def main():
     # pcbnew портятся, и `FindNet` начинает отдавать сырой SwigPyObject —
     # прогон падал ровно на этом, уже проложив половину дорожек.
     netobj = {name: board.FindNet(name) for _, name in by_net}
+    codeobj = {code: netobj[name] for code, name in by_net}
 
-    for t in list(board.GetTracks()):
-        if not isinstance(t, pcbnew.PCB_VIA):
-            board.Remove(t)
+    for t in mine:
+        board.RemoveNative(t)
 
-    g = build(board, pads, vias, keepouts)
+    g = build(board, pads, vias, keepouts, wires)
 
     # Порядок — от коротких цепей к длинным: у короткой связи путь чаще всего
     # единственный разумный, и уступать его длинной незачем.
     tasks = []
     for (code, name), pts in by_net.items():
         if len(pts) < 2:
+            continue
+        if wanted and name not in wanted:
             continue
         span = max(math.dist(a, b) for a in pts for b in pts)
         # Порядок — строго по длине связи, без предпочтения питанию. Пробовали
@@ -410,7 +440,7 @@ def main():
     order_bonus = set()
     best_state = None
     for attempt in range(PASSES):
-        g = build(board, pads, vias, keepouts)
+        g = build(board, pads, vias, keepouts, wires)
         laid = []
         done = fail = nvias = 0
         failed = []
@@ -423,18 +453,25 @@ def main():
             g.copper.setdefault(code, set())
             rest = list(range(1, len(pts)))
             connected = {0}
+            # Соединённое ведём отдельно от «меди вообще». В меди у цепи лежат
+            # все её площадки сразу, и если стартовать от неё, цель оказывается
+            # достигнутой в ноль шагов: путь пустой, счётчик растёт, на плату
+            # не ложится ничего. Разводка «удавалась» полностью и не давала
+            # ни одной дорожки.
+            own = {cells[0]}
             while rest:
                 rest.sort(key=lambda r: min(math.dist(pts[r], pts[c])
                                             for c in connected))
                 r = rest.pop(0)
-                starts = sorted(g.copper.get(code, set()))
-                path = route(g, starts or [cells[0]], [cells[r]], code, margin=60)
+                path = route(g, sorted(own), [cells[r]], code, margin=60)
                 if path:
-                    nvias += lay_rec(laid, path, width)
+                    nvias += lay_rec(laid, path, width, code)
                     for i, j, L in path:
                         x, y = to_mm(i, j)
                         g.fill_box(x, y, x, y, code, layer=L)
                         g.add_copper(i, j, L, code)
+                        own.add((i, j))
+                    own.add(cells[r])
                     done += 1
                 else:
                     fail += 1
@@ -454,10 +491,11 @@ def main():
         if kind == "via":
             v = pcbnew.PCB_VIA(board)
             v.SetPosition(pcbnew.VECTOR2I(mm(OX + a[0]), mm(OY + a[1])))
-            v.SetWidth(mm(0.9))
-            v.SetDrill(mm(0.5))
+            v.SetWidth(mm(0.7))
+            v.SetDrill(mm(0.4))
             v.SetNet(net)
             v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+            v.SetLocked(True)
             board.Add(v)
         else:
             tr = pcbnew.PCB_TRACK(board)
@@ -466,12 +504,14 @@ def main():
             tr.SetWidth(mm(width))
             tr.SetLayer(pcbnew.F_Cu if layer == 0 else pcbnew.B_Cu)
             tr.SetNet(net)
+            tr.SetLocked(True)     # наше — задание отдаёт это неприкосновенным
             board.Add(tr)
 
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())
     board.Save(str(BOARD))
-    print(f"проложено связей: {done}, не удалось: {fail}, переходных {nvias}")
+    print(f"проложено связей: {done}, не удалось: {fail}, переходных {nvias}; "
+          f"отрезков на плату: {sum(1 for k, *_ in laid if k == 'seg')}")
     if failed:
         import collections
         top = collections.Counter(failed).most_common(10)
