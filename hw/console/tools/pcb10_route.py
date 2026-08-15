@@ -244,6 +244,32 @@ def build(board, pads, vias, keepouts, wires=()):
     return g
 
 
+def components(edge_list):
+    """Связные куски меди цепи: клетка -> корень, и корень -> клетки.
+
+    Обычное объединение-поиск по рёбрам «конец дорожки — конец дорожки» и
+    «лицо — изнанка в точке переходной». Нужно оно ровно затем, чтобы не
+    принять два отдельных куска одной цепи за соединённое целое.
+    """
+    root = {}
+
+    def find(a):
+        root.setdefault(a, a)
+        while root[a] != a:
+            root[a] = root[root[a]]
+            a = root[a]
+        return a
+
+    for a, b in edge_list:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            root[ra] = rb
+    out = {}
+    for cell in list(root):
+        out.setdefault(find(cell), set()).add(cell)
+    return {c: find(c) for c in root}, out
+
+
 def route(g, starts, goals, net, margin=60):
     """A* от множества стартов к множеству целей. Возвращает путь `(i, j, слой)`.
 
@@ -404,12 +430,16 @@ def main():
             pos = p.GetPosition()
             by_net.setdefault((code, name), []).append(
                 (pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
-    wires, mine, seen_copper = [], [], {}
+    wires, mine, edges = [], [], {}
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
             pos = t.GetPosition()
-            vias.append((t.GetNetCode(),
-                         pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
+            vx = pcbnew.ToMM(pos.x) - OX
+            vy = pcbnew.ToMM(pos.y) - OY
+            vias.append((t.GetNetCode(), vx, vy))
+            # переходная связывает стороны в одной точке
+            edges.setdefault(t.GetNetCode(), []).append(
+                (to_cell(vx, vy) + (0,), to_cell(vx, vy) + (1,)))
             continue
         name = t.GetNetname()
         if wanted and name in wanted and not t.IsLocked():
@@ -421,13 +451,16 @@ def main():
                       pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY,
                       0 if t.GetLayer() == pcbnew.F_Cu else 1,
                       pcbnew.ToMM(t.GetWidth())))
-        # Своя медь прошлого захода — это СОЕДИНЁННОЕ, а не только помеха.
-        # Пока она числилась одной помехой, каждый следующий заход тянул
-        # вторую дорожку от той же площадки рядом с первой: меди вчетверо
-        # больше, неподключённых столько же.
-        seen_copper.setdefault(t.GetNetCode(), set()).update(
-            (to_cell(pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY),
-             to_cell(pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY)))
+        # Своя медь прошлого захода — это соединённое, но НЕ ЦЕЛИКОМ. Она
+        # лежит отдельными кусками, и считать её одним блобом нельзя: у `+3V3`
+        # тридцать восемь площадок, дерево собрано наполовину, а трассировщик
+        # видел сплошное «уже соединено» и не делал ничего. Отсюда и
+        # расхождение: он рапортовал успех, DRC показывал сорок разрывов.
+        # Копим рёбра, связность считаем ниже.
+        L = 0 if t.GetLayer() == pcbnew.F_Cu else 1
+        edges.setdefault(t.GetNetCode(), []).append(
+            (to_cell(pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY) + (L,),
+             to_cell(pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY) + (L,)))
 
     keepouts = []
     for z in list(board.Zones()) + [z for f in board.GetFootprints()
@@ -491,11 +524,22 @@ def main():
             # достигнутой в ноль шагов: путь пустой, счётчик растёт, на плату
             # не ложится ничего. Разводка «удавалась» полностью и не давала
             # ни одной дорожки.
-            own = set(seen_copper.get(code, ())) | {cells[0]}
+            # Стартуем от куска, в котором лежит первая площадка, а не от
+            # всей меди цепи. Клетки берём без слоя: дорожка приходит на
+            # площадку по лицу.
+            of_cell, of_root = components(edges.get(code, ()))
+            def piece(cell):
+                r = of_cell.get(cell + (0,)) or of_cell.get(cell + (1,))
+                return {(c[0], c[1]) for c in of_root[r]} if r else {cell}
+            own = piece(cells[0])
             while rest:
                 rest.sort(key=lambda r: min(math.dist(pts[r], pts[c])
                                             for c in connected))
                 r = rest.pop(0)
+                if cells[r] in own:
+                    connected.add(r)
+                    done += 1
+                    continue
                 path = route(g, sorted(own), [cells[r]], code, margin=60)
                 if path:
                     nvias += lay_rec(laid, path, width, code)
@@ -515,6 +559,7 @@ def main():
                                        x + keep, y + keep, code)
                         prev_L = L
                     own.add(cells[r])
+                    own |= piece(cells[r])
                     done += 1
                 else:
                     fail += 1
