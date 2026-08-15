@@ -5,15 +5,36 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 этого нет). Отдавать его freerouting как есть нельзя — три поправки, и каждая
 получена набитой шишкой, а не из общих соображений.
 
-**Зазор для выхода из-под F133.** Общее правило платы — 0,2 мм, и по нему
-выйти из-под корпуса с шагом 0,4 мм невозможно: дорожка 0,2 по оси площадки
-оставляет до края соседней 0,185. Трассировщик честно отказывался и возвращал
-«не разведено» даже там, где места хватало. Ставим 185 мкм для пары
-дорожка-площадка, того же требует правило в `console.kicad_dru`.
+**Зазор не трогаем — 0,2 мм, как на всей плате.** Послабление до 185 мкм
+здесь было и оказалось вредным. Оно нужно ровно там, где дорожка идёт по оси
+площадки с шагом 0,4 — то есть под F133, — но в задании его иначе как на всю
+плату не задать, и трассировщик честно поджимал 0,185 у чужих деталей: 32
+нарушения DRC вдали от чипа.
 
-**Одна переходная, наша.** KiCad предлагает на выбор свою 0,6/0,3 и нашу
-0,9/0,5, а freerouting берёт первую. Сверло 0,3 — нижняя граница набора и
-негодная для заклёпки из проволоки (10-mech.md §7), поэтому лишнюю убираем.
+А под самим чипом послабление больше не нужно: выход из-под корпуса делает
+`pcb07_fanout.py`, и исключение для него записано в `console.kicad_dru`
+адресно, по имени корпуса.
+
+(Если послабление всё же понадобится, имя пары пишется в каноническом
+порядке — `smd_wire`, а не `wire_smd`. Неизвестное имя freerouting принимает
+молча и не применяет.)
+
+**Переходная — 0,7/0,4, и это выбрано измерением.** KiCad предлагает свою
+0,6/0,3 и нашу 0,9/0,5; freerouting берёт первую из списка. Проверили обе на
+одном и том же задании:
+
+| переходная | поставил | дорожек по изнанке | не разведено |
+|---|---|---|---|
+| 0,9 / 0,5 | **1** | 23 | 120 |
+| 0,6 / 0,3 | 21 | 23 | 110 |
+
+С нашей 0,9 он остаётся в одном слое: медь 0,9 плюс зазор 0,2 с двух сторон —
+это круг 1,3 мм, в тесноте у корпуса ему просто негде встать. Плата при этом
+двухсторонняя только на бумаге.
+
+Берём середину, 0,7/0,4: сверло 0,4 из середины набора (у нас 0,3…1,2), а не
+с его края, и поясок 0,15 на сторону — под заклёпку из проволоки хватает.
+Колодку объявляем сами, в выгрузке её нет.
 
 **Заливки — не в задание.** Это оказалось главным. Земля у нас на обеих
 сторонах: сплошная плоскость на изнанке и заливка на лице; в выгрузке они —
@@ -36,6 +57,10 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 
 Разница решающая: 43 связи неразведёнными вместо 114, и проходы вместо
 нескольких минут занимают секунды.
+
+**Лучи из-под F133 уходят в задание неприкосновенной медью.** Их кладёт
+`pcb07_fanout.py`, и трассировщику остаётся подхватить их концы в открытом
+поле. Секция `wiring` целиком пересобирается по плате — там же, где и посадка.
 
 **Посадка деталей берётся с платы, а не из выгрузки.** Экспорт `.dsn` делается
 руками из KiCad, а размещение мы правим скриптами — и без этого каждая правка
@@ -71,8 +96,13 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "console.dsn"
 DST = ROOT / "console.route.dsn"
 
-ESCAPE = 185                    # мкм, зазор дорожки до площадки под F133
-VIA = "Via[0-1]_900:500_um"
+VIA = "Via[0-1]_700:400_um"
+VIA_SHAPE = f"""    (padstack "{VIA}"
+      (shape (circle F.Cu 700))
+      (shape (circle B.Cu 700))
+      (attach off)
+    )
+"""
 STITCH = re.compile(r'\n\s*\(via "[^"]+"\s+-?[\d.]+\s+-?[\d.]+ '
                     r'\(net GND\)\(type \w+\)\)')
 
@@ -125,33 +155,68 @@ def replace_places(text, board):
     return text, moved
 
 
+def fix_class(text):
+    """Наша переходная — и в правила класса.
+
+    Класс перекрывает общие правила задания: в нём своя переходная и свой
+    зазор. Правки только общих правил класс молча возвращает обратно.
+    """
+    i = text.index("(class ")
+    head, blk = text[:i], text[i:]
+    end = blk.index("\n    )") + 6
+    blk, tail = blk[:end], blk[end:]
+    blk = re.sub(r'use_via "[^"]+"', f'use_via "{VIA}"', blk)
+    return head + blk + tail
+
+
+def replace_wiring(text, board):
+    """Пересобрать `wiring` по закреплённой меди платы — это наши лучи."""
+    out = ["  (wiring\n"]
+    n = 0
+    for t in board.GetTracks():
+        if isinstance(t, pcbnew.PCB_VIA) or not t.IsLocked():
+            continue
+        net = t.GetNetname()
+        if not net:
+            continue
+        a, b = t.GetStart(), t.GetEnd()
+        layer = board.GetLayerName(t.GetLayer())
+        out.append(
+            f"    (wire (path {layer} {pcbnew.ToMM(t.GetWidth()) * 1000:.0f}"
+            f"  {pcbnew.ToMM(a.x) * 1000:.0f} {-pcbnew.ToMM(a.y) * 1000:.0f}"
+            f"  {pcbnew.ToMM(b.x) * 1000:.0f} {-pcbnew.ToMM(b.y) * 1000:.0f})"
+            f'(net "{net}")(type protect))\n')
+        n += 1
+    out.append("  )")
+    s, e = dsn.sections(text)["wiring"]
+    return text[:s] + "".join(out) + text[e:], n
+
+
 def main():
     text = SRC.read_text()
     board = pcbnew.LoadBoard(str(ROOT / "console.kicad_pcb"))
     text, moved = replace_places(text, board)
-
-    if "(type wire_smd)" not in text:
-        text = text.replace(
-            "      (clearance 50 (type smd_smd))\n",
-            "      (clearance 50 (type smd_smd))\n"
-            f"      (clearance {ESCAPE} (type wire_smd))\n"
-            f"      (clearance {ESCAPE} (type wire_pin))\n")
+    text, wires = replace_wiring(text, board)
 
     vias = re.search(r"\n    \(via [^\n]*\)", text)
     text = text[:vias.start()] + f'\n    (via "{VIA}")' + text[vias.end():]
+    if VIA_SHAPE not in text:
+        anchor = re.search(r'    \(padstack "Via\[0-1\]', text)
+        text = text[:anchor.start()] + VIA_SHAPE + text[anchor.start():]
 
     text, n = STITCH.subn("", text)
     text = dsn.subset(text, {c for c in dsn.nets_of(text) if c != "GND"})
+    text = fix_class(text)
     planes = 0
     for layer in ("F.Cu", "B.Cu"):
         text, k = drop_plane(text, layer)
         planes += k
 
     DST.write_text(text)
-    print(f"{DST.name}: зазор выхода {ESCAPE} мкм, переходная {VIA}, "
+    print(f"{DST.name}: переходная {VIA}, "
           f"сшивки убрано {n}, заливок убрано {planes}, "
           f"цепей в задании {len(dsn.nets_of(text))}, "
-          f"посадка обновлена у {moved}")
+          f"посадка обновлена у {moved}, лучей в задании {wires}")
 
 
 if __name__ == "__main__":

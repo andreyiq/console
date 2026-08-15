@@ -63,16 +63,48 @@ def nets_of(text):
 
 
 def subset(text, keep):
-    """Оставить в network только цепи из `keep`."""
+    """Оставить в network только цепи из `keep`, не тронув остальное.
+
+    «Остальное» — это класс цепей, и он там не для красоты: в нём ширина
+    дорожки, зазор и переходная. Пересобирая секцию из одних `(net …)`, я его
+    выбрасывал, цепи оставались без правил вовсе, и freerouting разводил
+    крохи. Стояло это с первой же пробы и объясняло её целиком.
+
+    Имена выброшенных цепей вычищаются и из списка при классе — иначе он
+    ссылается на то, чего в задании больше нет.
+    """
     s, e = sections(text)["network"]
-    body, out = text[s:e], ["(network\n"]
-    for m in NET_NAME.finditer(body):
-        st = m.start()
+    body, out, i = text[s:e], ["(network\n"], 0
+    while True:
+        n = body.find("\n    (", i)
+        if n < 0:
+            break
+        st = n + 5
         en = _block(body, st)
-        if m.group(1).strip('"') in keep:
-            out.append("    " + body[st:en] + "\n")
+        blk = body[st:en]
+        if blk.startswith("(net "):
+            name = NET_NAME.match(blk).group(1).strip('"')
+            if name in keep:
+                out.append("    " + blk + "\n")
+        elif blk.startswith("(class "):
+            out.append("    " + _class_keep(blk, keep) + "\n")
+        else:
+            out.append("    " + blk + "\n")
+        i = en
     out.append("  )")
     return text[:s] + "".join(out) + text[e:]
+
+
+def _class_keep(blk, keep):
+    """Вычистить из списка при классе имена цепей, которых не осталось."""
+    head = blk.index("(", 1) if "(" in blk[1:] else len(blk) - 1
+    names, rest = blk[:head], blk[head:]
+    words = names.split()
+    out = words[:2]                      # `(class` и его имя
+    for w in words[2:]:
+        if w.strip('"') in keep:
+            out.append(w)
+    return " ".join(out) + "\n      " + rest
 
 
 def drop_planes(text):
