@@ -37,6 +37,12 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 Разница решающая: 43 связи неразведёнными вместо 114, и проходы вместо
 нескольких минут занимают секунды.
 
+**Посадка деталей берётся с платы, а не из выгрузки.** Экспорт `.dsn` делается
+руками из KiCad, а размещение мы правим скриптами — и без этого каждая правка
+требовала бы снова лезть в KiCad. Секция `placement` устроена просто: строка
+на деталь, миллиметры и угол. Переписываем её по нынешней плате, и выгрузку
+можно не трогать, пока не менялась схема.
+
 **Сшивка земли — не в задание.** Заклёпки по сетке 8 мм ставит
 `pcb06_planes.py`, и в выгрузке они попадают в `wiring`. Пробовали отдать их
 трассировщику закреплёнными: сотня столбов по всему полю, и он развёл заметно
@@ -56,6 +62,8 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 """
 import re
 from pathlib import Path
+
+import pcbnew
 
 import dsn
 
@@ -89,8 +97,38 @@ def drop_plane(text, layer):
         n += 1
 
 
+PLACE = re.compile(r"\(place (\S+) (-?[\d.]+) (-?[\d.]+) (front|back) (-?[\d.]+)")
+
+
+def replace_places(text, board):
+    """Переписать посадку деталей по плате. Единицы `.dsn` — микрометры."""
+    missing, moved = [], 0
+
+    def one(m):
+        nonlocal moved
+        ref = m.group(1)
+        f = board.FindFootprintByReference(ref)
+        if f is None:
+            missing.append(ref)
+            return m.group(0)
+        pos = f.GetPosition()
+        side = "back" if f.IsFlipped() else "front"
+        rot = f.GetOrientationDegrees() % 360
+        moved += 1
+        return (f"(place {ref} {pcbnew.ToMM(pos.x) * 1000:.6f} "
+                f"{-pcbnew.ToMM(pos.y) * 1000:.6f} {side} {rot:.6f}")
+
+    text = PLACE.sub(one, text)
+    if missing:
+        raise SystemExit("в выгрузке есть детали, которых нет на плате: "
+                         + ", ".join(missing[:10]))
+    return text, moved
+
+
 def main():
     text = SRC.read_text()
+    board = pcbnew.LoadBoard(str(ROOT / "console.kicad_pcb"))
+    text, moved = replace_places(text, board)
 
     if "(type wire_smd)" not in text:
         text = text.replace(
@@ -112,7 +150,8 @@ def main():
     DST.write_text(text)
     print(f"{DST.name}: зазор выхода {ESCAPE} мкм, переходная {VIA}, "
           f"сшивки убрано {n}, заливок убрано {planes}, "
-          f"цепей в задании {len(dsn.nets_of(text))}")
+          f"цепей в задании {len(dsn.nets_of(text))}, "
+          f"посадка обновлена у {moved}")
 
 
 if __name__ == "__main__":
