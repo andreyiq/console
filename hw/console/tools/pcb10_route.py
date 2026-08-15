@@ -177,9 +177,19 @@ class Grid:
 
 
 def pad_box(p):
+    """Габарит площадки, раздутый на полклетки.
+
+    Сетка ложится на плату как придётся, и `to_cell` округляет края к
+    ближайшему узлу — то есть может срезать с каждой стороны до половины шага.
+    На плате это выходит дорожкой в 0.175 от чужой площадки при правиле 0.2.
+    Полклетки запаса убирают округление в безопасную сторону.
+    """
     bb = p.GetBoundingBox()
-    return (pcbnew.ToMM(bb.GetLeft()) - OX, pcbnew.ToMM(bb.GetTop()) - OY,
-            pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY)
+    half = STEP / 2
+    return (pcbnew.ToMM(bb.GetLeft()) - OX - half,
+            pcbnew.ToMM(bb.GetTop()) - OY - half,
+            pcbnew.ToMM(bb.GetRight()) - OX + half,
+            pcbnew.ToMM(bb.GetBottom()) - OY + half)
 
 
 def build(board, pads, vias, keepouts, wires=()):
@@ -256,10 +266,15 @@ def route(g, starts, goals, net, margin=60):
         dx, dy = abs(i - gx), abs(j - gy)
         return (dx + dy) + (1.4142 - 2) * min(dx, dy)
 
-    best, heap, seen = {}, [], {}
+    # Направление входа в состояние НЕ входит: с ним одна и та же клетка
+    # снимается до девяти раз, и `can_via` — самая дорогая проверка поиска —
+    # считается для неё столько же раз. Штраф за поворот при этом никуда не
+    # делся, он остался в стоимости. Померено: втрое быстрее и чуть лучший
+    # результат.
+    best, heap, seen, via_ok = {}, [], {}, {}
     for c in starts:
         i, j, L = c if len(c) == 3 else (c[0], c[1], 0)
-        best[(i, j, L, -1)] = 0.0
+        best[(i, j, L)] = 0.0
         heapq.heappush(heap, (h(i, j), 0.0, (i, j, L), -1, None))
     budget = NODE_BUDGET
     while heap:
@@ -267,14 +282,14 @@ def route(g, starts, goals, net, margin=60):
         if budget < 0:
             return None
         _, cost, cur, d, parent = heapq.heappop(heap)
-        if (cur, d) in seen:
+        if cur in seen:
             continue
-        seen[(cur, d)] = parent
+        seen[cur] = parent
         i, j, L = cur
         if (i, j) in goal and L == 0:
-            path, key = [], (cur, d)
+            path, key = [], cur
             while key is not None:
-                path.append(key[0])
+                path.append(key)
                 key = seen[key]
             return path[::-1]
         for k, (di, dj, w) in enumerate(DIRS):
@@ -284,18 +299,21 @@ def route(g, starts, goals, net, margin=60):
             if not g.free(ni, nj, L, net):
                 continue
             nc = cost + w * (BACK_COST if L else 1.0) + (TURN if d != -1 and k != d else 0.0)
-            key = ((ni, nj, L), k)
+            key = (ni, nj, L)
             if key in best and best[key] <= nc:
                 continue
             best[key] = nc
-            heapq.heappush(heap, (nc + h(ni, nj), nc, (ni, nj, L), k, (cur, d)))
+            heapq.heappush(heap, (nc + h(ni, nj), nc, key, k, cur))
         # перескок на другую сторону
-        if g.can_via(i, j, net):
+        ok = via_ok.get((i, j))
+        if ok is None:
+            ok = via_ok[(i, j)] = g.can_via(i, j, net)
+        if ok:
             nc = cost + VIA_COST
-            key = ((i, j, 1 - L), -1)
+            key = (i, j, 1 - L)
             if not (key in best and best[key] <= nc):
                 best[key] = nc
-                heapq.heappush(heap, (nc + h(i, j), nc, (i, j, 1 - L), -1, (cur, d)))
+                heapq.heappush(heap, (nc + h(i, j), nc, key, -1, cur))
     return None
 
 
@@ -481,11 +499,21 @@ def main():
                 path = route(g, sorted(own), [cells[r]], code, margin=60)
                 if path:
                     nvias += lay_rec(laid, path, width, code)
+                    prev_L = None
                     for i, j, L in path:
                         x, y = to_mm(i, j)
                         g.fill_box(x, y, x, y, code, layer=L)
                         g.add_copper(i, j, L, code)
                         own.add((i, j))
+                        if prev_L is not None and L != prev_L:
+                            # Переходная занимает место на ОБОИХ слоях, и
+                            # занимать его надо явно: пока отмечались только
+                            # клетки пути, соседняя дорожка ложилась к ней
+                            # вплотную — пять нарушений зазора на плату.
+                            keep = 0.35 + 0.2
+                            g.fill_box(x - keep, y - keep,
+                                       x + keep, y + keep, code)
+                        prev_L = L
                     own.add(cells[r])
                     done += 1
                 else:

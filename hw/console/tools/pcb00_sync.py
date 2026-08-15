@@ -106,7 +106,7 @@ def sync(board):
     return changed
 
 
-def audit(board):
+def audit(board, have):
     """Сверить состав платы со схемой.
 
     Скрипт умеет подменять корпус у детали, но не умеет заводить и удалять
@@ -115,20 +115,22 @@ def audit(board):
     набором. Крепёж `H*` в схеме не значится и в сверке не участвует.
     """
     want = set(want_footprints())
-    have = {f.GetReference() for f in board.GetFootprints()
-            if not f.GetReference().startswith("H")}
     return sorted(want - have), sorted(have - want)
 
 
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
+    # Состав снимаем ДО подмены корпусов: подмена делает `Remove`, после
+    # которого контейнер корпусов отдаёт сырой SwigPyObject (10-mech.md §8.2).
+    have = {f.GetReference() for f in board.GetFootprints()
+            if not f.GetReference().startswith("H")}
     changed = sync(board)
     for line in changed or ["корпуса уже совпадают со схемой"]:
         print(" ", line)
     if changed:
         board.Save(str(BOARD))
 
-    missing, extra = audit(board)
+    missing, extra = audit(board, have)
 
     # Осиротевшие убираем сами. «Update PCB from Schematic» делает это только
     # при взведённой галке «Delete footprints with no symbols», и она тоже по

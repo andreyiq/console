@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Вывод сигналов из-под F133 — короткие лучи от каждой площадки наружу.
+"""Вывод сигналов из-под мелкого шага — короткие лучи от площадок наружу.
 
 Эту часть трассировщик не делает вовсе. Freerouting 2.1.0 роняет свой поиск
 пути исключением `MazeSearchAlgo.expand_to_target_doors` каждый раз, когда
@@ -15,10 +15,16 @@
 своей оси: до соседней площадки остаётся 0.185 (послабление записано в
 `console.kicad_dru`), между соседними лучами — ровно 0.2, наш общий зазор.
 
-Лучи кончаются **через один** на двух разных радиусах. Иначе их концы стоят
-тем же частоколом 0.4 мм, и подойти к концу сбоку так же нельзя, как к самой
-площадке; в шахматном порядке у каждого конца соседи по своему ряду в 0.8 мм,
-и дальше трассировщик работает уже в открытом поле.
+Лучи кончаются **через один** на двух радиусах. Иначе их концы стоят тем же
+частоколом 0.4 мм, и подойти к концу сбоку так же нельзя, как к самой
+площадке; в шахматном порядке у каждого конца соседи по своему ряду в 0.8 мм.
+
+Трёх радиусов не делаем, хотя расчёт за них: 1.2 мм между концами вместо 0.8
+позволили бы поставить на конце каждого луча переходную (0.7 меди плюс 0.2
+зазора с двух сторон — нужно 1.1). Померено: с тремя радиусами связей не
+сходится 195 против 177 при двух. Лучи становятся длиннее и съедают то самое
+место у корпуса, ради которого всё и затевалось, а переходные трассировщик
+всё равно ставит там, где ему удобно, а не на их концах.
 
 Если прямо наружу не влезает — луч пробует уйти наискось, отклоняя конец в
 сторону. Прямая тяга сразу к площадке соседнего конденсатора тоже пробовалась
@@ -41,9 +47,14 @@ import pcbnew
 ROOT = Path(__file__).resolve().parent.parent
 BOARD = ROOT / "console.kicad_pcb"
 
-CHIP = "U1"
+# Кому нужен вывод. Мерка простая: дорожка 0.2 с зазорами занимает 0.6 мм, и
+# при шаге площадок мельче этого между ними не пройти — площадка замурована
+# соседями, и добраться до неё не может ни один трассировщик, ни наш, ни
+# чужой. Под мерку попадают трое: F133 (шаг 0.4), разъём шлейфа дисплея
+# (0.5) и розетка USB-C (0.5). У разъёмов это 36 площадок из 41.
+CHIPS = ("U1", "J601", "J301")
 WIDTH = 0.2
-NEAR, FAR = 1.3, 2.1          # насколько луч выходит за край площадки, мм
+OUT = (1.3, 2.1)              # насколько луч выходит за край площадки, мм
 LEAST = 0.4                   # короче — не имеет смысла, лучше отдать как есть
 KEEP = 0.2                    # зазор до чужой меди, общее правило платы
 CHIP_KEEP = 0.15              # у площадок F133 — послабление из .kicad_dru
@@ -55,20 +66,22 @@ def mm(v):
 
 
 def clear(board):
-    """Снять всю медь дорожек — это первый шаг разводки, начинаем с чистого.
+    """Снять всю медь — и дорожки, и переходные. Это первый шаг разводки.
 
-    Не только свои лучи: наискось луч может задеть и чужую дорожку прошлого
-    круга, а держать в голове ещё и её незачем — вся разводка всё равно
-    кладётся заново из `.ses`.
+    Переходные тоже, и это важнее, чем кажется. Сшивка земли от прошлого круга
+    остаётся на плате помехой, а ставится она по свободному полю, то есть
+    каждый раз по-разному. Пока она переживала пересборку, один и тот же
+    прогон давал то 177 несошедшихся связей, то 206 — и разница была не в том,
+    что мы правили, а в том, где вчера легли заклёпки. Возвращает их
+    `pcb06_planes.py` после разводки.
     """
-    doomed = [t for t in board.GetTracks()
-              if not isinstance(t, pcbnew.PCB_VIA)]
+    doomed = list(board.GetTracks())
     for t in doomed:
         board.RemoveNative(t)
     return len(doomed)
 
 
-def obstacles(board, chip):
+def obstacles(board, chips):
     """Площадки платы: прямоугольник, цепь и мерка зазора до неё.
 
     Мерок две. Всем — общий зазор платы. Площадкам самого F133 — послабление
@@ -81,7 +94,7 @@ def obstacles(board, chip):
     """
     out = []
     for f in board.GetFootprints():
-        own = f.GetReference() == chip.GetReference()
+        own = f.GetReference() in chips
         gap = CHIP_KEEP if own else KEEP
         for p in f.Pads():
             bb = p.GetBoundingBox()
@@ -136,26 +149,28 @@ def clashes(x1, y1, x2, y2, net, boxes):
 
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
-    chip = board.FindFootprintByReference(CHIP)
-    cx, cy = chip.GetPosition().x, chip.GetPosition().y
+    parts = [board.FindFootprintByReference(r) for r in CHIPS]
+    parts = [f for f in parts if f is not None]
 
     pads = []
-    for p in chip.Pads():
-        net = p.GetNetname()
-        bb = p.GetBoundingBox()
-        if bb.GetWidth() > mm(2.0) and bb.GetHeight() > mm(2.0):
-            continue                      # термопад, ему лучи не нужны
-        if not net or net == "GND" or net.startswith("unconnected-"):
-            continue
-        pads.append(p)
+    for chip in parts:
+        cx, cy = chip.GetPosition().x, chip.GetPosition().y
+        for p in chip.Pads():
+            net = p.GetNetname()
+            bb = p.GetBoundingBox()
+            if bb.GetWidth() > mm(2.0) and bb.GetHeight() > mm(2.0):
+                continue                  # термопад, ему лучи не нужны
+            if not net or net == "GND" or net.startswith("unconnected-"):
+                continue
+            pads.append((p, cx, cy))
 
-    boxes = obstacles(board, chip)
+    boxes = obstacles(board, set(CHIPS))
     dropped = clear(board)
 
     laid = short = 0
     laid_segs = []
-    for i, p in enumerate(sorted(pads, key=lambda q: (q.GetPosition().x,
-                                                      q.GetPosition().y))):
+    pads.sort(key=lambda q: (q[0].GetPosition().x, q[0].GetPosition().y))
+    for i, (p, cx, cy) in enumerate(pads):
         pos = p.GetPosition()
         dx, dy = pos.x - cx, pos.y - cy
         bb = p.GetBoundingBox()
@@ -171,7 +186,7 @@ def main():
         side = (step[1], step[0])          # поперёк луча
         found = None
         for skew in SKEW:
-            want = NEAR if i % 2 == 0 else FAR
+            want = OUT[i % len(OUT)]
             while want >= LEAST:
                 ex = int(pos.x + step[0] * (half + mm(want))
                          + side[0] * mm(skew))
