@@ -25,6 +25,10 @@ fp-info-cache
 *-bak
 *.kicad_sch-bak
 *.kicad_pcb-bak
+_autosave-*
+
+# Задание трассировщику — собирается из console.dsn скриптом pcb07_dsn.py
+console.route.dsn
 
 # Python
 __pycache__/
