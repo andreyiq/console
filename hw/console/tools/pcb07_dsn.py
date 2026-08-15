@@ -28,6 +28,15 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 
 Это ровно тот порядок, что принят вообще: сначала разводка, потом заливка.
 
+**Земля — не в задание вовсе.** Следующий шаг той же мысли. Заливку мы всё
+равно вернём, и она соберёт землю сама; а трассировщику земля обходится дорого
+— это треть всех связей, две сотни отрезков и половина занятого поля. Убираем
+`GND` из списка цепей: площадки при этом никуда не деваются, он их видит и
+обходит, но тянуть к ним ничего не обязан.
+
+Разница решающая: 43 связи неразведёнными вместо 114, и проходы вместо
+нескольких минут занимают секунды.
+
 **Сшивка земли — не в задание.** Заклёпки по сетке 8 мм ставит
 `pcb06_planes.py`, и в выгрузке они попадают в `wiring`. Пробовали отдать их
 трассировщику закреплёнными: сотня столбов по всему полю, и он развёл заметно
@@ -36,15 +45,19 @@ KiCad пишет `console.dsn` (File → Export → Specctra DSN; из кома�
 
 Запуск: `python3 pcb07_dsn.py`, дальше
 
-    java -jar freerouting.jar -de console.route.dsn -do console.ses
+    FREEROUTING__ROUTER__MAX_PASSES=250 java -jar freerouting.jar \
+        -de console.route.dsn -do console.ses
 
-при `{"router":{"stop_pass_no":25},"gui":{"enabled":false}}` в
-`freerouting.json` рядом. Без `stop_pass_no` он не заканчивает никогда: и
-`-mp`, и `-oit`, и `router.job_timeout` он молча пропускает мимо ушей, а файл
-пишет только по завершении.
+Число проходов задаётся **только переменной окружения** — это важно, потому
+что файл он пишет единственный раз, по окончании работы, а сам не кончает
+никогда. Ключи `-mp`, `-oit` и настройки `router.max_passes`,
+`router.stop_pass_no`, `router.job_timeout` в `freerouting.json` он молча
+пропускает мимо ушей; проверено, при лимите в 10 проходов уходил на 45-й.
 """
 import re
 from pathlib import Path
+
+import dsn
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "console.dsn"
@@ -90,6 +103,7 @@ def main():
     text = text[:vias.start()] + f'\n    (via "{VIA}")' + text[vias.end():]
 
     text, n = STITCH.subn("", text)
+    text = dsn.subset(text, {c for c in dsn.nets_of(text) if c != "GND"})
     planes = 0
     for layer in ("F.Cu", "B.Cu"):
         text, k = drop_plane(text, layer)
@@ -97,7 +111,8 @@ def main():
 
     DST.write_text(text)
     print(f"{DST.name}: зазор выхода {ESCAPE} мкм, переходная {VIA}, "
-          f"сшивки убрано {n}, заливок убрано {planes}")
+          f"сшивки убрано {n}, заливок убрано {planes}, "
+          f"цепей в задании {len(dsn.nets_of(text))}")
 
 
 if __name__ == "__main__":
