@@ -53,6 +53,15 @@ BOARD = ROOT / "console.kicad_pcb"
 # чужой. Под мерку попадают трое: F133 (шаг 0.4), разъём шлейфа дисплея
 # (0.5) и розетка USB-C (0.5). У разъёмов это 36 площадок из 41.
 CHIPS = ("U1", "J601", "J301")
+
+# Куда выводить принудительно. Разъём шлейфа по общему правилу выводится в ту
+# сторону, откуда приходит шлейф, — то есть влево. А чип справа, и вся шина
+# из 23 линий вынуждена разворачиваться вокруг его 26-миллиметрового корпуса.
+# Меди под корпусом разъёма ничего не запрещает (у `FH12` нет зон правил, в
+# отличие от лотка microSD), поэтому выводим лучи вправо, под корпус, прямо к
+# чипу. Без этого шина не разводится вовсе: пущенная первой по пустой плате,
+# она сходилась на шесть связей из тридцати шести.
+FORCED = {"J601": (1, 0)}
 WIDTH = 0.2
 OUT = (1.3, 2.1)              # насколько луч выходит за край площадки, мм
 LEAST = 0.4                   # короче — не имеет смысла, лучше отдать как есть
@@ -155,6 +164,19 @@ def main():
     pads = []
     for chip in parts:
         cx, cy = chip.GetPosition().x, chip.GetPosition().y
+        # Куда «наружу». У корпуса с четырьмя сторонами — от середины, у
+        # однорядного разъёма — поперёк ряда. Разница не косметическая: у
+        # крайних площадок ряда «от середины» указывает ВДОЛЬ него, прямо в
+        # соседа, луч упирается и не ставится вовсе. Так у разъёма шлейфа без
+        # вывода осталось восемнадцать площадок — вся шина дисплея.
+        xs = [p.GetPosition().x for p in chip.Pads()]
+        ys = [p.GetPosition().y for p in chip.Pads()]
+        span_x, span_y = max(xs) - min(xs), max(ys) - min(ys)
+        row = None
+        if span_x > 3 * span_y:
+            row = "x"                      # ряд идёт по X, наружу — по Y
+        elif span_y > 3 * span_x:
+            row = "y"
         for p in chip.Pads():
             net = p.GetNetname()
             bb = p.GetBoundingBox()
@@ -162,7 +184,7 @@ def main():
                 continue                  # термопад, ему лучи не нужны
             if not net or net == "GND" or net.startswith("unconnected-"):
                 continue
-            pads.append((p, cx, cy))
+            pads.append((p, cx, cy, row))
 
     boxes = obstacles(board, set(CHIPS))
     dropped = clear(board)
@@ -170,14 +192,18 @@ def main():
     laid = short = 0
     laid_segs = []
     pads.sort(key=lambda q: (q[0].GetPosition().x, q[0].GetPosition().y))
-    for i, (p, cx, cy) in enumerate(pads):
+    for i, (p, cx, cy, row) in enumerate(pads):
         pos = p.GetPosition()
         dx, dy = pos.x - cx, pos.y - cy
         bb = p.GetBoundingBox()
-        # Наружу — от середины корпуса. Сторону берём по расстоянию, а не по
-        # размеру площадки: `GetSize` отдаёт размер до поворота, и у боковых
-        # рядов луч от него уходил поперёк, ложась на соседние площадки.
-        if abs(dy) >= abs(dx):
+        # Сторону берём по расстоянию, а не по размеру площадки: `GetSize`
+        # отдаёт размер до поворота, и у боковых рядов луч от него уходил
+        # поперёк, ложась на соседние площадки.
+        forced = FORCED.get(p.GetParentFootprint().GetReference())
+        if forced:
+            step = forced
+            half = (bb.GetWidth() if forced[0] else bb.GetHeight()) / 2
+        elif row == "x" or (row is None and abs(dy) >= abs(dx)):
             step = (0, 1 if dy > 0 else -1)
             half = bb.GetHeight() / 2
         else:

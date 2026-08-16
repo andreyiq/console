@@ -419,7 +419,7 @@ def main():
     # `Remove` ломает контейнеры. Поэтому один проход: собрали, почистили,
     # разложили.
     wanted = set(sys.argv[1:])
-    pads, vias, by_net = [], [], {}
+    pads, vias, by_net, pad_at = [], [], {}, {}
     for f in board.GetFootprints():
         for p in f.Pads():
             code = p.GetNetCode()
@@ -430,6 +430,8 @@ def main():
             pos = p.GetPosition()
             by_net.setdefault((code, name), []).append(
                 (pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
+            pad_at[(code, round(pcbnew.ToMM(pos.x) - OX, 2),
+                    round(pcbnew.ToMM(pos.y) - OY, 2))] = (code, name)
     wires, mine, edges = [], [], {}
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
@@ -477,6 +479,27 @@ def main():
     # прогон падал ровно на этом, уже проложив половину дорожек.
     netobj = {name: board.FindNet(name) for _, name in by_net}
     codeobj = {code: netobj[name] for code, name in by_net}
+
+    # Целиться надо в КОНЕЦ ЛУЧА, а не в площадку. Площадки мелкого шага
+    # замурованы соседями — к ним не подойти, для того лучи и выведены
+    # (`pcb07_fanout.py`). Пока цель оставалась площадкой, лучи не помогали
+    # вовсе: шина дисплея, пущенная первой по пустой плате, разводилась на
+    # шесть связей из тридцати шести.
+    moved = 0
+    for code, x1, y1, x2, y2, L, w in wires:
+        key = (code, round(x1, 2), round(y1, 2))
+        if key not in pad_at:
+            continue
+        pts = by_net.get(pad_at[key])
+        if pts is None:
+            continue
+        for i, q in enumerate(pts):
+            if abs(q[0] - x1) < 0.01 and abs(q[1] - y1) < 0.01:
+                pts[i] = (x2, y2)
+                moved += 1
+                break
+    if moved:
+        print(f"  целей перенесено на концы лучей: {moved}")
 
     for t in mine:
         board.RemoveNative(t)

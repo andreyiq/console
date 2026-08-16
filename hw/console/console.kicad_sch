@@ -19146,53 +19146,53 @@
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "9f414a50-6761-533e-a3b0-5412c2207754")
 	)
-	(global_label "LCD-DB0"
+	(global_label "LCD-DB7"
 		(shape bidirectional)
 		(at 541.02 278.13 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4a8dc8e8-bd3f-58bc-824b-a505bcf92100")
-	)
-	(global_label "LCD-DB1"
-		(shape bidirectional)
-		(at 541.02 280.67 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "025ee0e2-083d-5c67-af80-d8168cce2799")
-	)
-	(global_label "LCD-DB2"
-		(shape bidirectional)
-		(at 541.02 283.21 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "600249e9-07c9-5316-a672-826b902f1f37")
-	)
-	(global_label "LCD-DB3"
-		(shape bidirectional)
-		(at 541.02 285.75 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "a6ba51fa-ca5c-5d58-baf3-768421e4d4b5")
-	)
-	(global_label "LCD-DB4"
-		(shape bidirectional)
-		(at 541.02 288.29 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "774fdb28-c935-5b95-99e1-0e07705d7c1f")
-	)
-	(global_label "LCD-DB5"
-		(shape bidirectional)
-		(at 541.02 290.83 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2dd87292-a084-5941-b5c8-a03221adc96b")
+		(uuid "6863a6e9-90fd-567b-bf13-33486d387b39")
 	)
 	(global_label "LCD-DB6"
 		(shape bidirectional)
+		(at 541.02 280.67 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "62f677f1-b974-587a-b46b-f7a442d2cb96")
+	)
+	(global_label "LCD-DB5"
+		(shape bidirectional)
+		(at 541.02 283.21 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "98a37d8a-718a-570b-927c-aae8418fa0af")
+	)
+	(global_label "LCD-DB4"
+		(shape bidirectional)
+		(at 541.02 285.75 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "29611685-590a-59ee-a2dc-d1e33b699a9d")
+	)
+	(global_label "LCD-DB3"
+		(shape bidirectional)
+		(at 541.02 288.29 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "8a6a9271-dd9b-5670-9957-a47740512dc7")
+	)
+	(global_label "LCD-DB2"
+		(shape bidirectional)
+		(at 541.02 290.83 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "77a57e22-0c73-54be-81e1-5269adbd6ac8")
+	)
+	(global_label "LCD-DB1"
+		(shape bidirectional)
 		(at 541.02 293.37 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "1d5c1598-97b0-5d50-94f4-d936b8bdb5e6")
+		(uuid "c908c98f-80f4-5cc1-9b3a-53f354ae7108")
 	)
-	(global_label "LCD-DB7"
+	(global_label "LCD-DB0"
 		(shape bidirectional)
 		(at 541.02 295.91 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ba02aa82-43dc-5050-9996-f2ae21e5d1ad")
+		(uuid "3406875c-cb77-51ba-8659-ce896756c74c")
 	)
 	(global_label "LCD-DB8"
 		(shape bidirectional)
@@ -19206,17 +19206,17 @@
 		(effects (font (size 1.27 1.27)) (justify right))
 		(uuid "7c3d63b3-1880-534d-9777-288c443ba0a9")
 	)
-	(global_label "LCD-DB10"
+	(global_label "LCD-DB11"
 		(shape bidirectional)
 		(at 541.02 303.53 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4fecb706-7306-5b0c-9e7e-52ca92751aa6")
+		(uuid "8e56a980-fbd6-5016-ad2c-c66ae2112dc2")
 	)
-	(global_label "LCD-DB11"
+	(global_label "LCD-DB10"
 		(shape bidirectional)
 		(at 541.02 306.07 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "e4df2385-087a-5660-a260-d0bb2f796977")
+		(uuid "032c12cc-96ae-5e17-b90f-9d54b4612ff1")
 	)
 	(global_label "LCD-DB12"
 		(shape bidirectional)

@@ -160,10 +160,28 @@ def ring(board):
     j601 = board.FindFootprintByReference("J601")
     j601.BuildCourtyardCaches()
     jb = j601.GetCourtyard(pcbnew.F_CrtYd).BBox()
-    keep = (pcbnew.ToMM(jb.GetLeft()) - OX - 0.4,
-            pcbnew.ToMM(jb.GetTop()) - OY - 0.4,
-            pcbnew.ToMM(jb.GetRight()) - OX + 0.4,
-            pcbnew.ToMM(jb.GetBottom()) - OY + 0.4)
+    keeps = [(pcbnew.ToMM(jb.GetLeft()) - OX - 0.4,
+              pcbnew.ToMM(jb.GetTop()) - OY - 0.4,
+              pcbnew.ToMM(jb.GetRight()) - OX + 0.4,
+              pcbnew.ToMM(jb.GetBottom()) - OY + 0.4)]
+
+    # Коридор для шины дисплея. 23 линии выходят у чипа лентой вдоль верхней
+    # четверти левого бока, и им надо пройти к разъёму — а кольцо развязки
+    # стоит там сплошной стеной в два столбца. Оставляем в нём горизонтальную
+    # щель ровно в полосе этих выводов: конденсаторы, которым выпало это
+    # место, сдвигаются вдоль бока вверх или вниз, на два-три миллиметра, а не
+    # уезжают за угол. Без щели шина не проходит вовсе: разрывы стоят ровно
+    # между лучом у разъёма и лучом у чипа.
+    ys = [pcbnew.ToMM(p.GetPosition().y) - OY for p in u1.Pads()
+          if p.GetNetname().startswith("LCD")
+          and pcbnew.ToMM(p.GetPosition().x) - OX < cx]
+    if ys:
+        # Ширина коридора — по числу линий, а не по полосе выводов: 23 линии
+        # при шаге 0.4 требуют 9.2 мм, полоса выводов даёт всего 5.8.
+        need = 0.4 * len(ys) + 1.6
+        mid = (min(ys) + max(ys)) / 2
+        keeps.append((pcbnew.ToMM(jb.GetRight()) - OX, mid - need / 2,
+                      cx - 8.0, mid + need / 2))
 
     # сторона вывода и оси: n — наружу, t — вдоль стороны
     def side(pin):
@@ -217,27 +235,42 @@ def ring(board):
                 tc = lo + along / 2
                 rc = half + radial / 2 + k * (radial + GAP)
                 qx, qy = (cx + nx * rc, tc) if vertical else (tc, cy + ny * rc)
-                bad = (keep[0] < qx + w / 2 and qx - w / 2 < keep[2]
-                       and keep[1] < qy + h / 2 and qy - h / 2 < keep[3])
+                bad = any(k[0] < qx + w / 2 and qx - w / 2 < k[2]
+                          and k[1] < qy + h / 2 and qy - h / 2 < k[3]
+                          for k in keeps)
                 return tc, qx, qy, bad
 
             # Ряд выбираем сразу с оглядкой на разъём шлейфа: если место в этом
             # ряду занято им, ряд не годится вовсе. Двигать деталь после
             # выбора нельзя — учёт занятого вдоль ряда остаётся от прежнего
             # места, и соседи садятся друг на друга.
-            for k in range(MAX_ROWS):
-                if k == len(rows):
-                    rows.append(-1e9)
-                if rows[k] + GAP <= lo and not spot(k, lo)[3]:
+            # Ищем место: сперва в своём ряду на своём уровне, потом в
+            # следующем ряду, потом сдвигаясь ВДОЛЬ бока — по полмиллиметра в
+            # обе стороны. Сдвиг вдоль дешевле сдвига наружу: деталь остаётся
+            # на том же расстоянии от корпуса, только чуть в стороне от своего
+            # вывода. И он же единственный способ уступить коридор шине: если
+            # коридор просто игнорировать, конденсатор садится в него обратно.
+            found = None
+            # Сдвиг вдоль бока ищем дальше, чем ширина коридора: иначе
+            # деталь не находит места вовсе и садится в коридор обратно, по
+            # запасному пути.
+            for shift in [0.0] + [s * d for s in
+                                  (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0,
+                                   6.0, 7.0, 8.0, 9.0, 10.0)
+                                  for d in (1, -1)]:
+                want = lo0 + shift
+                for k in range(MAX_ROWS):
+                    if k == len(rows):
+                        rows.append(-1e9)
+                    if rows[k] + GAP <= want and not spot(k, want)[3]:
+                        found = (k, want)
+                        break
+                if found:
                     break
-            else:
-                # у пустого ряда счётчик −1e9, начало интервала берём желаемое
-                def start(i):
-                    return max(rows[i] + GAP, lo0)
-
-                free = [i for i in range(len(rows)) if not spot(i, start(i))[3]]
-                k = min(free or range(len(rows)), key=lambda i: rows[i])
-                lo = start(k)
+            if found is None:
+                k = min(range(len(rows)), key=lambda i: rows[i])
+                found = (k, max(rows[k] + GAP, lo0))
+            k, lo = found
             t, px, py, _ = spot(k, lo)
             rows[k] = lo + along
             put(board, ref, px, py, rot)
