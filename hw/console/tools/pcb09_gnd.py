@@ -24,8 +24,9 @@ import pcbnew
 ROOT = Path(__file__).resolve().parent.parent
 BOARD = ROOT / "console.kicad_pcb"
 
-VIA_PAD, VIA_DRILL = 0.9, 0.5
-KEEP = 0.75                     # на сколько отходить от чужой меди
+VIA_PAD, VIA_DRILL = 0.7, 0.4   # как в разводке, 10-mech.md §7
+KEEP = 0.6                      # медь 0.35 плюс зазор 0.2 и запас
+STEP, RINGS = 0.4, 6            # на сколько и как далеко искать место рядом
 
 
 def mm(v):
@@ -69,15 +70,37 @@ def main():
             pos = t.GetPosition()
             have.append((pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y)))
 
-    added = skipped = 0
-    for x, y in drc_points():
+    def free(x, y):
         if any(x1 - KEEP < x < x2 + KEEP and y1 - KEEP < y < y2 + KEEP
                for x1, y1, x2, y2 in busy):
+            return False
+        return not any((x - vx) ** 2 + (y - vy) ** 2 < 1.2 ** 2
+                       for vx, vy in have)
+
+    added = skipped = 0
+    for x0, y0 in drc_points():
+        # Ищем место не только в самой точке разрыва: DRC называет середину
+        # куска меди, а она нередко стоит впритык к чужой площадке. Обходим
+        # кольцами вокруг — заклёпке всё равно, где стоять, лишь бы попасть в
+        # тот же кусок.
+        spot = None
+        for r in range(RINGS + 1):
+            for dx in range(-r, r + 1):
+                for dy in range(-r, r + 1):
+                    if max(abs(dx), abs(dy)) != r:
+                        continue
+                    x, y = x0 + dx * STEP, y0 + dy * STEP
+                    if free(x, y):
+                        spot = (x, y)
+                        break
+                if spot:
+                    break
+            if spot:
+                break
+        if spot is None:
             skipped += 1
             continue
-        if any((x - vx) ** 2 + (y - vy) ** 2 < 1.2 ** 2 for vx, vy in have):
-            skipped += 1
-            continue
+        x, y = spot
         v = pcbnew.PCB_VIA(board)
         v.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
         v.SetWidth(mm(VIA_PAD))

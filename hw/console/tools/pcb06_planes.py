@@ -80,7 +80,12 @@ def wipe(board):
     # списки собираем до первого удаления, а удаляем через `RemoveNative`:
     # обычный `Remove` отдаёт объект питону и ломает всё, что создаётся после —
     # `ZONE.Outline()` начинает возвращать сырой SwigPyObject (10-mech.md §8.2)
-    zones = [z for z in board.Zones() if z.GetNetname() == "GND"]
+    # Снимаем ВСЕ свои медные заливки, а не перечисленные по имени: список
+    # рельс менялся, и заливки от прошлой пробы оставались на плате молча —
+    # плата показывала 170 разрывов вместо 140, и я искал причину в чём угодно,
+    # кроме мусора от собственного прошлого прогона. Зоны правил (запреты под
+    # лотком карты) не наши, их не трогаем.
+    zones = [z for z in board.Zones() if not z.GetIsRuleArea()]
     stitch = [t for t in board.GetTracks()
               if isinstance(t, pcbnew.PCB_VIA) and t.GetNetname() == "GND"
               and t.IsLocked()]
@@ -97,10 +102,98 @@ def plane(board, layer, net, inset):
     z.SetLocalClearance(mm(0.25))
     z.SetMinThickness(mm(0.15))
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)   # без термобарьеров: паяем феном
+    # Островки НЕ удаляем, хотя соблазн есть: обрезки заливки DRC считает
+    # разрывами, и «удалять несоединённые» кажется чистой уборкой. Померено —
+    # разрывов по земле становится 53 вместо шести: KiCad вырезает и те куски,
+    # что держались на сшивочных заклёпках, а на них у нас держится земля всех
+    # деталей лица.
     poly = z.Outline()
     poly.NewOutline()
     for x, y in board_outline(inset):
         poly.Append(mm(OX + x), mm(OY + y))
+    board.Add(z)
+    return z
+
+
+# Островки питания ПРОБОВАЛИ И ОТКАЗАЛИСЬ. Мысль верная и обычная для
+# двухслойки: питание не тянут дорожками, его заливают. Померено: девять
+# островков дали питанию 18 связей (+3V3 с 11 разрывов до 4, +0V9 до нуля) — и
+# стоили земле 46. Даже два островка на одной компактной рельсе стоили 56.
+#
+# Причина в том, что у нас заливка земли НЕСУЩАЯ: все детали на лице, и
+# земляной вывод каждой из них держится только ею. Островок питания режет её
+# на куски, а к куску надо ставить заклёпку — вручную, с двух сторон. Размен
+# получается не в нашу пользу.
+#
+# Оставить пустым, чтобы вернуться к этому осознанно.
+RAILS = ()
+RAIL_NEAR = 11.0               # на каком расстоянии площадки считаем кучкой
+RAIL_MIN = 3                   # кучка меньше трёх островка не стоит
+RAIL_PAD = 1.2                 # насколько островок выходит за края кучки
+
+
+def islands(board, net, refs):
+    """Кучки площадок цепи: прямоугольники, которые стоит залить.
+
+    На двухслойной плате питание не тянут дорожками — его заливают. У `+3V3`
+    тридцать восемь площадок, у `+1V8` шестнадцать: провести к каждой отдельную
+    дорожку значит занять полплаты, и как раз питание у нас и не сходилось —
+    35 разрывов из 140. Островок соединяет всю кучку разом и ничего не стоит:
+    меди на плате и так полно, вопрос только чьей она будет.
+
+    Кучки собираем связыванием: две площадки в одной, если между ними меньше
+    `RAIL_NEAR`. Одиночек не заливаем — им дешевле дорожка.
+    """
+    pts = []
+    for f in board.GetFootprints():
+        for p in f.Pads():
+            if p.GetNetname() == net:
+                q = p.GetPosition()
+                pts.append((pcbnew.ToMM(q.x), pcbnew.ToMM(q.y)))
+    root = list(range(len(pts)))
+
+    def find(a):
+        while root[a] != a:
+            root[a] = root[root[a]]
+            a = root[a]
+        return a
+
+    for i in range(len(pts)):
+        for j in range(i + 1, len(pts)):
+            if ((pts[i][0] - pts[j][0]) ** 2
+                    + (pts[i][1] - pts[j][1]) ** 2) ** 0.5 < RAIL_NEAR:
+                ri, rj = find(i), find(j)
+                if ri != rj:
+                    root[ri] = rj
+    groups = {}
+    for i in range(len(pts)):
+        groups.setdefault(find(i), []).append(pts[i])
+    out = []
+    for g in groups.values():
+        if len(g) < RAIL_MIN:
+            continue
+        xs = [q[0] for q in g]
+        ys = [q[1] for q in g]
+        out.append((min(xs) - RAIL_PAD, min(ys) - RAIL_PAD,
+                    max(xs) + RAIL_PAD, max(ys) + RAIL_PAD))
+    return out
+
+
+def island(board, net, box, layer=pcbnew.F_Cu):
+    """Прямоугольная заливка рельсы. Приоритет выше земли — земля отступит."""
+    z = pcbnew.ZONE(board)
+    z.SetLayer(layer)
+    z.SetNet(net)
+    z.SetIsFilled(False)
+    z.SetLocalClearance(mm(0.25))
+    z.SetMinThickness(mm(0.15))
+    z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+    z.SetAssignedPriority(10)
+    poly = z.Outline()
+    poly.NewOutline()
+    x1, y1, x2, y2 = box
+    for x, y in ((x1, y1), (x2, y1), (x2, y2), (x1, y2)):
+        poly.Append(mm(x), mm(y))
     board.Add(z)
     return z
 
@@ -184,6 +277,15 @@ def main():
     plane(board, pcbnew.B_Cu, gnd, EDGE)
     plane(board, pcbnew.F_Cu, gnd, EDGE)
 
+    n_isl = 0
+    for name in RAILS:
+        net = board.FindNet(name)
+        if net is None:
+            continue
+        for box in islands(board, name, None):
+            island(board, net, box)
+            n_isl += 1
+
     # сшивка термопада — под корпусом, до посадки чипа (10-mech.md §7)
     n_epad = 0
     for dx, dy in EPAD_GRID:
@@ -212,6 +314,7 @@ def main():
     print(f"  полигон GND: изнанка сплошная, лицо заливкой")
     print(f"  переходных под термопадом: {n_epad}")
     print(f"  переходных сшивки по полю: {n_grid}")
+    print(f"  островков питания: {n_isl}")
 
 
 if __name__ == "__main__":
