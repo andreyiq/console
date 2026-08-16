@@ -83,15 +83,23 @@ ZONES = [
     # Хранение — под самой картой, справа от корпуса: банк `PF`/`PC` выходит
     # у развёрнутого F133 вправо, а `J401` теперь стоит на верхнем торце
     # справа (§5.1). Разъём занимает x 124…140, y 0…17.8 — зона ниже него.
-    ("хранение",    4, None,                     126.0, 18.5, 148.0, 31.0),
+    ("хранение",    4, None,                     124.0, 20.0, 148.0, 46.0),
     ("такт",        7, None,                     112.0, 49.0, 128.0, 60.0),
     # Отладка — под своим разъёмом, левее его: `J901` занимает x 98.2…101.8,
     # y 0…11.2.
     ("отладка",     9, None,                      78.0, 11.5, 91.0, 17.5),
-        # Между корпусом и разъёмом шлейфа, а не левее его: в блоке есть
+    # Между корпусом и разъёмом шлейфа, а не левее его: в блоке есть
     # последовательные резисторы, стоящие прямо в линиях. Стой они слева от
     # `J601`, сигнал шёл бы от чипа мимо разъёма к резистору и обратно.
-    ("дисплей",     6, None,                      60.0, 12.0,  71.0, 44.0),
+    #
+    # Зона стояла на x 60…71, y 12…44 и налезла на сам разъём, когда тот
+    # переехал на ось хвоста панели: `R609` село прямо на площадки 1…4 `J601`.
+    # Теперь зона ПОД коридором шины — по x всё так же между корпусом и
+    # разъёмом, но ниже полосы, которую держит `pcb04_fine.py`. Крюк у
+    # последовательных резисторов остаётся вертикальный, порядка десяти
+    # миллиметров (06-display.md §7.9.1), и это дешевле, чем гнать сигнал в
+    # обход корпуса разъёма.
+    ("дисплей",     6, None,                      52.0, 12.0,  65.5, 42.0),
     ("звук",        5, None,                      38.0, 44.0,  58.0, 62.0),
     ("развязка",    8, None,                      60.0, 46.0,  71.0, 60.0),
 ]
@@ -155,11 +163,17 @@ def to_front(fp):
     fp.SetOrientationDegrees(0)
 
 
-def pack(board, refs, x1, y1, x2, y2):
+def pack(board, refs, x1, y1, x2, y2, blocked=()):
     """Разложить рядами слева направо, перенося строку по краю зоны.
 
     Возвращает список тех, кто не влез, — чтобы это было видно, а не молча
     оказалось друг на друге.
+
+    `blocked` — прямоугольники уже стоящей механики. Раскладка их не знала
+    вовсе: зоны рисовались руками так, чтобы обойти разъёмы, и это держалось
+    ровно до первого переезда. Разъём шлейфа сдвинули на ось хвоста панели —
+    и `R609` легло прямо на его площадки 1…4, четыре замыкания в DRC. Зона —
+    это про то, ГДЕ живёт блок, а не про то, что там пусто.
     """
     # Полочная упаковка: сначала высокие, потом мелочь. Иначе первый же ряд
     # задаёт высоту по самой рослой детали и половина зоны уходит в воздух.
@@ -175,8 +189,17 @@ def pack(board, refs, x1, y1, x2, y2):
     cx, cy, row_h, left = x1, y1, 0.0, [r for r in refs
                                         if board.FindFootprintByReference(r) is None]
     for ref, fp, w, h in items:
-        if cx + w > x2:                       # перенос строки
-            cx, cy, row_h = x1, cy + row_h + GAP, 0.0
+        while True:
+            if cx + w > x2:                   # перенос строки
+                cx, cy, row_h = x1, cy + row_h + GAP, 0.0
+            if cy + h > y2:
+                break
+            hit = [b for b in blocked
+                   if not (cx + w <= b[0] or cx >= b[2]
+                           or cy + h <= b[1] or cy >= b[3])]
+            if not hit:
+                break
+            cx = max(b[2] for b in hit) + GAP   # обходим механику вправо
         if cy + h > y2:
             left.append(ref)
             continue
@@ -223,6 +246,22 @@ def main():
         fp.SetPosition(pcbnew.VECTOR2I(mm(OX + x), mm(OY + y)))
         fp.SetOrientationDegrees(rot)
 
+    # Прямоугольники уже стоящей механики — их раскладка обходит.
+    for f in board.GetFootprints():
+        f.BuildCourtyardCaches()
+    blocked = []
+    for f in board.GetFootprints():
+        if f.GetReference() not in placed:
+            continue
+        cy_ = f.GetCourtyard(pcbnew.F_CrtYd)
+        if not cy_.OutlineCount():
+            continue
+        bb = cy_.BBox()
+        blocked.append((pcbnew.ToMM(bb.GetLeft()) - OX - GAP,
+                        pcbnew.ToMM(bb.GetTop()) - OY - GAP,
+                        pcbnew.ToMM(bb.GetRight()) - OX + GAP,
+                        pcbnew.ToMM(bb.GetBottom()) - OY + GAP))
+
     left_over, done = [], 0
     used = set()
     for name, n, sel, x1, y1, x2, y2 in ZONES:
@@ -230,7 +269,7 @@ def main():
                       if b == n and r not in placed and r not in used
                       and (sel is None or sel(r)))
         used |= set(refs)
-        miss = pack(board, refs, x1, y1, x2, y2)
+        miss = pack(board, refs, x1, y1, x2, y2, blocked)
         left_over += [(name, m) for m in miss]
         done += len(refs) - len(miss)
         print("  %-12s %2d деталей в (%.0f,%.0f)…(%.0f,%.0f)%s"

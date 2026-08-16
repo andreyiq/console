@@ -48,10 +48,16 @@ FP = {
     # зазор a = 1.5 — совпадает с футпринтом KiCad до десятой.
     "Device:L": "Inductor_SMD:L_Sunlord_SWPA3015S",
     "Connector:TestPoint": "TestPoint:TestPoint_Pad_D1.5mm",
+    # Гребёнки УГЛОВЫЕ, а не вертикальные. Все три — `J1` банка, `J501`
+    # динамик, `J901` UART — стоят на нижнем торце платы (10-mech.md §5), и
+    # смысл у них один: провод наружу. У вертикальной провод пошёл бы вверх,
+    # под стекло, где просвет 2.0 мм, а сама гребёнка торчит на 8.5.
+    # Стояли вертикальные — схема противоречила механике, и никто не замечал,
+    # потому что высоту считали только для деталей под панелью.
     "Connector:Conn_01x02_Pin":
-        "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+        "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal",
     "Connector:Conn_01x04_Pin":
-        "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical",
+        "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal",
 }
 
 
