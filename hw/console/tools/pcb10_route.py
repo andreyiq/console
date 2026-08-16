@@ -46,6 +46,29 @@ CLEAR = 0.2                     # зазор
 EDGE = 0.5                      # отступ меди от реза
 PAD = int(math.ceil((TRACK / 2 + CLEAR) / STEP))     # раздутие препятствий
 
+
+def track_pad(w):
+    """Сколько клеток вокруг оси дорожки закрыть для чужих осей.
+
+    Считать это тем же раздутием, что у площадки, — ошибка, и дорогая. У
+    площадки раздувается **край**: от края до чужой оси нужно зазор плюс
+    полдорожки, 0.3 мм, то есть две клетки. У дорожки же раздувается **ось**, и
+    от оси до оси нужно полдорожки плюс зазор плюс полдорожки — 0.4 мм ровно,
+    две клетки. А «закрыто две клетки» означает, что чужая ось встанет только
+    на третьей: 0.6 мм.
+
+    Ошибка в одну клетку, но шина дисплея идёт с шагом 0.4 — ровно с
+    минимальным, — и полуторный шаг убивал её насмерть. Померено на пустой
+    плате, где мешать некому: с прежней моделью проходили 4 линии данных из 16,
+    и проходили через одну.
+
+    Отсюда правило: чужая ось разрешена начиная с `ceil(D / STEP)` клеток, где
+    `D` — минимальное расстояние между осями. Закрываем на одну меньше.
+    """
+    d = w / 2 + CLEAR + TRACK / 2
+    return max(0, int(math.ceil(d / STEP)) - 1)
+
+
 NX = int(BOARD_W / STEP) + 1
 NY = int(BOARD_H / STEP) + 1
 
@@ -86,6 +109,44 @@ VIA_PAD_CELLS = 4               # 0.9 мм площадка плюс зазор
 # и отдавать им остатки коридоров нельзя.
 CRITICAL = {"USB0-DP", "USB0-DM", "DXIN", "DXOUT", "X32KIN", "X32KOUT",
             "RESET", "AVCC", "AGND", "VRA1", "VRA2"}
+
+# Ленты: цепи, которые идут пучком и которые надо класть подряд и по порядку
+# обхода, а не вперемешку по длине.
+#
+# Обычная очередь «от коротких к длинным» для пучка не годится: у шестнадцати
+# линий шины длины почти равны, порядок между ними получается случайный, и
+# каждая следующая ищет себе место в уже наполовину занятом коридоре, вместо
+# того чтобы лечь вплотную к предыдущей. Кладём с самой дальней — той, которой
+# дальше всех огибать угол корпуса, — и дальше внутрь: тогда каждая следующая
+# просто прижимается к соседке.
+#
+# Порядок здесь — тот же порядок обхода, по которому выбраны номера бит
+# (06-display.md, `block06_display.py`). Если он поедет там, он должен поехать
+# и здесь.
+RIBBON = (
+    tuple(f"LCD-DB{i}" for i in range(8))
+    + ("LCD-DB8", "LCD-DB9", "LCD-DB11", "LCD-DB10")
+    + tuple(f"LCD-DB{i}" for i in range(12, 16)),
+)
+RANK = {n: (b, i) for b, names in enumerate(RIBBON)
+        for i, n in enumerate(names)}
+
+# Закреплённые коридоры: (левый, верхний, правый, нижний, за кем закреплён).
+#
+# Между разъёмом шлейфа и корпусом чипа остаётся просвет 9 × 11 мм, и через
+# него должны пройти двадцать три линии шины дисплея — другого пути у них нет,
+# слева разъём, справа корпус, сверху и снизу кольцо развязки. Померено: без
+# брони в этот просвет заходит питание — `+3V3`, `+1V8`, `+0V9`, `AVCC`,
+# `VCC-TVOUT`, на обоих слоях, плюс три переходных, — и шина протискивается
+# четырьмя линиями данных из шестнадцати.
+#
+# Это тот случай, когда «кто раньше» — неправильный вопрос. У рельсы питания
+# запретов нет: она обойдёт просвет поверху или понизу и потеряет миллиметры.
+# У шины обхода не существует. Поэтому просвет не разыгрывается очередью, а
+# закрепляется: чужой цепи вход в него стоит столько, что она пойдёт кругом,
+# если круг вообще есть, и пройдёт напрямую, если его нет.
+RESERVED = ((80.4, 24.8, 89.5, 36.2, "LCD"),)
+TOLL = 400.0                    # цена входа в чужой коридор, в клетках пути
 
 # Потолок раскрытых узлов на одну связь. Без него безнадёжная связь съедает
 # минуты, перебирая всю окрестность; с ним она честно объявляется неразведённой
@@ -236,10 +297,11 @@ def build(board, pads, vias, keepouts, wires=()):
         # freerouting. Идём по отрезку с шагом в клетку — габаритный
         # прямоугольник у косой дорожки захватывает вчетверо больше места.
         n = max(1, int(math.dist((x1, y1), (x2, y2)) / STEP))
+        tp = track_pad(w)
         for k in range(n + 1):
             x = x1 + (x2 - x1) * k / n
             y = y1 + (y2 - y1) * k / n
-            g.fill_box(x - w / 2, y - w / 2, x + w / 2, y + w / 2, code, layer=L)
+            g.fill_box(x, y, x, y, code, layer=L, pad=tp)
             g.add_copper(*to_cell(x, y), L, code)
     return g
 
@@ -270,13 +332,17 @@ def components(edge_list):
     return {c: find(c) for c in root}, out
 
 
-def route(g, starts, goals, net, margin=60):
+def route(g, starts, goals, net, margin=60, toll=()):
     """A* от множества стартов к множеству целей. Возвращает путь `(i, j, слой)`.
 
     Поиск ограничен прямоугольником вокруг концов, раздутым на `margin` клеток.
     Без ограничения волна расходится по всей плате, и одна длинная связь
     считается дольше, чем вся остальная разводка вместе взятая. А обход в
     двенадцать миллиметров — это уже не «обошёл препятствие», это «пути нет».
+
+    `toll` — чужие коридоры в клетках, `(i1, j1, i2, j2)`. Платится один раз,
+    на входе, а не за каждую клетку внутри: нам всё равно, сколько цепь пройдёт
+    по чужому коридору, важно только, что она его пересекла.
     """
     goal = set(goals)
     if not starts or not goal:
@@ -291,6 +357,9 @@ def route(g, starts, goals, net, margin=60):
     def h(i, j):
         dx, dy = abs(i - gx), abs(j - gy)
         return (dx + dy) + (1.4142 - 2) * min(dx, dy)
+
+    def inside(i, j):
+        return any(a <= i <= c and b <= j <= d for a, b, c, d in toll)
 
     # Направление входа в состояние НЕ входит: с ним одна и та же клетка
     # снимается до девяти раз, и `can_via` — самая дорогая проверка поиска —
@@ -325,6 +394,8 @@ def route(g, starts, goals, net, margin=60):
             if not g.free(ni, nj, L, net):
                 continue
             nc = cost + w * (BACK_COST if L else 1.0) + (TURN if d != -1 and k != d else 0.0)
+            if toll and inside(ni, nj) and not inside(i, j):
+                nc += TOLL
             key = (ni, nj, L)
             if key in best and best[key] <= nc:
                 continue
@@ -335,7 +406,10 @@ def route(g, starts, goals, net, margin=60):
         if ok is None:
             ok = via_ok[(i, j)] = g.can_via(i, j, net)
         if ok:
-            nc = cost + VIA_COST
+            # Переходная в чужом коридоре платит отдельно, даже если цепь уже
+            # внутри и за вход заплатила: она съедает 1.1 мм поперёк, то есть
+            # почти три линии шины — дороже, чем просто пройти насквозь.
+            nc = cost + VIA_COST + (TOLL if toll and inside(i, j) else 0.0)
             key = (i, j, 1 - L)
             if not (key in best and best[key] <= nc):
                 best[key] = nc
@@ -533,11 +607,27 @@ def main():
         laid = []
         done = fail = nvias = 0
         failed = []
-        ordered = sorted(tasks, key=lambda tk: (
-            0 if tk[2] in CRITICAL else (1 if tk[2] in order_bonus else 2), tk[0]))
+        # Три яруса: критичные, ленты, все остальные. Внутри ленты порядок —
+        # по обходу, внутри остальных — по длине связи. Ярус «не хватило
+        # коридора в прошлом проходе» вклинивается перед общей толпой, но
+        # ленту не разрывает: пучок, положенный вразбивку, дороже любой
+        # отдельной цепи, которой не повезло.
+        def key(tk):
+            name, span = tk[2], tk[0]
+            if name in CRITICAL:
+                return (0, 0, 0.0)
+            if name in RANK:
+                b, i = RANK[name]
+                return (1, b, -i)
+            return (2, 0 if name in order_bonus else 1, span)
+
+        ordered = sorted(tasks, key=key)
         for span, code, name, pts in ordered:
             net = netobj[name]
             width = POWER_TRACK if name in POWER else TRACK
+            toll = tuple(to_cell(a, b) + to_cell(c, d)
+                         for a, b, c, d, who in RESERVED
+                         if not name.startswith(who))
             cells = [to_cell(*q) for q in pts]
             g.copper.setdefault(code, set())
             rest = list(range(1, len(pts)))
@@ -563,13 +653,15 @@ def main():
                     connected.add(r)
                     done += 1
                     continue
-                path = route(g, sorted(own), [cells[r]], code, margin=60)
+                path = route(g, sorted(own), [cells[r]], code, margin=60,
+                             toll=toll)
                 if path:
                     nvias += lay_rec(laid, path, width, code)
                     prev_L = None
                     for i, j, L in path:
                         x, y = to_mm(i, j)
-                        g.fill_box(x, y, x, y, code, layer=L)
+                        g.fill_box(x, y, x, y, code, layer=L,
+                                   pad=track_pad(width))
                         g.add_copper(i, j, L, code)
                         own.add((i, j))
                         if prev_L is not None and L != prev_L:
