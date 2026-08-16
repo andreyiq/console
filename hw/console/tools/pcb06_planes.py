@@ -86,9 +86,15 @@ def wipe(board):
     # кроме мусора от собственного прошлого прогона. Зоны правил (запреты под
     # лотком карты) не наши, их не трогаем.
     zones = [z for z in board.Zones() if not z.GetIsRuleArea()]
+    # Снимаем ВСЕ переходные земли, а не только помеченные замком. Замок был
+    # меткой «эта заклёпка наша», и на ней скрипт спотыкался: `pcb09_gnd.py`
+    # метку не ставил, его добивки не снимались никогда и копились от прогона
+    # к прогону — пять штук осталось стоять снаружи контура платы, за резом.
+    # Метка не нужна вовсе: `pcb10_route.py` цепь `GND` не разводит (она идёт
+    # плоскостью), значит на плате нет ни одной переходной земли, которую
+    # поставили бы не мы.
     stitch = [t for t in board.GetTracks()
-              if isinstance(t, pcbnew.PCB_VIA) and t.GetNetname() == "GND"
-              and t.IsLocked()]
+              if isinstance(t, pcbnew.PCB_VIA) and t.GetNetname() == "GND"]
     for item in zones + stitch:
         board.RemoveNative(item)
     return gnd
@@ -100,7 +106,13 @@ def plane(board, layer, net, inset):
     z.SetNet(net)
     z.SetIsFilled(False)
     z.SetLocalClearance(mm(0.25))
-    z.SetMinThickness(mm(0.15))
+    # Минимальная толщина заливки — 0.2, не меньше. Стояло 0.15, и это было
+    # число ниоткуда: процесс проверен на 0.2/0.2 на живой плате
+    # (`10-mech.md §7`), а на 0.15 у нас нет ни одного травления. У дорожки
+    # такую вольность хотя бы видно на чертеже; перемычка заливки возникает
+    # сама, в случайном месте, и узнать, что земля всей платы держится на
+    # ней одной, можно только после травления.
+    z.SetMinThickness(mm(0.2))
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)   # без термобарьеров: паяем феном
     # Островки НЕ удаляем, хотя соблазн есть: обрезки заливки DRC считает
     # разрывами, и «удалять несоединённые» кажется чистой уборкой. Померено —
@@ -186,7 +198,7 @@ def island(board, net, box, layer=pcbnew.F_Cu):
     z.SetNet(net)
     z.SetIsFilled(False)
     z.SetLocalClearance(mm(0.25))
-    z.SetMinThickness(mm(0.15))
+    z.SetMinThickness(mm(0.2))                        # почему 0.2 — см. `plane`
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
     z.SetAssignedPriority(10)
     poly = z.Outline()
@@ -233,14 +245,22 @@ def occupied(board):
 
 
 def other_vias(board):
-    """Чужие переходные — их ставит разводка, и в них тоже нельзя попадать.
+    """ЧУЖИЕ переходные — их ставит разводка, и в них тоже нельзя попадать.
 
     Сшивка смотрела на детали и на дорожки, а на переходные нет, и заклёпки
     садились ровно в них: три пары совпавших отверстий на плату.
+
+    Своя прошлая сшивка сюда не входит, и это не мелочь. Плату мы смотрим до
+    первой правки (`Remove` портит контейнеры pcbnew), а `wipe` снимает старую
+    сшивку уже после. Пока свои заклёпки попадали в список, каждая занимала
+    свою же точку сетки — и второй прогон подряд ставил ноль вместо двадцати
+    пяти. Скрипт «работал» через раз, и по выводу это выглядело как теснота.
     """
     out = []
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
+            if t.GetNetname() == "GND":
+                continue          # наша прошлая сшивка, её снимет `wipe`
             pos = t.GetPosition()
             out.append((pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY,
                         pcbnew.ToMM(t.GetWidth()) / 2 + VIA_PAD / 2 + 0.25))

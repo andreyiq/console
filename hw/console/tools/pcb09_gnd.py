@@ -27,6 +27,7 @@ BOARD = ROOT / "console.kicad_pcb"
 VIA_PAD, VIA_DRILL = 0.7, 0.4   # как в разводке, 10-mech.md §7
 KEEP = 0.6                      # медь 0.35 плюс зазор 0.2 и запас
 STEP, RINGS = 0.4, 6            # на сколько и как далеко искать место рядом
+EDGE = 0.5                      # отступ меди от реза, 10-mech.md §7
 
 
 def mm(v):
@@ -70,7 +71,28 @@ def main():
             pos = t.GetPosition()
             have.append((pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y)))
 
+    # Контур платы. Поиск места ходит кольцами до 2.4 мм от точки разрыва и
+    # спокойно уходил за рез: пять заклёпок земли встали снаружи платы, в
+    # отрицательных координатах. Проверяем не только «внутри», но и «не ближе
+    # отступа»: пробуем восемь точек вокруг центра на расстоянии, которое
+    # заклёпке нужно от реза. Так обходимся без `Deflate` — контур со
+    # скруглениями он портит.
+    edges = pcbnew.SHAPE_POLY_SET()
+    board.GetBoardPolygonOutlines(edges)
+    ring = VIA_PAD / 2 + EDGE
+
+    def in_board(x, y):
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1),
+                       (0.7071, 0.7071), (0.7071, -0.7071),
+                       (-0.7071, 0.7071), (-0.7071, -0.7071)):
+            p = pcbnew.VECTOR2I(mm(x + dx * ring), mm(y + dy * ring))
+            if not edges.Contains(p):
+                return False
+        return True
+
     def free(x, y):
+        if not in_board(x, y):
+            return False
         if any(x1 - KEEP < x < x2 + KEEP and y1 - KEEP < y < y2 + KEEP
                for x1, y1, x2, y2 in busy):
             return False
@@ -107,6 +129,11 @@ def main():
         v.SetDrill(mm(VIA_DRILL))
         v.SetNet(gnd)
         v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+        # Метка «это сшивка земли» — по ней `pcb06_planes.py` снимает прежнее
+        # перед новой заливкой. Без метки добивка копилась: заливка
+        # перекладывается, разрывы теперь в других местах, а заклёпки прошлого
+        # захода остаются стоять там, где разрыва больше нет.
+        v.SetLocked(True)
         board.Add(v)
         have.append((x, y))
         added += 1
