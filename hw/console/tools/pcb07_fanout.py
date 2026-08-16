@@ -189,8 +189,10 @@ def main():
     boxes = obstacles(board, set(CHIPS))
     dropped = clear(board)
 
-    laid = short = 0
+    laid = short = twins = 0
     laid_segs = []
+    blocked = []
+    done_at = set()          # где луч уже стоит: (x, y, цепь)
     pads.sort(key=lambda q: (q[0].GetPosition().x, q[0].GetPosition().y))
     for i, (p, cx, cy, row) in enumerate(pads):
         pos = p.GetPosition()
@@ -225,7 +227,28 @@ def main():
                 want -= 0.1
             if found:
                 break
+        if not found and (pos.x, pos.y, p.GetNetCode()) in done_at:
+            # Не «не поместился», а «уже выведен». У реверсивной розетки USB-C
+            # площадки `A4`/`B9` и `A9`/`B4` стоят в одной и той же точке: две
+            # ориентации кабеля, один контакт на плате. Луч там уже лежит, и
+            # второй раз он и не нужен — прежний счёт «129 из 131» был просто
+            # двойным учётом двух точек.
+            twins += 1
+            continue
+
         if not found:
+            # Кто именно не пустил — вопрос не праздный. Помеха от деталей
+            # («некуда выйти в принципе») и помеха от уже положенного соседа
+            # («место разобрали») лечатся в разных местах: первое — свойство
+            # корпуса и должно быть записано в самой детали, второе —
+            # размещение. Проверяем самым щедрым вариантом: короткий луч,
+            # прямо, без сдвига вбок.
+            ex = int(pos.x + step[0] * (half + mm(LEAST)))
+            ey = int(pos.y + step[1] * (half + mm(LEAST)))
+            why = ("корпус" if clashes(pos.x, pos.y, ex, ey,
+                                       p.GetNetCode(), boxes) else "сосед")
+            blocked.append((p.GetParentFootprint().GetReference(),
+                            p.GetPadName(), p.GetNetname(), why))
             short += 1
             continue
         ex, ey = found
@@ -239,11 +262,14 @@ def main():
         t.SetLocked(True)                 # метка «луч наш», по ней и снимаем
         board.Add(t)
         laid_segs.append((pos.x, pos.y, ex, ey))
+        done_at.add((pos.x, pos.y, p.GetNetCode()))
         laid += 1
 
     board.Save(str(BOARD))
     print(f"снято прежней меди: {dropped}; лучей выведено: {laid}, "
-          f"не поместилось: {short}")
+          f"не поместилось: {short}, площадок в одной точке: {twins}")
+    for ref, pin, net, why in blocked:
+        print(f"    {ref}-{pin} ({net or '—'}): помешал {why}")
 
 
 if __name__ == "__main__":
