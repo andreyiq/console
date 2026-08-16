@@ -597,7 +597,23 @@ def main():
             break
 
     done, fail, nvias, laid, failed = best_state
+    # Одна и та же переходная может попасть в список дважды: две ветви цепи
+    # проходят через одну клетку и каждая честно записывает переход. На плате
+    # это два отверстия в одной точке — сверлить их будут дважды.
+    # В том числе те, что уже стоят на плате: заходов у нас несколько подряд,
+    # и каждый следующий не знает, что предыдущий уже поставил тут переходную.
+    seen_via = {((round(vx, 2), round(vy, 2)), code) for code, vx, vy in vias}
     for kind, a, b, width, layer, code in laid:
+        if kind == "via":
+            key = ((round(a[0], 2), round(a[1], 2)), code)
+            # Не только в той же точке, но и вплотную: две ветви одной цепи
+            # ставили переходные в соседних клетках, в 0.2 мм друг от друга —
+            # это два отверстия там, где хватает одного.
+            if key in seen_via or any(
+                    c == code and (a[0] - vx) ** 2 + (a[1] - vy) ** 2 < 1.0
+                    for (vx, vy), c in seen_via):
+                continue
+            seen_via.add(key)
         net = codeobj[code]
         if kind == "via":
             v = pcbnew.PCB_VIA(board)

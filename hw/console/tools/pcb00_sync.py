@@ -10,6 +10,7 @@ schematic», а она по умолчанию снята. Плюс pcbnew по�
 
 Запуск:  python3 hw/console/tools/pcb00_sync.py
 """
+import math
 import re
 from pathlib import Path
 
@@ -118,6 +119,58 @@ def audit(board, have):
     return sorted(want - have), sorted(have - want)
 
 
+def relabel(board, want, libs):
+    """Сверить нумерацию площадок с библиотекой и поправить.
+
+    Сверять одно имя корпуса мало. На плате у `J601` лежала копия со ШТАТНОЙ
+    нумерацией, хотя имя стояло наше, `..._ContactsReversed`: копия попала
+    туда раньше, чем библиотека была перенумерована, и с тех пор молча жила.
+    А в ней вся суть — заворот шлейфа на 180° переставляет контакты, и без
+    обратной нумерации шина дисплея разведена задом наперёд. DRC об этом
+    говорит, но одной строчкой `lib_footprint_mismatch` среди сотни разрывов.
+
+    Сверяем по МЕСТАМ: где в библиотеке стоит вывод N, там же он должен стоять
+    и на плате. Поворот снимаем, чтобы сравнивать в осях самого корпуса.
+    """
+    fixed, checked = [], []
+    for ref, fpid in want.items():
+        fp = board.FindFootprintByReference(ref)
+        if fp is None or ":" not in fpid:
+            continue
+        lib, name = fpid.split(":", 1)
+        if lib not in libs:
+            continue
+        fresh = pcbnew.FootprintLoad(str(libs[lib]), name)
+        if fresh is None:
+            continue
+        # Знак поворота: у KiCad ось Y смотрит вниз, и снимается поворот тем
+        # же знаком, каким он задан. С обратным знаком не совпадает ни одна
+        # площадка — и это выглядит как «нумерация на плате перевёрнута».
+        # Я на этом попался и чуть не «починил» верную плату.
+        rot = math.radians(fp.GetOrientationDegrees())
+        c, s = math.cos(rot), math.sin(rot)
+        here = {}
+        for p in fp.Pads():
+            dx = pcbnew.ToMM(p.GetX() - fp.GetX())
+            dy = pcbnew.ToMM(p.GetY() - fp.GetY())
+            here[(round(dx * c - dy * s, 2), round(dx * s + dy * c, 2))] = p
+        there = {(round(pcbnew.ToMM(p.GetX()), 2),
+                  round(pcbnew.ToMM(p.GetY()), 2)): p.GetPadName()
+                 for p in fresh.Pads()}
+        if set(here) != set(there):
+            continue                      # геометрия другая — это не наш случай
+        n = 0
+        for pos, pad in here.items():
+            if pad.GetPadName() != there[pos]:
+                pad.SetPadName(there[pos])
+                n += 1
+        if n:
+            fixed.append(f"{ref}: перенумеровано площадок {n}")
+        else:
+            checked.append(ref)
+    return fixed, checked
+
+
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
     # Состав снимаем ДО подмены корпусов: подмена делает `Remove`, после
@@ -125,6 +178,13 @@ def main():
     have = {f.GetReference() for f in board.GetFootprints()
             if not f.GetReference().startswith("H")}
     changed = sync(board)
+    fixed, checked = relabel(board, want_footprints(),
+                             {"console": ROOT / "lib" / "console.pretty"})
+    print(f"  нумерация площадок сверена с библиотекой: {len(checked)}, "
+          f"поправлено {len(fixed)}")
+    for line in fixed:
+        print("   ", line)
+        changed = changed or [""]
     for line in changed or ["корпуса уже совпадают со схемой"]:
         print(" ", line)
     if changed:

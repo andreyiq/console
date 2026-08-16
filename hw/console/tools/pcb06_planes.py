@@ -232,6 +232,21 @@ def occupied(board):
     return boxes
 
 
+def other_vias(board):
+    """Чужие переходные — их ставит разводка, и в них тоже нельзя попадать.
+
+    Сшивка смотрела на детали и на дорожки, а на переходные нет, и заклёпки
+    садились ровно в них: три пары совпавших отверстий на плату.
+    """
+    out = []
+    for t in board.GetTracks():
+        if isinstance(t, pcbnew.PCB_VIA):
+            pos = t.GetPosition()
+            out.append((pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY,
+                        pcbnew.ToMM(t.GetWidth()) / 2 + VIA_PAD / 2 + 0.25))
+    return out
+
+
 def wires(board):
     """Отрезки чужих дорожек и радиус, ближе которого заклёпку не поставить.
 
@@ -266,6 +281,7 @@ def main():
     # всё, что надо посмотреть на плате, смотрим до первой правки
     busy = occupied(board)
     segs = wires(board)
+    holes = other_vias(board)
     u1 = board.FindFootprintByReference("U1")
     ex = pcbnew.ToMM(u1.GetPosition().x) - OX
     ey = pcbnew.ToMM(u1.GetPosition().y) - OY
@@ -302,7 +318,9 @@ def main():
                     and EDGE + 1.0 < y < BOARD_H - EDGE - 1.0
                     and not any(bx1 < x < bx2 and by1 < y < by2
                                 for bx1, by1, bx2, by2 in busy)
-                    and not near_wire(x, y, segs)):
+                    and not near_wire(x, y, segs)
+                    and not any((x - vx) ** 2 + (y - vy) ** 2 < r * r
+                                for vx, vy, r in holes)):
                 via(board, gnd, x, y)
                 n_grid += 1
             x += STITCH_STEP
