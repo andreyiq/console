@@ -1,0 +1,69 @@
+Кол,Номинал,Корпус,Позиции
+18,0.1u,Capacitor_SMD:C_0805_2012Metric,C802 C803 C804 C805 C807 C808 C809 C810 C811 C812 C814 C815 C816 C817 C818 C820 C824 C825
+14,10k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R19 R401 R402 R403 R406 R407 R408 R410 R504 R602 R606 R607 R608 R609
+9,0.1u,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C7 C8 C9 C14 C19 C401 C402 C503 C601
+8,0,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R16 R17 R18 R503 R601 R801 R803 R804
+7,10u,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C12 C13 C403 C501 C502 C505 C602
+6,22u,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C1 C2 C3 C4 C5 C6
+5,22p,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C10 C15 C16 C17 C18
+5,1k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R7 R8 R12 R13 R901
+5,33,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R404 R405 R603 R604 R605
+4,2.2u,Capacitor_SMD:C_0805_2012Metric,C819 C821 C822 C823
+3,10u,Capacitor_SMD:C_0805_2012Metric,C801 C806 C813
+3,2.2u,Inductor_SMD:L_Sunlord_SWPA3015S,L1 L2 L3
+3,150k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R2 R4 R6
+3,47k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R10 R501 R502
+3,GND,TestPoint:TestPoint_Pad_D1.5mm,TP5 TP802 TP905
+3,SY8089AAAC,Package_TO_SOT_SMD:SOT-23-5_HandSoldering,U2 U3 U4
+2,0.47u,Capacitor_SMD:C_0805_2012Metric,C826 C827
+2,680k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R1 R20
+2,5.1k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R301 R302
+2,2.2k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R409 R411
+1,0.47u,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C11
+1,1u,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,C504
+1,красный,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,D1
+1,зелёный,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,D2
+1,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,D301
+1,жёлтый,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,D901
+1,Batt,Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical,J1
+1,USB-C 16P,Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12,J301
+1,DM3AT-SF-PEJM5,Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5,J401
+1,SPK 8R,Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical,J501
+1,FFC-40 0.5mm,console:FH12-40S-0.5SH_ContactsReversed,J601
+1,UART,Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical,J901
+1,RESET,Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm,JP1
+1,FEL,Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm,JP301
+1,AO3400A,Package_TO_SOT_SMD:SOT-23,Q601
+1,300k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R3
+1,75k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R5
+1,1M,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R9
+1,1.1k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R11
+1,100k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R14
+1,68k,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R15
+1,240,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,R802
+1,Движок,Button_Switch_SMD:SW_SPDT_Shouhan_MSK12C02,SW1
+1,UP,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW101
+1,DOWN,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW102
+1,LEFT,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW103
+1,RIGHT,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW104
+1,SELECT,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW105
+1,START,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW106
+1,A,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW107
+1,B,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW108
+1,C,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW109
+1,D,Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92,SW110
+1,+3V3,TestPoint:TestPoint_Pad_D1.5mm,TP1
+1,+1V8,TestPoint:TestPoint_Pad_D1.5mm,TP2
+1,+0V9,TestPoint:TestPoint_Pad_D1.5mm,TP3
+1,VSYS,TestPoint:TestPoint_Pad_D1.5mm,TP4
+1,REFCLK,TestPoint:TestPoint_Pad_D1.5mm,TP801
+1,TMS,TestPoint:TestPoint_Pad_D1.5mm,TP901
+1,TDI,TestPoint:TestPoint_Pad_D1.5mm,TP902
+1,TDO,TestPoint:TestPoint_Pad_D1.5mm,TP903
+1,TCK,TestPoint:TestPoint_Pad_D1.5mm,TP904
+1,F133-A,console:eLQFP-128_14x14_Pitch0.4mm_EPAD_5.72mm,U1
+1,TP4056,Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm,U5
+1,W25Q32JVSSIQ,Package_SO:SOIC-8_5.3x5.3mm_P1.27mm,U401
+1,PAM8301,Package_TO_SOT_SMD:SOT-23-6,U501
+1,24 МГц,Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering,Y1
+1,32.768 кГц,Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm,Y2
