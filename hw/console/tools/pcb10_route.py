@@ -27,6 +27,7 @@
 Скрипт идемпотентный: перед работой снимает все дорожки (переходные и зоны не
 трогает) и кладёт заново.
 """
+import collections
 import heapq
 import math
 import os
@@ -170,6 +171,17 @@ NODE_BUDGET = int(os.environ.get("PCB_BUDGET", 60000))
 # щедрый бюджет, а на сотне коротких сигналов дешевле быстро сдаться и отдать
 # связь дальше, чем перебирать шестьдесят тысяч клеток на каждую.
 PASSES = int(os.environ.get("PCB_PASSES", 3))
+
+# На сколько клеток раздуть коробку поиска вокруг концов связи. Это предел
+# обхода: 60 клеток — двенадцать миллиметров, и всё, что дальше, объявляется
+# «пути нет».
+#
+# Померено, один проход, бюджет 200000: коробка 60 — 135 связей, коробка 150
+# (тридцать миллиметров) — 138. Три связи за втрое более долгий прогон, и обе
+# настройки упираются в одно и то же: почти все неудачи — «нет пути», а не
+# «кончился бюджет». Значит дело не в пределах поиска, а в том, что коридора
+# нет. Чинить надо размещение.
+MARGIN = int(os.environ.get("PCB_MARGIN", 60))
 
 
 def mm(v):
@@ -368,8 +380,13 @@ def route(g, starts, goals, net, margin=60, toll=()):
     `toll` — чужие коридоры в клетках, `(i1, j1, i2, j2)`. Платится один раз,
     на входе, а не за каждую клетку внутри: нам всё равно, сколько цепь пройдёт
     по чужому коридору, важно только, что она его пересекла.
+
+    Причину неудачи кладём в `route.why`. Разница существенная: «волна дошла
+    до края и пути нет» лечится размещением, «кончился бюджет» — числом в
+    настройке, и путать их значит чинить не то.
     """
     goal = set(goals)
+    route.why = "нет пути"
     if not starts or not goal:
         return None
     xs = [c[0] for c in list(starts) + list(goals)]
@@ -400,6 +417,7 @@ def route(g, starts, goals, net, margin=60, toll=()):
     while heap:
         budget -= 1
         if budget < 0:
+            route.why = "кончился бюджет"
             return None
         _, cost, cur, d, parent = heapq.heappop(heap)
         if cur in seen:
@@ -632,6 +650,7 @@ def main():
         laid = []
         done = fail = nvias = 0
         failed = []
+        why = collections.Counter()
         # Три яруса: критичные, ленты, все остальные. Внутри ленты порядок —
         # по обходу, внутри остальных — по длине связи. Ярус «не хватило
         # коридора в прошлом проходе» вклинивается перед общей толпой, но
@@ -686,7 +705,7 @@ def main():
                     connected.add(r)
                     done += 1
                     continue
-                path = route(g, sorted(own), [cells[r]], code, margin=60,
+                path = route(g, sorted(own), [cells[r]], code, margin=MARGIN,
                              toll=toll)
                 if path:
                     nvias += lay_rec(laid, path, width, code)
@@ -712,8 +731,10 @@ def main():
                 else:
                     fail += 1
                     failed.append(name)
+                    why[route.why] += 1
                 connected.add(r)
-        print(f"  проход {attempt + 1}: проложено {done}, не удалось {fail}, "
+        print(f"  проход {attempt + 1}: проложено {done}, не удалось {fail} "
+              f"({', '.join(f'{k} {v}' for k, v in why.most_common())}), "
               f"переходных {nvias}")
         if best_state is None or done > best_state[0]:
             best_state = (done, fail, nvias, laid, list(failed))
@@ -782,7 +803,6 @@ def main():
           f"отрезков на плату: {sum(1 for k, *_ in laid if k == 'seg')}"
           + (f"; заклёпок ближе миллиметра друг к другу: {near}" if near else ""))
     if failed:
-        import collections
         top = collections.Counter(failed).most_common(10)
         print("  не разошлись:", ", ".join(f"{k}×{v}" for k, v in top))
 
