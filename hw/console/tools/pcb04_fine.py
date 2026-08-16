@@ -152,6 +152,19 @@ def ring(board):
                             pcbnew.ToMM(p.GetPosition().y) - OY)
             for p in u1.Pads()}
 
+    # Коридор к разъёму шлейфа кольцу уступает. Шина дисплея — 23 линии, и
+    # ради того, чтобы она легла без крюка, разъём стоит вплотную к левому
+    # верхнему углу корпуса (`pcb02_place.py`). Конденсатор, которому выпало
+    # это место, уходит рядом дальше; развязке лишний миллиметр стоит меньше,
+    # чем шине десять переходных.
+    j601 = board.FindFootprintByReference("J601")
+    j601.BuildCourtyardCaches()
+    jb = j601.GetCourtyard(pcbnew.F_CrtYd).BBox()
+    keep = (pcbnew.ToMM(jb.GetLeft()) - OX - 0.4,
+            pcbnew.ToMM(jb.GetTop()) - OY - 0.4,
+            pcbnew.ToMM(jb.GetRight()) - OX + 0.4,
+            pcbnew.ToMM(jb.GetBottom()) - OY + 0.4)
+
     # сторона вывода и оси: n — наружу, t — вдоль стороны
     def side(pin):
         px, py = pads[pin]
@@ -164,8 +177,10 @@ def ring(board):
     AXIS = {"L": (-1, 0), "R": (1, 0), "T": (0, -1), "B": (0, 1)}
     groups = {"L": [], "R": [], "T": [], "B": []}
     for ref, pin in DECOUP.items():
-        if pin in pads:
-            groups[side(pin)].append((ref, pin))
+        if pin not in pads:
+            continue
+        s = side(pin)
+        groups[s].append((ref, pin))
 
     # Край площадок корпуса плюс зазор. Зазор не «на всякий случай»: в него
     # должен уместиться луч, которым сигнал выходит из-под корпуса
@@ -191,29 +206,40 @@ def ring(board):
             rot = 90 if not vertical else 0
             along, radial = (h, w) if True else (w, h)
             t = pads[pin][1] if vertical else pads[pin][0]
-            lo = t - along / 2
+            lo = lo0 = t - along / 2
             # Рядов не больше двух. Третий ряд уводит конденсатор на 4.5 мм
             # дальше от вывода, чем второй, — а смысл развязки именно в том,
             # чтобы петля тока была короткой. Если в двух рядах на уровне
             # своего вывода места нет, лучше сдвинуть деталь вдоль стороны,
             # чем отодвинуть от корпуса.
+            def spot(k, lo):
+                """Место в ряду k при начале интервала lo — и занят ли он."""
+                tc = lo + along / 2
+                rc = half + radial / 2 + k * (radial + GAP)
+                qx, qy = (cx + nx * rc, tc) if vertical else (tc, cy + ny * rc)
+                bad = (keep[0] < qx + w / 2 and qx - w / 2 < keep[2]
+                       and keep[1] < qy + h / 2 and qy - h / 2 < keep[3])
+                return tc, qx, qy, bad
+
+            # Ряд выбираем сразу с оглядкой на разъём шлейфа: если место в этом
+            # ряду занято им, ряд не годится вовсе. Двигать деталь после
+            # выбора нельзя — учёт занятого вдоль ряда остаётся от прежнего
+            # места, и соседи садятся друг на друга.
             for k in range(MAX_ROWS):
                 if k == len(rows):
                     rows.append(-1e9)
-                if rows[k] + GAP <= lo:
+                if rows[k] + GAP <= lo and not spot(k, lo)[3]:
                     break
             else:
-                k = min(range(len(rows)), key=lambda i: rows[i])
-                lo = rows[k] + GAP
-            t = lo + along / 2
+                # у пустого ряда счётчик −1e9, начало интервала берём желаемое
+                def start(i):
+                    return max(rows[i] + GAP, lo0)
+
+                free = [i for i in range(len(rows)) if not spot(i, start(i))[3]]
+                k = min(free or range(len(rows)), key=lambda i: rows[i])
+                lo = start(k)
+            t, px, py, _ = spot(k, lo)
             rows[k] = lo + along
-            r = half + radial / 2 + k * (radial + GAP)
-            px = cx + nx * r if not vertical else cx + nx * r
-            py = cy + ny * r if not vertical else t
-            if vertical:
-                px, py = cx + nx * r, t
-            else:
-                px, py = t, cy + ny * r
             put(board, ref, px, py, rot)
             placed += 1
     return placed
@@ -257,15 +283,21 @@ def crystals(board):
     До этой правки и флешка, и кварцы стояли у самого края платы, в 20…40 мм
     от своих выводов — свободное место у корпуса просто никто не занял.
     """
+    # Координаты — от середины корпуса, а не от угла платы: чип двигается ради
+    # шины дисплея, и всё, что стоит «вплотную к его выводам», обязано ехать
+    # за ним. Иначе кварцы и флешка молча остаются на месте в двадцати
+    # миллиметрах от своих выводов — так и случилось при первом же сдвиге.
+    u1 = board.FindFootprintByReference("U1")
+    cx, cy = xy(u1)
     n = 0
-    for ref, x, y, rot in (("U401", 120.0, 36.5, 0),     # SPI NOR у выводов 14…19
-                           ("Y1", 118.0, 30.0, 0),       # 24 МГц, выводы 22/23
-                           ("Y2", 118.0, 25.0, 0),       # 32.768 кГц, выводы 24/25
-                           ("C15", 123.5, 29.0, 0),      # нагрузочные 24 МГц
-                           ("C16", 123.5, 32.0, 0),
-                           ("C17", 123.5, 24.0, 0),      # нагрузочные 32 кГц
-                           ("C18", 123.5, 26.5, 0)):
-        if put(board, ref, x, y, rot):
+    for ref, dx, dy, rot in (("U401", 22.0,  1.5, 0),    # SPI NOR у выводов 14…19
+                             ("Y1",   20.0, -5.0, 0),    # 24 МГц, выводы 22/23
+                             ("Y2",   20.0, -10.0, 0),   # 32.768 кГц, выводы 24/25
+                             ("C15",  25.5, -6.0, 0),    # нагрузочные 24 МГц
+                             ("C16",  25.5, -3.0, 0),
+                             ("C17",  25.5, -11.0, 0),   # нагрузочные 32 кГц
+                             ("C18",  25.5, -8.5, 0)):
+        if put(board, ref, cx + dx, cy + dy, rot):
             n += 1
     return n
 
