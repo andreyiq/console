@@ -77,6 +77,14 @@ def sync(board):
     """
     want = want_footprints()
     changed = []
+
+    # Сначала ЗАГРУЖАЕМ ВСЁ, потом трогаем плату. `FootprintLoad` после
+    # первого же `board.Remove` падает с «SwigPyObject has no attribute
+    # FootprintLoad»: pcbnew портит свой объект плагина ровно так же, как
+    # портит контейнер корпусов. Пока загрузка стояла внутри цикла, скрипт
+    # менял первый корпус и умирал на втором — то есть половину работы делал
+    # и оставлял плату в промежуточном состоянии.
+    todo = []
     for fp in list(board.GetFootprints()):
         ref = fp.GetReference()
         target = want.get(ref)
@@ -89,6 +97,10 @@ def sync(board):
         if new is None:
             changed.append(f"{ref}: НЕ НАЙДЕН {target}")
             continue
+        todo.append((fp, new, nick, name))
+
+    for fp, new, nick, name in todo:
+        ref = fp.GetReference()
         nets = {p.GetNumber(): p.GetNet() for p in fp.Pads()}
         new.SetReference(ref)
         new.SetValue(fp.GetValue())
@@ -119,7 +131,27 @@ def audit(board, have):
     return sorted(want - have), sorted(have - want)
 
 
-def relabel(board, want, libs):
+def preload(want, libs):
+    """Заранее прочитать из библиотеки всё, с чем будем сверяться.
+
+    Читать надо ДО первой правки платы: `FootprintLoad` после `board.Remove`
+    падает с «SwigPyObject has no attribute FootprintLoad» — pcbnew портит
+    объект плагина ровно так же, как портит контейнер корпусов.
+    """
+    out = {}
+    for ref, fpid in want.items():
+        if ":" not in fpid:
+            continue
+        lib, name = fpid.split(":", 1)
+        if lib not in libs:
+            continue
+        fresh = pcbnew.FootprintLoad(str(libs[lib]), name)
+        if fresh is not None:
+            out[ref] = fresh
+    return out
+
+
+def relabel(board, want, fresh_of):
     """Сверить нумерацию площадок с библиотекой и поправить.
 
     Сверять одно имя корпуса мало. На плате у `J601` лежала копия со ШТАТНОЙ
@@ -135,13 +167,8 @@ def relabel(board, want, libs):
     fixed, checked = [], []
     for ref, fpid in want.items():
         fp = board.FindFootprintByReference(ref)
-        if fp is None or ":" not in fpid:
-            continue
-        lib, name = fpid.split(":", 1)
-        if lib not in libs:
-            continue
-        fresh = pcbnew.FootprintLoad(str(libs[lib]), name)
-        if fresh is None:
+        fresh = fresh_of.get(ref)
+        if fp is None or fresh is None:
             continue
         # Знак поворота: у KiCad ось Y смотрит вниз, и снимается поворот тем
         # же знаком, каким он задан. С обратным знаком не совпадает ни одна
@@ -177,9 +204,15 @@ def main():
     # которого контейнер корпусов отдаёт сырой SwigPyObject (10-mech.md §8.2).
     have = {f.GetReference() for f in board.GetFootprints()
             if not f.GetReference().startswith("H")}
+    want = want_footprints()
+    fresh_of = preload(want, {"console": ROOT / "lib" / "console.pretty"})
+    # Сверка нумерации — ДО подмены корпусов, а не после. После первого
+    # `board.Remove` контейнер корпусов отдаёт сырой SwigPyObject, и
+    # `FindFootprintByReference` возвращает объект без методов. Порядок при
+    # этом ничего не портит: корпус, который подменяет `sync`, берётся прямо
+    # из библиотеки и приходит с правильной нумерацией по построению.
+    fixed, checked = relabel(board, want, fresh_of)
     changed = sync(board)
-    fixed, checked = relabel(board, want_footprints(),
-                             {"console": ROOT / "lib" / "console.pretty"})
     print(f"  нумерация площадок сверена с библиотекой: {len(checked)}, "
           f"поправлено {len(fixed)}")
     for line in fixed:
