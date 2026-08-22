@@ -34,6 +34,7 @@
 Идемпотентно: свои заклёпки помечены `locked`, и `pcb06_planes.py` снимает их
 перед новой заливкой.
 """
+import collections
 from pathlib import Path
 
 import pcbnew
@@ -142,10 +143,37 @@ def main():
                 gpads.append(pcbnew.SHAPE_POLY_SET(
                     p.GetEffectivePolygon(pcbnew.F_Cu)))
 
+    # Заходов несколько, пока добавляется хоть что-то. Не для порядка: каждая
+    # поставленная заклёпка меняет саму заливку — куски сливаются, границы
+    # ползут, и там, где места не было, оно появляется. Померено на живой
+    # плате: один заход оставляет три куска без связи, второй по тем же
+    # правилам добивает два из трёх. Пока заход был один, эти два выглядели
+    # «не влезает» — то есть отчёт называл невозможным то, что возможно на
+    # следующем шаге.
+    total, left = 0, []
+    for round_no in range(6):
+        zones = list(board.Zones())
+        back = pieces(zones, pcbnew.B_Cu, code)
+        front = pieces(zones, pcbnew.F_Cu, code)
+        added, left = place(board, gnd, code, front, back, gpads, pierce)
+        total += added
+        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+        if added == 0:
+            break
     zones = list(board.Zones())
-    back = pieces(zones, pcbnew.B_Cu, code)
     front = pieces(zones, pcbnew.F_Cu, code)
+    back = pieces(zones, pcbnew.B_Cu, code)
+    board.Save(str(BOARD))
+    print(f"кусков заливки на лице: {len(front)}, изнанка одним куском: "
+          f"{'да' if len(back) == 1 else f'нет, кусков {len(back)}'}")
+    print(f"добито заклёпок по земле: {total} за заходов {round_no + 1}, "
+          f"осталось без связи: {len(left)}")
+    for area, why, (x, y) in sorted(left, reverse=True)[:8]:
+        print(f"    кусок {area:7.2f} мм² в ({x}, {y}) — {why}")
 
+
+def place(board, gnd, code, front, back, gpads, pierce):
+    """Один заход: заклёпка в каждый кусок, который её примет."""
     added, left = 0, []
     for one in front:
         area = one.Area() / 1e12
@@ -160,29 +188,52 @@ def main():
         for q in near:
             whole.BooleanAdd(q)
         best, best_d = None, -1.0
+        # Кто именно не пустил. Без этого отчёт говорит «не влезает» и на
+        # куске 2 мм², и на куске 5 мм², хотя чинить их надо по-разному:
+        # тесную медь — разводкой рядом, занятую изнанку — переносом дорожки.
+        stop = collections.Counter()
         n = int((x2 - x1) / GRID) + 1
         m = int((y2 - y1) / GRID) + 1
         for i in range(n):
             for j in range(m):
                 x, y = x1 + i * GRID, y1 + j * GRID
                 if not deep_inside(whole, x, y):
+                    stop["мало своей меди"] += 1
                     continue
-                # Сверло — только по заливке, не по площадке детали.
-                rd = VIA_DRILL / 2 + 0.05
+                # Сверло не должно ЗАДЕВАТЬ площадку детали — иначе у неё
+                # выест середину и паять деталь будет нечем. Радиус ровно
+                # сверлa, без запаса: полигон площадки и так огранён в запас, а
+                # «на всякий случай» здесь уже дважды стоило связей (см.
+                # `RING`). Кромка отверстия вплотную к кромке площадки законна:
+                # площадка остаётся целой, цепь у них одна.
+                #
+                # Здесь, впрочем, это ничего не дало: на всех трёх оставшихся
+                # кусках места лежат глубоко внутри площадок, и запас был не
+                # при чём. Правило оставлено как верное, а не как полезное.
+                rd = VIA_DRILL / 2
                 if any(q.Contains(pt(x, y))
                        or any(q.Contains(pt(x + dx * rd, y + dy * rd))
                               for dx, dy in DIRS) for q in near):
+                    stop["сверло попало бы в площадку детали"] += 1
                     continue
                 if not any(deep_inside(b, x, y) for b in back):
+                    stop["на изнанке в этом месте не плоскость"] += 1
                     continue
                 d = min(((x - px) ** 2 + (y - py) ** 2 for px, py in pierce),
                         default=1e9)
                 if d < HOLE * HOLE:
+                    stop["рядом уже стоит заклёпка"] += 1
                     continue        # свёрла столкнутся, медь тут не при чём
                 if d > best_d:
                     best, best_d = (x, y), d
         if best is None:
-            left.append((area, "заклёпка не влезает",
+            # Причина — самая частая среди тех, что не про «мало меди»: клеток
+            # вне куска всегда большинство, и они ничего не объясняют.
+            real = [(v, k) for k, v in stop.items() if k != "мало своей меди"]
+            why = (f"{max(real)[1]} ({max(real)[0]} мест из "
+                   f"{sum(v for v, _ in real)})" if real
+                   else "кусок уже своей меди для заклёпки")
+            left.append((area, why,
                          (round((x1 + x2) / 2, 1), round((y1 + y2) / 2, 1))))
             continue
         x, y = best
@@ -200,25 +251,7 @@ def main():
         board.Add(v)
         pierce.append((x, y))
         added += 1
-
-    # Кусок, в который заклёпка не влезла, остаётся висеть в воздухе: медь без
-    # связи, у нас это два-три квадратных миллиметра. Для ЛУТ это не пустяк —
-    # лишний островок под утюгом и лишний шанс замкнуть соседа перемычкой
-    # тонера. Кто не смог получить заклёпку, тот убирается.
-    #
-    # Убирает сама заливка, режимом «снимать островки», и делать это надо
-    # ПОСЛЕ добивки, а не до: до неё островками считаются все пятнадцать
-    # кусков, которым заклёпка как раз полагается.
-    for z in zones:
-        if z.GetNetCode() == code and z.IsOnLayer(pcbnew.F_Cu):
-            z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
-    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
-    board.Save(str(BOARD))
-    print(f"кусков заливки на лице: {len(front)}, изнанка одним куском: "
-          f"{'да' if len(back) == 1 else f'нет, кусков {len(back)}'}")
-    print(f"добито заклёпок по земле: {added}, осталось без связи: {len(left)}")
-    for area, why, (x, y) in sorted(left, reverse=True)[:8]:
-        print(f"    кусок {area:7.2f} мм² в ({x}, {y}) — {why}")
+    return added, left
 
 
 if __name__ == "__main__":
