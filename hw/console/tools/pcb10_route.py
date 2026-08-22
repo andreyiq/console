@@ -29,6 +29,7 @@
 """
 import collections
 import heapq
+import json
 import math
 import os
 import sys
@@ -1016,7 +1017,21 @@ def main():
                     groups[hit][0].update(p)
                     groups[hit][1].add(idx)
 
+            # Связей у цепи `len(pts) - 1`. Часть из них уже сделана медью,
+            # лежащей на плате: чтобы соединить G кусков, нужно G−1 сшивок,
+            # значит `need − (G−1)` связей есть до нашего первого шага.
+            #
+            # Без этой поправки счёт врал на всей меди, которая пришла с платы.
+            # В обычном конвейере это не видно: `pcb07_fanout.py` снимает всю
+            # медь, и каждая площадка приходит отдельной группой. А стоит
+            # запустить разводку ПОВЕРХ готовой платы — добрать несошедшееся, —
+            # и отчёт объявляет неудачей всё, что уже соединено: `+3V3` давал
+            # 33 неудачи из 37 при целом дереве на плате. Медь при этом цела,
+            # врёт только число, и это худший вид вранья: по нему принимают
+            # решение откатить хорошую правку.
             need = len(pts) - 1
+            already = need - (len(groups) - 1)
+            done += already
             joined, bad = 0, set()
             while len(groups) > 1:
                 pair, dist = None, None
@@ -1071,12 +1086,11 @@ def main():
                     # тридцать восемь площадок, и «не удалось 13» не говорит
                     # ни где смотреть, ни что двигать.
                     spots.append((name, pts[min(groups[b][1])], route.why))
-            # Считаем как раньше: связей у цепи `len(pts) - 1`, сшитых
-            # `joined`, остальное — неудачи. Иначе числа перестанут сравниваться
-            # с прежними замерами, а сравнивать их всё равно будут.
+            # Остаток: сшитые сейчас плюс те, что так и не сошлись.
             done += joined
-            fail += need - joined
-            failed.extend([name] * (need - joined))
+            lost = need - already - joined
+            fail += lost
+            failed.extend([name] * lost)
         print(f"  проход {attempt + 1}: проложено {done}, не удалось {fail} "
               f"({', '.join(f'{k} {v}' for k, v in why.most_common())}), "
               f"переходных {nvias}")
@@ -1149,8 +1163,15 @@ def main():
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())
     board.Save(str(BOARD))
+    segs = sum(1 for k, *_ in laid if k == "seg")
     print(f"проложено связей: {done}, не удалось: {fail}, переходных {nvias}; "
-          f"отрезков на плату: {sum(1 for k, *_ in laid if k == 'seg')}")
+          f"отрезков на плату: {segs}")
+    # Итог ещё и числом в файл — для тех, кто решает по нему, а не читает.
+    # Разбирать текст отчёта нельзя: он меняется от каждого улучшения отчёта, и
+    # сторож ломается на улучшении. `pcb11_more.py` читает отсюда.
+    (ROOT / "route.json").write_text(json.dumps(
+        {"done": done, "fail": fail, "vias": nvias, "segs": segs},
+        ensure_ascii=False) + "\n")
     if failed:
         top = collections.Counter(failed).most_common(10)
         print("  не разошлись:", ", ".join(f"{k}×{v}" for k, v in top))
