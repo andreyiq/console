@@ -169,6 +169,8 @@ POWER_FIRST = bool(os.environ.get("PCB_POWER_FIRST"))
 VIA_COST = float(os.environ.get("PCB_VIA", 12.0))
 BACK_COST = float(os.environ.get("PCB_BACK", 1.2))
 VIA_PAD_CELLS = 4               # 0.9 мм площадка плюс зазор
+# Между центрами двух отверстий: сверло 0.4 плюс 0.2495 между кромками.
+HOLE = 0.4 + 0.2495
 
 # Критичные цепи ведём вне очереди — так делают в индустрии, и по той же
 # причине: пара USB, кварцы и опора кодека чувствительны к длине и к соседям,
@@ -292,6 +294,13 @@ class Grid:
     def __init__(self):
         self.own = [[0] * (NX * NY), [0] * (NX * NY)]
         self.diag = [[0] * (NX * NY), [0] * (NX * NY)]
+        # Куда заклёпку ставить нельзя из-за уже стоящей рядом. Правило не про
+        # медь, а про СВЕРЛО: между кромками отверстий нужно 0.2495 мм
+        # (console.kicad_dru), сверло 0.4 — значит между центрами 0.65. Своей
+        # цепи это не прощается тоже: две заклёпки `+1V8` встали в 0.6 друг от
+        # друга, и DRC назвал это `hole_to_hole`. Раньше здесь стоял только
+        # счётчик «ближе миллиметра» — он честно печатал 1 и ничего не менял.
+        self.nohole = bytearray(NX * NY)
         # Реальная медь каждой цепи — площадки и уже проложенные дорожки.
         # Ветка цепи должна стартовать от НЕЁ, а не от ближайшей площадки:
         # иначе питание с 38 площадками растёт змеёй через полплаты вместо
@@ -423,8 +432,20 @@ class Grid:
         o = self.diag[L][self.idx(i, j)]
         return o == 0 or o == net
 
+    def add_hole(self, x, y):
+        """Запретить заклёпки вокруг отверстия в `(x, y)` — по кромкам свёрел."""
+        i0, j0 = to_cell(x, y)
+        r = int(math.ceil(HOLE / STEP))
+        for i in range(max(0, i0 - r), min(NX, i0 + r + 1)):
+            dx = (i * STEP - x) ** 2
+            for j in range(max(0, j0 - r), min(NY, j0 + r + 1)):
+                if dx + (j * STEP - y) ** 2 < HOLE * HOLE:
+                    self.nohole[self.idx(i, j)] = 1
+
     def can_via(self, i, j, net):
         """Переходная занимает обе стороны и шире дорожки."""
+        if self.nohole[self.idx(i, j)]:
+            return False
         for L in (0, 1):
             o = self.own[L]
             for di in range(-VIA_PAD_CELLS, VIA_PAD_CELLS + 1):
@@ -499,6 +520,7 @@ def build(board, pads, vias, keepouts, wires=(), tips=()):
     for code, x, y in vias:
         r = 0.45          # переходная 0.9, см. pcb06_planes.py
         g.fill_box(x - r, y - r, x + r, y + r, code)
+        g.add_hole(x, y)
     for code, x1, y1, x2, y2, L, w in wires:
         # Чужая медь, уже лежащая на плате: лучи из-под F133 и то, что развёл
         # freerouting. Идём по отрезку с шагом в клетку — габаритный
@@ -1028,6 +1050,7 @@ def main():
                             keep = 0.35 + 0.2
                             g.fill_box(x - keep, y - keep,
                                        x + keep, y + keep, code)
+                            g.add_hole(x, y)
                         prev_L = L
                     own |= groups[b][0]
                     groups[a] = (own, groups[a][1] | groups[b][1])
@@ -1082,15 +1105,18 @@ def main():
     # лучи веера у цепей, которые не разошлись вовсе. Это не оборванные пути,
     # это выходы, к которым никто не пришёл, и лечатся они разводкой, а не
     # уборкой переходных. Оставшиеся восемь — разбирать отдельно.
-    near = 0
+    # Счётчик «ближе миллиметра» здесь стоял вместо правила и врал в обе
+    # стороны: миллиметр он взял наугад, а настоящее ограничение — 0.65 между
+    # центрами (сверло 0.4 плюс 0.2495 между кромками). Пары в 0.8 он объявлял
+    # подозрительными, будучи законными, а пару в 0.6 — тоже «одной штукой»,
+    # хотя это готовое `hole_to_hole` в DRC. Правило теперь соблюдает поиск
+    # (`Grid.nohole`), и счётчик-заместитель убран: он показывал число, по
+    # которому нельзя было принять ни одного решения.
     for kind, a, b, width, layer, code in laid:
         if kind == "via":
             key = ((round(a[0], 2), round(a[1], 2)), code)
             if key in seen_via:
                 continue
-            if any(c == code and (a[0] - vx) ** 2 + (a[1] - vy) ** 2 < 1.0
-                   for (vx, vy), c in seen_via):
-                near += 1
             seen_via.add(key)
         net = codeobj[code]
         if kind == "via":
@@ -1116,8 +1142,7 @@ def main():
     filler.Fill(board.Zones())
     board.Save(str(BOARD))
     print(f"проложено связей: {done}, не удалось: {fail}, переходных {nvias}; "
-          f"отрезков на плату: {sum(1 for k, *_ in laid if k == 'seg')}"
-          + (f"; заклёпок ближе миллиметра друг к другу: {near}" if near else ""))
+          f"отрезков на плату: {sum(1 for k, *_ in laid if k == 'seg')}")
     if failed:
         top = collections.Counter(failed).most_common(10)
         print("  не разошлись:", ", ".join(f"{k}×{v}" for k, v in top))

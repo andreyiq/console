@@ -191,8 +191,16 @@ def relabel(board, want, fresh_of):
             if pad.GetPadName() != there[pos]:
                 pad.SetPadName(there[pos])
                 n += 1
+        # Описание тоже с библиотеки. Не украшение: пока оно расходилось, DRC
+        # держал `lib_footprint_mismatch` на `J601` — и эта строчка ничем не
+        # отличается от той, которой он сообщал о перевёрнутой нумерации.
+        # Одинаково выглядящее предупреждение про мелочь учит не смотреть на
+        # предупреждение про важное.
+        if fp.GetLibDescription() != fresh.GetLibDescription():
+            fp.SetLibDescription(fresh.GetLibDescription())
+            n += 1
         if n:
-            fixed.append(f"{ref}: перенумеровано площадок {n}")
+            fixed.append(f"{ref}: приведено к библиотеке, полей {n}")
         else:
             checked.append(ref)
     return fixed, checked

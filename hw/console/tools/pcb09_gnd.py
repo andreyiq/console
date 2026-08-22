@@ -43,6 +43,10 @@ BOARD = ROOT / "console.kicad_pcb"
 
 VIA_PAD, VIA_DRILL = 0.7, 0.4   # как в разводке, 10-mech.md §7
 CLEAR = 0.2                     # зазор, как на всей плате
+# Между центрами двух отверстий: сверло плюс 0.2495 между кромками
+# (console.kicad_dru). Правило про сверло, а не про медь, и заливка его не
+# видит — поэтому здесь оно проверяется отдельно.
+HOLE = VIA_DRILL + 0.2495
 GRID = 0.2                      # шаг перебора мест внутри куска
 RING = VIA_PAD / 2 + CLEAR      # на этом радиусе вокруг места нужна своя медь
 
@@ -129,6 +133,8 @@ def main():
                     continue
                 d = min(((x - px) ** 2 + (y - py) ** 2 for px, py in pierce),
                         default=1e9)
+                if d < HOLE * HOLE:
+                    continue        # свёрла столкнутся, медь тут не при чём
                 if d > best_d:
                     best, best_d = (x, y), d
         if best is None:
