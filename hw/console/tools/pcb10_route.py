@@ -86,6 +86,37 @@ def axis_clear(d):
     return math.sqrt(d * d + STEP * STEP / 2)
 
 
+# Мерить ли зазор одним уровнем (поправка на провис — на все клетки) или двумя
+# (поправка только на диагональный шаг). Двухуровневая модель честнее, но
+# честнее и лучше — разные вещи, поэтому здесь ручка, а не решение:
+#     PCB_ONE_LEVEL=1 python3 pcb10_route.py
+#
+# И это тот случай, когда порядок правок решал всё. Пока цепь росла от нулевой
+# площадки, два уровня давали 167 связей против 176 — то есть честная модель
+# ПРОИГРЫВАЛА: лишняя свобода уходила первым цепям, а последним от неё
+# становилось хуже. После починки роста (лес групп) те же два уровня дают 191
+# против 189. Правку легко было выбросить по замеру, и замер был верный —
+# он просто отвечал на другой вопрос.
+ONE_LEVEL = bool(os.environ.get("PCB_ONE_LEVEL"))
+
+# Сколько клеток прямо перед концом луча закрепить за его цепью.
+#
+# Зачем. Из-под F133 выходит гребёнка лучей с шагом 0.4 — ровно минимальным.
+# Пока цепь идёт своей колонкой, соседям она не мешает вовсе: 0.4 между осями
+# законно, и раздутие в 0.4 до соседней колонки не дотягивается. Мешает
+# ПОВОРОТ. Линия, повернувшая налево в 0.4 мм над концом соседнего луча,
+# делает клетку между ними спорной, а спорная клетка закрыта для обоих — и
+# конец соседнего луча превращается в тупик, куда «нет пути».
+#
+# Видно это на карте: `LCD-DB4` уходит горизонтально по y = 24.2, конец луча
+# `LCD-DB5` стоит на y = 24.6, и клетка 24.4 между ними ничья. Шесть линий
+# шины из тринадцати на верхней стороне корпуса запечатаны так.
+#
+# Поэтому перед концом луча держим коридор: чужой цепи в него нельзя, своя
+# обязана пройти его прямо и повернуть уже там, где место есть.
+ESCAPE = int(os.environ.get("PCB_ESCAPE", 0))
+
+
 NX = int(BOARD_W / STEP) + 1
 NY = int(BOARD_H / STEP) + 1
 
@@ -230,7 +261,7 @@ def to_mm(i, j):
 
 
 class Grid:
-    """Занятость клеток на двух слоях.
+    """Занятость клеток на двух слоях, в двух уровнях.
 
     `own[L][k]`: 0 свободно, >0 — клетка принадлежит одной цепи, −1 — на неё
     претендуют две и более, значит закрыта для всех. Слой 0 — лицо, 1 —
@@ -240,10 +271,27 @@ class Grid:
     зазор нельзя считать глухой стеной. Зазор вокруг площадки — это место, куда
     **своей** цепи ходить можно, а чужой нельзя. Пока раздутие блокировало всё
     подряд, дорожка не могла выйти даже из собственной площадки.
+
+    Уровней два, и это не запас, а разная геометрия:
+
+    * `own` — расстояние ровно по правилу (`d`). Годится для ПРЯМОГО шага:
+      дорожка, идущая вдоль препятствия на расстоянии `d`, соблюдает `d` на
+      всей длине, никакого провиса нет.
+    * `diag` — расстояние с поправкой на провис (`axis_clear(d)`). Нужно для
+      ДИАГОНАЛЬНОГО шага: у выпуклого угла отрезок между двумя клетками
+      проходит ближе к углу, чем любая из них.
+
+    Одним уровнем это не выражается, и попытка обошлась дорого. Поправка
+    стояла на все клетки сразу — тогда полоса между двумя соседними линиями
+    шины, ровно 0.4 мм, объявлялась непроходимой, хотя прямой шаг по ней
+    законен. А из таких полос состоит весь веер из-под F133: замер на пустой
+    плате, где мешать некому, давал 25 связей шины из 36, и все одиннадцать
+    неудач упирались в конец собственного луча.
     """
 
     def __init__(self):
         self.own = [[0] * (NX * NY), [0] * (NX * NY)]
+        self.diag = [[0] * (NX * NY), [0] * (NX * NY)]
         # Реальная медь каждой цепи — площадки и уже проложенные дорожки.
         # Ветка цепи должна стартовать от НЕЁ, а не от ближайшей площадки:
         # иначе питание с 38 площадками растёт змеёй через полплаты вместо
@@ -257,8 +305,15 @@ class Grid:
     def wall(self, i, j, layer=None):
         for L in ((0, 1) if layer is None else (layer,)):
             self.own[L][self.idx(i, j)] = -1
+            self.diag[L][self.idx(i, j)] = -1
 
-    def fill_near(self, x, y, net, layer, d):
+    def _mark(self, o, k, net):
+        if o[k] == 0:
+            o[k] = net
+        elif o[k] != net:
+            o[k] = -1
+
+    def fill_near(self, x, y, net, layer, d, sag=False):
         """Занять клетки ближе `d` миллиметров к точке `(x, y)`.
 
         Отличается от `fill_box` тем, что меряет по НАСТОЯЩИМ координатам, а не
@@ -272,20 +327,34 @@ class Grid:
         проходила одной линией из шестнадцати.
 
         Расстояние в миллиметрах даёт ровно правило и ни клеткой больше.
+
+        `d` — правило для прямого шага. Поправку на провис (`sag`) сюда НЕ
+        передаём, и это не забывчивость: препятствие здесь — дорожка, то есть
+        линия, а провис появляется у ВЫПУКЛОГО УГЛА. Две дорожки, идущие
+        рядом в 0.4 мм, соблюдают 0.4 на всей длине под любым углом шага.
+        Поправка нужна углу площадки — там её и ставим (`fill_rect_near`).
+
+        Замерено, вся плата, три прохода: поправка и на дорожки тоже — 189
+        связей, поправка только на площадки — 191. DRC по зазорам чист в обоих
+        случаях, то есть на дорожках поправка защищала от того, чего не бывает.
         """
         i0, j0 = to_cell(x, y)
-        r = int(math.ceil(d / STEP))
+        ac = axis_clear(d) if sag else d
+        r = int(math.ceil(ac / STEP))
+        ac2 = ac * ac
+        d2 = ac2 if ONE_LEVEL else d * d
         for L in ((0, 1) if layer is None else (layer,)):
-            o = self.own[L]
+            o, g = self.own[L], self.diag[L]
             for i in range(max(0, i0 - r), min(NX, i0 + r + 1)):
+                ddx = (i * STEP - x) ** 2
                 for j in range(max(0, j0 - r), min(NY, j0 + r + 1)):
-                    if (i * STEP - x) ** 2 + (j * STEP - y) ** 2 >= d * d:
+                    q = ddx + (j * STEP - y) ** 2
+                    if q >= ac2:
                         continue
                     k = self.idx(i, j)
-                    if o[k] == 0:
-                        o[k] = net
-                    elif o[k] != net:
-                        o[k] = -1
+                    self._mark(g, k, net)
+                    if q < d2:
+                        self._mark(o, k, net)
 
     def fill_rect_near(self, x1, y1, x2, y2, net, layer, d):
         """Занять клетки ближе `d` миллиметров к прямоугольнику площадки.
@@ -297,45 +366,61 @@ class Grid:
         щель. Ровно на этом закрывался проход между площадкой `C10` и
         площадкой розетки USB: настоящий просвет 0.9 мм, дорожке нужно 0.6,
         а модель требовала 1.1 — и `VBUS` не выходил из розетки вовсе.
+
+        Как и `fill_near`, заполняет оба уровня: `d` для прямого шага,
+        `axis_clear(d)` для диагонального.
         """
-        i1, j1 = to_cell(x1 - d, y1 - d)
-        i2, j2 = to_cell(x2 + d, y2 + d)
+        ac = axis_clear(d)
+        i1, j1 = to_cell(x1 - ac, y1 - ac)
+        i2, j2 = to_cell(x2 + ac, y2 + ac)
+        ac2 = ac * ac
+        d2 = ac2 if ONE_LEVEL else d * d
         for L in ((0, 1) if layer is None else (layer,)):
-            o = self.own[L]
+            o, g = self.own[L], self.diag[L]
             for i in range(max(0, i1), min(NX, i2 + 1)):
                 x = i * STEP
                 dx = max(x1 - x, x - x2, 0.0)
+                dx *= dx
                 for j in range(max(0, j1), min(NY, j2 + 1)):
                     y = j * STEP
                     dy = max(y1 - y, y - y2, 0.0)
-                    if dx * dx + dy * dy >= d * d:
+                    q = dx + dy * dy
+                    if q >= ac2:
                         continue
                     k = self.idx(i, j)
-                    if o[k] == 0:
-                        o[k] = net
-                    elif o[k] != net:
-                        o[k] = -1
+                    self._mark(g, k, net)
+                    if q < d2:
+                        self._mark(o, k, net)
 
     def fill_box(self, x1, y1, x2, y2, net, layer=None, pad=PAD):
+        """Занять клетки по НОМЕРУ клетки — для переходных: они круглые и стоят
+        по узлам сетки, мерить их в миллиметрах смысла нет. Оба уровня одинаково:
+        заклёпка препятствие грубое, экономить на её краю нечего."""
         i1, j1 = to_cell(x1, y1)
         i2, j2 = to_cell(x2, y2)
         for L in ((0, 1) if layer is None else (layer,)):
-            o = self.own[L]
+            o, g = self.own[L], self.diag[L]
             for i in range(max(0, i1 - pad), min(NX, i2 + pad + 1)):
                 for j in range(max(0, j1 - pad), min(NY, j2 + pad + 1)):
                     k = self.idx(i, j)
-                    if o[k] == 0:
-                        o[k] = net
-                    elif o[k] != net:
-                        o[k] = -1
+                    self._mark(o, k, net)
+                    self._mark(g, k, net)
 
     def add_copper(self, i, j, L, net):
         self.copper.setdefault(net, set()).add((i, j, L))
 
     def free(self, i, j, L, net):
+        """Можно ли встать в клетку и уйти из неё ПРЯМЫМ шагом."""
         if not (0 <= i < NX and 0 <= j < NY):
             return False
         o = self.own[L][self.idx(i, j)]
+        return o == 0 or o == net
+
+    def free_diag(self, i, j, L, net):
+        """Можно ли пройти через клетку ДИАГОНАЛЬНЫМ отрезком."""
+        if not (0 <= i < NX and 0 <= j < NY):
+            return False
+        o = self.diag[L][self.idx(i, j)]
         return o == 0 or o == net
 
     def can_via(self, i, j, net):
@@ -373,7 +458,7 @@ def pad_box(p):
             pcbnew.ToMM(bb.GetBottom()) - OY)
 
 
-def build(board, pads, vias, keepouts, wires=()):
+def build(board, pads, vias, keepouts, wires=(), tips=()):
     g = Grid()
     # поле за контуром платы
     for i in range(NX):
@@ -401,8 +486,7 @@ def build(board, pads, vias, keepouts, wires=()):
         else:
             # Раздутие площадки — ровно по правилу, в миллиметрах: зазор плюс
             # полдорожки. Через число клеток это округлялось вверх и врало.
-            g.fill_rect_near(*box, code, None,
-                             axis_clear(CLEAR + TRACK / 2))
+            g.fill_rect_near(*box, code, None, CLEAR + TRACK / 2)
     for x1, y1, x2, y2 in keepouts:
         # Зоны запрета живут внутри футпринтов — у `J401` это «No conductive
         # traces» из каталога Hirose, стр. 3, под механикой лотка. Закрываем
@@ -419,7 +503,15 @@ def build(board, pads, vias, keepouts, wires=()):
         # Чужая медь, уже лежащая на плате: лучи из-под F133 и то, что развёл
         # freerouting. Идём по отрезку с шагом в клетку — габаритный
         # прямоугольник у косой дорожки захватывает вчетверо больше места.
-        n = max(1, int(math.dist((x1, y1), (x2, y2)) / STEP))
+        # Шаг обхода — ПОЛКЛЕТКИ, а не клетка. Ровно клетка кажется достаточной
+        # и не является: `to_cell` округляет, и при шаге чуть больше клетки
+        # очередной узел перепрыгивается. Луч `LCD-DB9` идёт от 88.45 до 90.38,
+        # это 1.93 мм, `int(1.93 / 0.2)` даёт 9 шагов по 0.2144 — и клетка
+        # x = 89.2 не помечается ничем. Клетка спорная (её просят соседние
+        # лучи в 0.4 мм), значит остаётся стеной, и стена эта режет луч
+        # пополам: конец луча оказывается ОТДЕЛЬНЫМ куском меди, до которого
+        # «нет пути». Половина неудач шины дисплея — ровно это.
+        n = max(1, int(math.ceil(math.dist((x1, y1), (x2, y2)) / (STEP / 2))))
         # Луч веера начинается на площадке, а площадки стоят где угодно, не по
         # узлам сетки: у разъёма шлейфа они идут с шагом 0.5 при шаге сетки
         # 0.2. Округлять к ближайшему узлу нельзя — модель ошибётся на полшага
@@ -430,7 +522,7 @@ def build(board, pads, vias, keepouts, wires=()):
         # Поэтому чужую медь занимаем по НАСТОЯЩЕМУ расстоянию, а не по числу
         # клеток: `fill_near`. Там же записано, почему «на клетку больше» —
         # неверное лекарство.
-        d = axis_clear(w / 2 + CLEAR + TRACK / 2)
+        d = w / 2 + CLEAR + TRACK / 2
         for k in range(n + 1):
             x = x1 + (x2 - x1) * k / n
             y = y1 + (y2 - y1) * k / n
@@ -452,11 +544,27 @@ def build(board, pads, vias, keepouts, wires=()):
     # Клетка своей меди свободна для своей цепи и закрыта для чужих — ровно
     # то, что есть на плате.
     for L in (0, 1):
-        o = g.own[L]
+        o, dg = g.own[L], g.diag[L]
         for code, cells in g.copper.items():
             for i, j, cl in cells:
                 if cl == L:
                     o[g.idx(i, j)] = code
+                    dg[g.idx(i, j)] = code
+
+    # ТРЕТИЙ ПРОХОД: коридор выхода перед концом каждого луча — см. `ESCAPE`.
+    # Забираем только ничьё и спорное; чужую настоящую медь не трогаем, иначе
+    # модель начнёт врать в свою пользу ровно там, где мы её только починили.
+    for code, tx, ty, di, dj in tips:
+        i0, j0 = to_cell(tx, ty)
+        for k in range(1, ESCAPE + 1):
+            i, j = i0 + di * k, j0 + dj * k
+            if not (0 <= i < NX and 0 <= j < NY):
+                break
+            n = g.own[0][g.idx(i, j)]
+            if n > 0 and n != code:
+                break
+            g.own[0][g.idx(i, j)] = code
+            g.diag[0][g.idx(i, j)] = code
     return g
 
 
@@ -553,6 +661,12 @@ def route(g, starts, goals, net, margin=60, toll=()):
                 continue
             if not g.free(ni, nj, L, net):
                 continue
+            # Диагональный отрезок провисает к препятствию, прямой нет. Спрос
+            # разный, поэтому и уровень занятости разный, и спрашиваем оба
+            # конца отрезка: провис посередине зависит от обоих.
+            if di and dj and not (g.free_diag(ni, nj, L, net)
+                                  and g.free_diag(i, j, L, net)):
+                continue
             nc = cost + w * (BACK_COST if L else 1.0) + (TURN if d != -1 and k != d else 0.0)
             if toll and inside(ni, nj) and not inside(i, j):
                 nc += TOLL
@@ -640,7 +754,7 @@ def lay(board, path, net, g, width=TRACK):
     code = net.GetNetCode()
     for i, j, L in path:
         x, y = to_mm(i, j)
-        g.fill_box(x, y, x, y, code, layer=L)
+        g.fill_near(x, y, code, L, width / 2 + CLEAR + TRACK / 2)
         g.add_copper(i, j, L, code)
     return vias
 
@@ -666,7 +780,7 @@ def main():
                 (pcbnew.ToMM(pos.x) - OX, pcbnew.ToMM(pos.y) - OY))
             pad_at[(code, round(pcbnew.ToMM(pos.x) - OX, 2),
                     round(pcbnew.ToMM(pos.y) - OY, 2))] = (code, name)
-    wires, mine, edges = [], [], {}
+    wires, mine, edges, tips = [], [], {}, []
     for t in board.GetTracks():
         if isinstance(t, pcbnew.PCB_VIA):
             pos = t.GetPosition()
@@ -687,6 +801,20 @@ def main():
                       pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY,
                       0 if t.GetLayer() == pcbnew.F_Cu else 1,
                       pcbnew.ToMM(t.GetWidth())))
+        # Конец луча веера и куда он смотрит. Луч рисует `pcb07_fanout.py` от
+        # центра площадки к концу и помечает `locked` — по метке и узнаём.
+        # Направление берём по главной оси: `SKEW` уводит конец вбок на
+        # десятые, и от этого луч слегка косой, но выходит он всё равно от
+        # корпуса поперёк своей стороны.
+        if t.IsLocked() and ESCAPE:
+            ax, ay = pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY
+            bx, by = pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY
+            dx, dy = bx - ax, by - ay
+            if abs(dx) >= abs(dy):
+                step = (1 if dx > 0 else -1, 0)
+            else:
+                step = (0, 1 if dy > 0 else -1)
+            tips.append((t.GetNetCode(), bx, by) + step)
         # Своя медь прошлого захода — это соединённое, но НЕ ЦЕЛИКОМ. Она
         # лежит отдельными кусками, и считать её одним блобом нельзя: у `+3V3`
         # тридцать восемь площадок, дерево собрано наполовину, а трассировщик
@@ -738,7 +866,7 @@ def main():
     for t in mine:
         board.RemoveNative(t)
 
-    g = build(board, pads, vias, keepouts, wires)
+    g = build(board, pads, vias, keepouts, wires, tips)
 
     # Порядок — от коротких цепей к длинным: у короткой связи путь чаще всего
     # единственный разумный, и уступать его длинной незачем.
@@ -762,10 +890,21 @@ def main():
     # Проходы «неудачники идут первыми». Настоящий rip-up выдирает мешающие
     # дорожки и кладёт их иначе; здесь беднее, но по духу то же — цепь, которой
     # не хватило коридора, в следующем проходе выбирает первой.
-    order_bonus = set()
+    #
+    # Считаем неудачи НАКОПИТЕЛЬНО, а не «кто провалился в прошлый раз». Флажок
+    # «в прошлом проходе не сошлась» заменялся целиком, и проходы входили в
+    # цикл длиной два: 169, 171, 176, 169, 176, 169, 176, 169 — с третьего
+    # прохода одно и то же по кругу, восемь проходов стоят как три и дают
+    # ровно то же. Счётчик так не зацикливается: цепь, проваливающаяся из
+    # прохода в проход, поднимается в очереди всё выше.
+    #
+    # На числе связей это, впрочем, НЕ СКАЗАЛОСЬ: `PCB_LASTFAIL=1` (прежнее
+    # поведение) и накопительный счёт дают одинаково 191. Оставлено потому, что
+    # цикл сам по себе врёт про пользу проходов, а не потому, что помогло.
+    hist = collections.Counter()
     best_state = None
     for attempt in range(PASSES):
-        g = build(board, pads, vias, keepouts, wires)
+        g = build(board, pads, vias, keepouts, wires, tips)
         laid = []
         done = fail = nvias = 0
         failed = []
@@ -785,7 +924,7 @@ def main():
                 return (1, b, -i)
             if POWER_FIRST and name in POWER:
                 return (2, 0, span)
-            return (3, 0 if name in order_bonus else 1, span)
+            return (3, -hist[name], span)
 
         ordered = sorted(tasks, key=key)
         for span, code, name, pts in ordered:
@@ -796,8 +935,6 @@ def main():
                          if not name.startswith(who))
             cells = [to_cell(*q) for q in pts]
             g.copper.setdefault(code, set())
-            rest = list(range(1, len(pts)))
-            connected = {0}
             # Соединённое ведём отдельно от «меди вообще». В меди у цепи лежат
             # все её площадки сразу, и если стартовать от неё, цель оказывается
             # достигнутой в ноль шагов: путь пустой, счётчик растёт, на плату
@@ -818,24 +955,69 @@ def main():
             def piece(cell):
                 r = of_cell.get(cell + (0,)) or of_cell.get(cell + (1,))
                 return set(of_root[r]) if r else {cell + (0,)}
-            own = piece(cells[0])
-            while rest:
-                rest.sort(key=lambda r: min(math.dist(pts[r], pts[c])
-                                            for c in connected))
-                r = rest.pop(0)
-                if any(cells[r] + (L,) in own for L in (0, 1)):
-                    connected.add(r)
-                    done += 1
-                    continue
-                path = route(g, sorted(own), [cells[r]], code, margin=MARGIN,
+            #
+            # Растим не «от первой площадки», а лес: каждая площадка со своим
+            # куском меди — отдельная группа, и мы сшиваем ближайшую пару
+            # групп, пока пар не останется.
+            #
+            # Прежде стартовали от куска, в котором лежит площадка номер ноль,
+            # и росли только оттуда. Если эта площадка окажется запертой,
+            # рушится ВСЯ цепь: `own` не растёт ни на клетку, и каждая
+            # следующая связь честно получает «нет пути». Так `+1V8` терял все
+            # пятнадцать связей из пятнадцати — при том что один на плате он
+            # разводится целиком, 15 из 15. Проверено на паре: критичные цепи
+            # плюс `+1V8` — те же 15 из 15 в минус, `AVCC`+`AGND` плюс `+1V8` —
+            # 27 связей и ни одной неудачи. Дело было не в тесноте.
+            #
+            # Заодно у сшивки пары целей не одна, а все площадки группы: путь
+            # ищется до ЛЮБОЙ из них, а не до заранее назначенной.
+            groups, gid = {}, 0
+            for idx in range(len(pts)):
+                p = piece(cells[idx])
+                hit = None
+                for k, (gc, _) in groups.items():
+                    if (gc & p) or any(cells[idx] + (L,) in gc for L in (0, 1)):
+                        hit = k
+                        break
+                if hit is None:
+                    groups[gid] = (set(p), {idx})
+                    gid += 1
+                else:
+                    groups[hit][0].update(p)
+                    groups[hit][1].add(idx)
+
+            need = len(pts) - 1
+            joined, bad = 0, set()
+            while len(groups) > 1:
+                pair, dist = None, None
+                keys = sorted(groups)
+                for ia, a in enumerate(keys):
+                    for b in keys[ia + 1:]:
+                        if frozenset((a, b)) in bad:
+                            continue
+                        d = min(math.dist(pts[i], pts[j])
+                                for i in groups[a][1] for j in groups[b][1])
+                        if dist is None or d < dist:
+                            pair, dist = (a, b), d
+                if pair is None:
+                    break
+                a, b = pair
+                own = groups[a][0]
+                goals = [cells[i] for i in groups[b][1]]
+                path = route(g, sorted(own), goals, code, margin=MARGIN,
                              toll=toll)
                 if path:
                     nvias += lay_rec(laid, path, width, code)
                     prev_L = None
                     for i, j, L in path:
                         x, y = to_mm(i, j)
-                        g.fill_box(x, y, x, y, code, layer=L,
-                                   pad=track_pad(width))
+                        # Тем же способом, что чужая медь с платы, и это не
+                        # придирка: пока свежая дорожка занимала место по числу
+                        # клеток, а прочитанная с платы — по миллиметрам, одна
+                        # и та же пара дорожек была законной внутри прохода и
+                        # незаконной на следующем.
+                        g.fill_near(x, y, code, L,
+                                    width / 2 + CLEAR + TRACK / 2)
                         g.add_copper(i, j, L, code)
                         own.add((i, j, L))
                         if prev_L is not None and L != prev_L:
@@ -847,24 +1029,32 @@ def main():
                             g.fill_box(x - keep, y - keep,
                                        x + keep, y + keep, code)
                         prev_L = L
-                    own.add(cells[r] + (0,))
-                    own |= piece(cells[r])
-                    done += 1
+                    own |= groups[b][0]
+                    groups[a] = (own, groups[a][1] | groups[b][1])
+                    del groups[b]
+                    joined += 1
                 else:
-                    fail += 1
-                    failed.append(name)
+                    bad.add(frozenset((a, b)))
                     why[route.why] += 1
                     # Куда именно не дошли. Одного имени цепи мало: у `+3V3`
                     # тридцать восемь площадок, и «не удалось 13» не говорит
                     # ни где смотреть, ни что двигать.
-                    spots.append((name, pts[r], route.why))
-                connected.add(r)
+                    spots.append((name, pts[min(groups[b][1])], route.why))
+            # Считаем как раньше: связей у цепи `len(pts) - 1`, сшитых
+            # `joined`, остальное — неудачи. Иначе числа перестанут сравниваться
+            # с прежними замерами, а сравнивать их всё равно будут.
+            done += joined
+            fail += need - joined
+            failed.extend([name] * (need - joined))
         print(f"  проход {attempt + 1}: проложено {done}, не удалось {fail} "
               f"({', '.join(f'{k} {v}' for k, v in why.most_common())}), "
               f"переходных {nvias}")
         if best_state is None or done > best_state[0]:
             best_state = (done, fail, nvias, laid, list(failed), list(spots))
-        order_bonus = set(failed)
+        if os.environ.get("PCB_LASTFAIL"):
+            hist.clear()        # прежнее поведение, для сравнения одной командой
+        for n in failed:
+            hist[n] += 1
         if fail == 0:
             break
 
