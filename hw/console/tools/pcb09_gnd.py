@@ -1,22 +1,39 @@
 #!/usr/bin/env python3
-"""Добивка земли: переходная там, где заливка на лице осталась островом.
+"""Добивка земли: заклёпка в каждый кусок заливки, отрезанный от плоскости.
 
 Изнанка — сплошная плоскость `GND`, лицо — заливка того же `GND`, между ними
 сшивка с шагом 8 мм (`pcb06_planes.py`). Но после трассировки дорожки режут
-переднюю заливку, и часть её кусков остаётся отрезанной от остальных: медь
-есть, а связи с плоскостью нет. DRC честно называет такие места
-неподключёнными.
+переднюю заливку на куски, и часть кусков остаётся без связи с плоскостью:
+медь есть, связи нет. Такой кусок — не пустяк: это висящая в воздухе медь
+площадью в десятки квадратных миллиметров.
 
-Скрипт спрашивает у DRC, где именно это случилось, и ставит туда переходную.
-Ставит только там, где просят, а не по всей плате: каждая переходная у нас —
-это заклёпка из проволоки, спаянная руками с двух сторон (10-mech.md §7).
+Работаем от самих кусков заливки, а не от текста отчёта DRC, и не по
+близости, а по принадлежности. Прежняя версия делала наоборот, и это была
+тихая поломка: она искала свободное место кольцами до 2.4 мм от точки,
+названной DRC, и ставила заклёпку в первое геометрически свободное — то есть
+запросто в СОСЕДНИЙ кусок или в щель между кусками. Отчёт при этом честно
+говорил «добито 8», хотя связал ли кто-нибудь из этих восьми хоть что-то, он
+не знал. Замер: восемь заклёпок, разрывов по земле по-прежнему 18.
 
-Запускать после `pcb08_ses.py`, можно несколько раз подряд — каждый прогон
-добивает то, что осталось.
+Кусок считается связанным, если внутри него стоит переходная `GND` или
+сквозная площадка `GND` — только они пробивают на изнанку.
+
+Место под заклёпку проверяется с двух сторон:
+  * на лице — все восемь точек на радиусе (полплощадки + зазор) лежат внутри
+    ЭТОГО куска;
+  * на изнанке — те же восемь точек лежат внутри плоскости.
+Заливка уже соблюдает зазоры до всего чужого, поэтому «внутри своей меди с
+запасом» и означает «зазоры соблюдены» — отдельного перебора чужих площадок
+не нужно, а прежний перебор ошибался: он смотрел только на площадки, но не на
+дорожки.
+
+Из подходящих мест берём то, что дальше от уже стоящих заклёпок: их паять
+руками, и две рядом хуже двух вразброс.
+
+Запускать после `pcb08_ses.py` / `pcb10_route.py` и `pcb06_planes.py`.
+Идемпотентно: свои заклёпки помечены `locked`, и `pcb06_planes.py` снимает их
+перед новой заливкой.
 """
-import re
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pcbnew
@@ -25,106 +42,102 @@ ROOT = Path(__file__).resolve().parent.parent
 BOARD = ROOT / "console.kicad_pcb"
 
 VIA_PAD, VIA_DRILL = 0.7, 0.4   # как в разводке, 10-mech.md §7
-KEEP = 0.6                      # медь 0.35 плюс зазор 0.2 и запас
-STEP, RINGS = 0.4, 6            # на сколько и как далеко искать место рядом
-EDGE = 0.5                      # отступ меди от реза, 10-mech.md §7
+CLEAR = 0.2                     # зазор, как на всей плате
+GRID = 0.2                      # шаг перебора мест внутри куска
+RING = VIA_PAD / 2 + CLEAR      # на этом радиусе вокруг места нужна своя медь
+
+# Восемь направлений вместо круга: круг здесь не нужен, а восемь точек ловят и
+# узкий перешеек, и близкий край. Диагонали через 0.7071, чтобы радиус был тот
+# же, а не корень из двух больше.
+DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1),
+        (0.7071, 0.7071), (0.7071, -0.7071),
+        (-0.7071, 0.7071), (-0.7071, -0.7071))
 
 
 def mm(v):
     return pcbnew.FromMM(v)
 
 
-def drc_points():
-    """Координаты неподключённых элементов цепи GND, из отчёта DRC."""
-    with tempfile.TemporaryDirectory() as d:
-        rpt = Path(d) / "drc.rpt"
-        subprocess.run(["kicad-cli", "pcb", "drc", "--severity-error",
-                        "--severity-warning", "-o", str(rpt), str(BOARD)],
-                       capture_output=True)
-        text = rpt.read_text()
+def pt(x, y):
+    return pcbnew.VECTOR2I(mm(x), mm(y))
+
+
+def deep_inside(poly, x, y, r=RING):
+    """Точка лежит внутри `poly` вместе с площадкой заклёпки и зазором."""
+    return all(poly.Contains(pt(x + dx * r, y + dy * r)) for dx, dy in DIRS)
+
+
+def pieces(zones, layer, net):
+    """Куски залитой меди цепи `net` на слое `layer`, каждый со своими дырами."""
     out = []
-    for blk in re.split(r"\n(?=\[)", text):
-        if not blk.startswith("[unconnected_items]"):
+    for z in zones:
+        if z.GetNetCode() != net or not z.IsOnLayer(layer):
             continue
-        if "[GND]" not in blk:
-            continue
-        for x, y in re.findall(r"@\(([\d,\.]+) mm, ([\d,\.]+) mm\)", blk):
-            out.append((float(x.replace(",", ".")), float(y.replace(",", "."))))
+        polys = z.GetFilledPolysList(layer)
+        for k in range(polys.OutlineCount()):
+            one = pcbnew.SHAPE_POLY_SET()
+            one.AddOutline(polys.Outline(k))
+            for h in range(polys.HoleCount(k)):
+                one.AddHole(polys.Hole(k, h), 0)
+            out.append(one)
     return out
 
 
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
     gnd = board.FindNet("GND")
+    if gnd is None:
+        raise SystemExit("цепь GND на плате не найдена — сначала pcb00_nets.py")
+    code = gnd.GetNetCode()
 
-    busy = []
+    # Заливка должна быть свежей: куски считаем по ней, а не по тому, что было
+    # залито до последней трассировки.
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+
+    # Что уже пробивает лицо на изнанку.
+    pierce = [(pcbnew.ToMM(t.GetPosition().x), pcbnew.ToMM(t.GetPosition().y))
+              for t in board.GetTracks()
+              if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == code]
     for f in board.GetFootprints():
         for p in f.Pads():
-            if p.GetNetCode() == gnd.GetNetCode():
-                continue
-            bb = p.GetBoundingBox()
-            busy.append((pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
-                         pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())))
-    have = []
-    for t in board.GetTracks():
-        if isinstance(t, pcbnew.PCB_VIA):
-            pos = t.GetPosition()
-            have.append((pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y)))
+            if p.GetNetCode() == code and p.GetAttribute() in (
+                    pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH):
+                pierce.append((pcbnew.ToMM(p.GetPosition().x),
+                               pcbnew.ToMM(p.GetPosition().y)))
 
-    # Контур платы. Поиск места ходит кольцами до 2.4 мм от точки разрыва и
-    # спокойно уходил за рез: пять заклёпок земли встали снаружи платы, в
-    # отрицательных координатах. Проверяем не только «внутри», но и «не ближе
-    # отступа»: пробуем восемь точек вокруг центра на расстоянии, которое
-    # заклёпке нужно от реза. Так обходимся без `Deflate` — контур со
-    # скруглениями он портит.
-    edges = pcbnew.SHAPE_POLY_SET()
-    board.GetBoardPolygonOutlines(edges)
-    ring = VIA_PAD / 2 + EDGE
+    zones = list(board.Zones())
+    back = pieces(zones, pcbnew.B_Cu, code)
+    front = pieces(zones, pcbnew.F_Cu, code)
 
-    def in_board(x, y):
-        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1),
-                       (0.7071, 0.7071), (0.7071, -0.7071),
-                       (-0.7071, 0.7071), (-0.7071, -0.7071)):
-            p = pcbnew.VECTOR2I(mm(x + dx * ring), mm(y + dy * ring))
-            if not edges.Contains(p):
-                return False
-        return True
-
-    def free(x, y):
-        if not in_board(x, y):
-            return False
-        if any(x1 - KEEP < x < x2 + KEEP and y1 - KEEP < y < y2 + KEEP
-               for x1, y1, x2, y2 in busy):
-            return False
-        return not any((x - vx) ** 2 + (y - vy) ** 2 < 1.2 ** 2
-                       for vx, vy in have)
-
-    added = skipped = 0
-    for x0, y0 in drc_points():
-        # Ищем место не только в самой точке разрыва: DRC называет середину
-        # куска меди, а она нередко стоит впритык к чужой площадке. Обходим
-        # кольцами вокруг — заклёпке всё равно, где стоять, лишь бы попасть в
-        # тот же кусок.
-        spot = None
-        for r in range(RINGS + 1):
-            for dx in range(-r, r + 1):
-                for dy in range(-r, r + 1):
-                    if max(abs(dx), abs(dy)) != r:
-                        continue
-                    x, y = x0 + dx * STEP, y0 + dy * STEP
-                    if free(x, y):
-                        spot = (x, y)
-                        break
-                if spot:
-                    break
-            if spot:
-                break
-        if spot is None:
-            skipped += 1
+    added, left = 0, []
+    for one in front:
+        area = one.Area() / 1e12
+        if any(one.Contains(pt(x, y)) for x, y in pierce):
             continue
-        x, y = spot
+        bb = one.BBox()
+        x1, y1 = pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop())
+        x2, y2 = pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())
+        best, best_d = None, -1.0
+        n = int((x2 - x1) / GRID) + 1
+        m = int((y2 - y1) / GRID) + 1
+        for i in range(n):
+            for j in range(m):
+                x, y = x1 + i * GRID, y1 + j * GRID
+                if not deep_inside(one, x, y):
+                    continue
+                if not any(deep_inside(b, x, y) for b in back):
+                    continue
+                d = min(((x - px) ** 2 + (y - py) ** 2 for px, py in pierce),
+                        default=1e9)
+                if d > best_d:
+                    best, best_d = (x, y), d
+        if best is None:
+            left.append((area, "заклёпка не влезает",
+                         (round((x1 + x2) / 2, 1), round((y1 + y2) / 2, 1))))
+            continue
+        x, y = best
         v = pcbnew.PCB_VIA(board)
-        v.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+        v.SetPosition(pt(x, y))
         v.SetWidth(mm(VIA_PAD))
         v.SetDrill(mm(VIA_DRILL))
         v.SetNet(gnd)
@@ -135,12 +148,16 @@ def main():
         # захода остаются стоять там, где разрыва больше нет.
         v.SetLocked(True)
         board.Add(v)
-        have.append((x, y))
+        pierce.append((x, y))
         added += 1
 
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     board.Save(str(BOARD))
-    print(f"добито переходных по земле: {added}, пропущено (занято): {skipped}")
+    print(f"кусков заливки на лице: {len(front)}, изнанка одним куском: "
+          f"{'да' if len(back) == 1 else f'нет, кусков {len(back)}'}")
+    print(f"добито заклёпок по земле: {added}, осталось без связи: {len(left)}")
+    for area, why, (x, y) in sorted(left, reverse=True)[:8]:
+        print(f"    кусок {area:7.2f} мм² в ({x}, {y}) — {why}")
 
 
 if __name__ == "__main__":
