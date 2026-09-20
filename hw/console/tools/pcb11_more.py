@@ -38,6 +38,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -47,6 +48,13 @@ STATE = ROOT / "route.json"
 MARGIN = int(os.environ.get("PCB_MORE_MARGIN", 250))
 BUDGET = int(os.environ.get("PCB_MORE_BUDGET", 1500000))
 LIMIT = int(os.environ.get("PCB_MORE_LIMIT", 6))     # потолок от зацикливания
+
+# Предел по времени, и он нужен отдельно от предела по числу заходов. Один
+# заход при широкой коробке идёт около девяти минут, шесть — почти час, и всё
+# это время шаг не говорит ничего. Упёршись в срок, он скажет, что упёрся во
+# ВРЕМЯ, а не в предмет: разница существенная, потому что лечится она разными
+# вещами — время ручкой, предмет размещением.
+DEADLINE = float(os.environ.get("PCB_MORE_DEADLINE", 1800))   # секунд
 
 
 def run():
@@ -66,19 +74,32 @@ def main():
         raise SystemExit("сначала нужен прогон pcb10_route.py: добор идёт "
                          "поверх готовой разводки, а не вместо неё")
     was = json.loads(STATE.read_text())
-    print(f"до добора: связей {was['done']}, не сошлось {was['fail']}")
-    n = 0
-    while n < LIMIT:
+    print(f"до добора: связей {was['done']}, не сошлось {was['fail']}; "
+          f"заходов не больше {LIMIT}, времени не больше {DEADLINE / 60:.0f} мин",
+          flush=True)
+    t0 = time.monotonic()
+    n, why = 0, None
+    while True:
+        if n >= LIMIT:
+            why = f"упёрлись в потолок {LIMIT} заходов"
+            break
+        left = DEADLINE - (time.monotonic() - t0)
+        if left <= 0:
+            why = f"упёрлись во ВРЕМЯ ({DEADLINE / 60:.0f} мин), а не в предмет"
+            break
+        print(f"  заход {n + 1} пошёл, в запасе {left / 60:.0f} мин…", flush=True)
         now = run()
         n += 1
         gain = was["fail"] - now["fail"]
         print(f"  добор {n}: связей {now['done']}, не сошлось {now['fail']}"
-              f" ({'убавилось на ' + str(gain) if gain > 0 else 'без изменений'})")
+              f" ({'убавилось на ' + str(gain) if gain > 0 else 'без изменений'})"
+              f", прошло {(time.monotonic() - t0) / 60:.0f} мин", flush=True)
         if gain <= 0:
+            why = "перестало убавлять"
+            was = now
             break
         was = now
-    print(f"добор кончен: прогонов {n}, не сошлось {was['fail']}"
-          + ("" if n < LIMIT else f" — упёрлись в потолок {LIMIT} прогонов"))
+    print(f"добор кончен: заходов {n}, не сошлось {was['fail']} — {why}")
 
 
 if __name__ == "__main__":

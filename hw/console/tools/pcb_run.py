@@ -36,19 +36,64 @@ STATE = ROOT / "route.json"
 
 
 def step(name, args, keep=()):
-    """Прогнать шаг, показать только те строки, что просили, вернуть их все."""
+    """Прогнать шаг, показывая нужные строки ПО ХОДУ, и вернуть их все.
+
+    Вывод читается построчно, а не забирается в конце. Разница не
+    косметическая: добор идёт двадцать минут, и пока его вывод копился до
+    конца шага, «идёт» и «зависло» были неотличимы ровно там, где ждать дольше
+    всего.
+    """
     t0 = time.monotonic()
-    r = subprocess.run([sys.executable, str(HERE / name)] + list(args),
-                       capture_output=True, text=True)
-    if r.returncode != 0:
-        tail = "\n".join(r.stderr.strip().split("\n")[-6:])
-        raise SystemExit(f"{name} упал (код {r.returncode}):\n{tail}")
-    out = [ln for ln in r.stdout.split("\n") if ln.strip()]
-    shown = [ln for ln in out if any(k in ln for k in keep)] if keep else out
-    for ln in shown:
-        print(f"  {ln.strip()}")
+    p = subprocess.Popen([sys.executable, "-u", str(HERE / name)] + list(args),
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         text=True, bufsize=1)
+    out = []
+    for ln in p.stdout:
+        ln = ln.rstrip()
+        if not ln.strip():
+            continue
+        out.append(ln)
+        if not keep or any(k in ln for k in keep):
+            print(f"  {ln.strip()}")
+    err = p.stderr.read()
+    if p.wait() != 0:
+        tail = "\n".join(err.strip().split("\n")[-6:])
+        raise SystemExit(f"{name} упал (код {p.returncode}):\n{tail}")
     print(f"  ({name}: {time.monotonic() - t0:.0f} c)")
     return out
+
+
+def picture():
+    """Картинка меди обеих сторон — чтобы на плату СМОТРЕЛИ, а не только мерили.
+
+    Это не украшение отчёта. Три круга проверок давали ноль, и каждый раз
+    осмотр глазами находил то, чего ни одна проверка не видела: резисторы под
+    банкой, защиту USB в стороне от розетки, зарядник в противоположном углу
+    (`10-mech.md §9.1`). Цифры проверяют только то, о чём догадался спросить.
+
+    Поэтому картинка делается КАЖДЫЙ круг и её путь печатается в сводке: цена
+    осмотра должна быть один клик, иначе о нём забывают. Забыли уже — целую
+    сессию мерили числа и ни разу не взглянули.
+    """
+    made = []
+    for name, layers in (("медь-лицо.png", "F.Cu,Edge.Cuts"),
+                         ("медь-изнанка.png", "B.Cu,Edge.Cuts")):
+        path = ROOT / "view" / name
+        path.parent.mkdir(exist_ok=True)
+        r = subprocess.run(["kicad-cli", "pcb", "render", "-o", str(path),
+                            "--side", "top", "-w", "1800", "-h", "900",
+                            str(BOARD)], capture_output=True, text=True)
+        if not path.exists():
+            # Рендер трёхмерный и требует моделей; если его нет — плоский SVG.
+            path = path.with_suffix(".svg")
+            r = subprocess.run(["kicad-cli", "pcb", "export", "svg",
+                                "-o", str(path), "--layers", layers,
+                                "--black-and-white", "--mode-single",
+                                "--exclude-drawing-sheet", str(BOARD)],
+                               capture_output=True, text=True)
+        if path.exists():
+            made.append(path)
+    return made
 
 
 def drc():
@@ -110,6 +155,12 @@ def main():
     print(f"  разрывов по DRC: {sum(gap.values())} по {len(gap)} цепям"
           + (f" — {', '.join(f'{k}x{v}' for k, v in gap.most_common(6))}"
              if gap else ""))
+    pics = picture()
+    if pics:
+        print("  ПОСМОТРЕТЬ ГЛАЗАМИ: " + ", ".join(str(p) for p in pics))
+    else:
+        print("  картинку сделать не удалось — осмотр глазами придётся "
+              "открывать вручную в KiCad")
     print(f"  весь круг: {time.monotonic() - t0:.0f} c")
 
 
