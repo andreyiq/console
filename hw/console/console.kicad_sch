@@ -16202,1804 +16202,6 @@
 		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
 		(uuid "ec0e8dfd-5e86-5326-96b9-164b38fb23e6")
 	)
-	(symbol
-		(lib_id "Memory_Flash:W25Q32JVSS")
-		(at 177.8 165.1 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "6b5aa568-755f-5973-9094-78eba36d36e1")
-		(property "Reference" "U401"
-			(at 154.94 146.05 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Value" "W25Q32JVSSIQ"
-			(at 154.94 148.59 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm"
-			(at 177.8 165.1 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 177.8 165.1 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C179173"
-			(at 177.8 165.1 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "U401")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "SPI0-CS0"
-		(shape bidirectional)
-		(at 167.64 157.48 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "04d46cfc-59c8-51ef-a723-ac09c4fedeb0")
-	)
-	(global_label "NOR-CLK"
-		(shape bidirectional)
-		(at 167.64 160.02 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "e72992c5-7902-5c1b-abb5-ee1640dbd1a4")
-	)
-	(global_label "SPI0-MOSI"
-		(shape bidirectional)
-		(at 167.64 162.56 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "283d792c-c782-5a53-9a44-26ce0e23515c")
-	)
-	(global_label "SPI0-MISO"
-		(shape bidirectional)
-		(at 167.64 165.1 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "f4f0e0f7-57b5-5107-bf6f-8ea0fc1ef840")
-	)
-	(global_label "SPI0-WP"
-		(shape bidirectional)
-		(at 167.64 167.64 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2f3442b0-0bde-58a9-865b-a2c7b283ae98")
-	)
-	(global_label "SPI0-HOLD"
-		(shape bidirectional)
-		(at 167.64 170.18 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d67b063d-d041-54d9-9d46-5afb03dd2144")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 177.8 152.4 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "02b58c9a-995f-59d5-a8f6-5eaa84b795aa")
-		(property "Reference" "#PWR400"
-			(at 180.34 151.13 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 177.8 147.32 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 177.8 152.4 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR400")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 177.8 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "58650b6d-6eec-5e03-b8dd-1acf66c96640")
-		(property "Reference" "#PWR401"
-			(at 180.34 176.53 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 177.8 182.88 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 177.8 177.8 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR401")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Micro_SD_Card_Det_Hirose_DM3AT")
-		(at 177.8 226.06 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ef88c4e2-b5c0-5835-84a9-8cfa8ed8a764")
-		(property "Reference" "J401"
-			(at 154.94 207.01 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Value" "DM3AT-SF-PEJM5"
-			(at 154.94 209.55 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5"
-			(at 177.8 226.06 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.3"
-			(at 177.8 226.06 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C114218"
-			(at 177.8 226.06 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "J401")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "SDC0-D2"
-		(shape bidirectional)
-		(at 154.94 215.9 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "c1af243f-db20-5829-a230-6f8c0cb7fd92")
-	)
-	(global_label "SDC0-D3"
-		(shape bidirectional)
-		(at 154.94 218.44 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "cab96e9e-3c7f-5edb-a2e4-1ea7dc752664")
-	)
-	(global_label "SDC0-CMD"
-		(shape bidirectional)
-		(at 154.94 220.98 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2a804bf2-7864-5512-b713-de0183d8d14d")
-	)
-	(global_label "+3V3"
-		(shape bidirectional)
-		(at 154.94 223.52 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "03a717e9-87eb-5b88-95c2-c7f7e6eea04d")
-	)
-	(global_label "SD-CLK"
-		(shape bidirectional)
-		(at 154.94 226.06 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "17f8b0fa-5956-52ee-8862-0c314a92f19d")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 154.94 228.6 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "122ff579-9341-502f-8235-b2f76a692f7c")
-	)
-	(global_label "SDC0-D0"
-		(shape bidirectional)
-		(at 154.94 231.14 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "0526e05c-1480-57ea-9362-997295d80cb8")
-	)
-	(global_label "SDC0-D1"
-		(shape bidirectional)
-		(at 154.94 233.68 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "bc44ccbb-8a79-5253-af7b-a27bce7152c9")
-	)
-	(global_label "SDC0-DET"
-		(shape bidirectional)
-		(at 154.94 238.76 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "a21ac91d-a76d-591a-9422-085190307007")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 154.94 236.22 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "eb03a26c-6b68-5485-b71e-ea524b5f774c")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 198.12 238.76 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "8e631b3d-c758-5b4b-ae3e-2171ebdc06f2")
-	)
-	(wire
-		(pts (xy 38.1 152.4) (xy 57.15 152.4))
-		(stroke (width 0) (type default))
-		(uuid "0931d125-3ae2-551c-bf92-47bc2b788bbe")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 60.96 152.4 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "40510894-3754-543b-8230-f55058fad71a")
-		(property "Reference" "R404"
-			(at 60.96 149.86 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Value" "33"
-			(at 60.96 154.94 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 60.96 152.4 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.5"
-			(at 60.96 152.4 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R404")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 64.77 152.4) (xy 83.82 152.4))
-		(stroke (width 0) (type default))
-		(uuid "000bf43a-6475-5948-b22a-5431250835af")
-	)
-	(global_label "SPI0-CLK"
-		(shape bidirectional)
-		(at 38.1 152.4 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "9ecae0b9-fa27-5ddb-964f-6aa0b5995f8e")
-	)
-	(global_label "NOR-CLK"
-		(shape bidirectional)
-		(at 83.82 152.4 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "61967f1b-8711-5c42-abea-162a94efecd5")
-	)
-	(wire
-		(pts (xy 38.1 165.1) (xy 57.15 165.1))
-		(stroke (width 0) (type default))
-		(uuid "9e24cae0-3a52-5d2a-ab83-4cd9b4996b96")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 60.96 165.1 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ef45bccb-96f8-5456-b605-090ea458c718")
-		(property "Reference" "R405"
-			(at 60.96 162.56 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Value" "33"
-			(at 60.96 167.64 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 60.96 165.1 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.5"
-			(at 60.96 165.1 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R405")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 64.77 165.1) (xy 83.82 165.1))
-		(stroke (width 0) (type default))
-		(uuid "42516117-87a6-5b18-a380-46bbd64f77e8")
-	)
-	(global_label "SDC0-CLK"
-		(shape bidirectional)
-		(at 38.1 165.1 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d1cd4b26-5bba-5a75-9bd1-5673dc353d57")
-	)
-	(global_label "SD-CLK"
-		(shape bidirectional)
-		(at 83.82 165.1 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "1d3de6a8-bbdc-5f60-9808-e78858c88e36")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 38.1 180.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "35370274-2e30-5e48-ad95-ba054a624767")
-		(property "Reference" "#PWR402"
-			(at 40.64 179.07 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 38.1 175.26 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 180.34 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR402")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 180.34) (xy 38.1 184.15))
-		(stroke (width 0) (type default))
-		(uuid "0d76a020-1b62-52c2-9c63-59a1653cb3bd")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 38.1 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9f6dca7a-acca-5cec-a24b-1fa677c90e1e")
-		(property "Reference" "R401"
-			(at 35.56 186.69 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 35.56 189.865 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 38.1 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 38.1 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R401")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 191.77) (xy 38.1 195.58))
-		(stroke (width 0) (type default))
-		(uuid "c6ed4b3f-8c48-5c75-98ff-b0cd3a12005b")
-	)
-	(global_label "SPI0-CS0"
-		(shape bidirectional)
-		(at 38.1 195.58 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "cd056fbf-bd4b-51b2-a801-fb696b508e35")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 63.5 180.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "fa21cbc1-1abf-5a10-8da7-68497bf7db46")
-		(property "Reference" "#PWR403"
-			(at 66.04 179.07 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 63.5 175.26 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 180.34 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR403")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 180.34) (xy 63.5 184.15))
-		(stroke (width 0) (type default))
-		(uuid "5abc8ed2-a4d7-577c-8ce6-0922188324e0")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 63.5 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d4539088-a7bc-58e5-9b31-54ff06f146a1")
-		(property "Reference" "R402"
-			(at 60.96 186.69 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 60.96 189.865 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 63.5 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 63.5 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R402")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 191.77) (xy 63.5 195.58))
-		(stroke (width 0) (type default))
-		(uuid "7c4e96c3-7150-5296-97df-a68c3d110c26")
-	)
-	(global_label "SPI0-WP"
-		(shape bidirectional)
-		(at 63.5 195.58 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ae246126-3795-53f6-b68d-829205114f32")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 88.9 180.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a2ae56af-abd6-50cd-ab16-c5a842a82d0c")
-		(property "Reference" "#PWR404"
-			(at 91.44 179.07 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 88.9 175.26 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 88.9 180.34 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR404")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 180.34) (xy 88.9 184.15))
-		(stroke (width 0) (type default))
-		(uuid "59e013bc-a885-50be-b6bb-1acd006cecf5")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 88.9 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "e36ea1a8-58e7-5e47-ba47-ccb87795f41b")
-		(property "Reference" "R403"
-			(at 86.36 186.69 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 86.36 189.865 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 88.9 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 88.9 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R403")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 191.77) (xy 88.9 195.58))
-		(stroke (width 0) (type default))
-		(uuid "9cd078dc-ffee-55c1-ad81-bfebfbf2efc4")
-	)
-	(global_label "SPI0-HOLD"
-		(shape bidirectional)
-		(at 88.9 195.58 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "55f392b8-1a9d-5379-8f1d-e27bb204de27")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 114.3 180.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "e6194a9b-454f-5218-b28c-5a055f82bb2d")
-		(property "Reference" "#PWR405"
-			(at 116.84 179.07 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 114.3 175.26 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 114.3 180.34 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR405")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 114.3 180.34) (xy 114.3 184.15))
-		(stroke (width 0) (type default))
-		(uuid "5e4aaf9c-4115-5433-95a0-cc332b05dc41")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 114.3 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "09d90a61-541a-5f0d-8a50-30b3e894181c")
-		(property "Reference" "R406"
-			(at 111.76 186.69 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 111.76 189.865 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 114.3 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 114.3 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R406")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 114.3 191.77) (xy 114.3 195.58))
-		(stroke (width 0) (type default))
-		(uuid "53a0819d-750f-5a7e-81d3-244b21286eb8")
-	)
-	(global_label "SDC0-CMD"
-		(shape bidirectional)
-		(at 114.3 195.58 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "39d57fc5-aeaf-587f-aa2c-b7707eae46da")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 139.7 180.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7c1ad282-7418-57e7-a4fa-eb028f0b4f86")
-		(property "Reference" "#PWR406"
-			(at 142.24 179.07 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 139.7 175.26 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 139.7 180.34 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR406")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 139.7 180.34) (xy 139.7 184.15))
-		(stroke (width 0) (type default))
-		(uuid "5aeb271e-9519-5da6-8136-228081775467")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 139.7 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "fa456328-2854-59cf-b30e-c5ce3f4ebbd5")
-		(property "Reference" "R407"
-			(at 137.16 186.69 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 137.16 189.865 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 139.7 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.2"
-			(at 139.7 187.96 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R407")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 139.7 191.77) (xy 139.7 195.58))
-		(stroke (width 0) (type default))
-		(uuid "dc5ce129-1233-5af1-8d67-91b0f711c600")
-	)
-	(global_label "SDC0-DET"
-		(shape bidirectional)
-		(at 139.7 195.58 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "85f5f516-e8d3-5347-8d97-6110d0397cd1")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 38.1 210.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "84f2c78c-6074-55c3-90d7-30d69dbefaf3")
-		(property "Reference" "#PWR407"
-			(at 40.64 209.55 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 38.1 205.74 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 210.82 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR407")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 210.82) (xy 38.1 214.63))
-		(stroke (width 0) (type default))
-		(uuid "c62fbc91-9bf0-5c4c-820c-d909802f9d2f")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 38.1 218.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7658c99d-2c6e-5f08-9483-c7e7b15f13c6")
-		(property "Reference" "R408"
-			(at 35.56 217.17 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 35.56 220.345 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 38.1 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.4"
-			(at 38.1 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R408")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 222.25) (xy 38.1 226.06))
-		(stroke (width 0) (type default))
-		(uuid "0b981a3b-5def-5339-88c6-5e551387d42e")
-	)
-	(global_label "SPI0-MOSI"
-		(shape bidirectional)
-		(at 38.1 226.06 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "42a219b8-9024-554c-badc-4b5a5ff396ed")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 63.5 226.06 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "643d237e-a4a2-5403-8fbd-5fdbac6d5968")
-		(property "Reference" "#PWR408"
-			(at 66.04 224.79 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 63.5 231.14 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 226.06 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR408")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 210.82) (xy 63.5 214.63))
-		(stroke (width 0) (type default))
-		(uuid "56a7adff-f398-5423-bf1b-2f3e8b474fc2")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 63.5 218.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp yes)
-		(uuid "ab610649-dd11-5da1-9e0f-cafcfc1cf662")
-		(property "Reference" "R409"
-			(at 60.96 217.17 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "2.2k"
-			(at 60.96 220.345 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 63.5 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.4"
-			(at 63.5 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R409")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 222.25) (xy 63.5 226.06))
-		(stroke (width 0) (type default))
-		(uuid "2772e258-347b-5b79-9dc1-d0a15bb642c1")
-	)
-	(global_label "SPI0-MOSI"
-		(shape bidirectional)
-		(at 63.5 210.82 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "289c3bd1-77e0-59a7-89ce-dc3fac22d635")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 88.9 210.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8f16ca61-3b3e-5672-9c0b-52b143a6a051")
-		(property "Reference" "#PWR409"
-			(at 91.44 209.55 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 88.9 205.74 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 88.9 210.82 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR409")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 210.82) (xy 88.9 214.63))
-		(stroke (width 0) (type default))
-		(uuid "a7cd72d0-83c3-504c-91b4-762aeb2fdfc3")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 88.9 218.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp yes)
-		(uuid "56855b9c-7e00-53ca-bfb6-7b42f4ca0e46")
-		(property "Reference" "R410"
-			(at 86.36 217.17 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 86.36 220.345 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 88.9 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.4"
-			(at 88.9 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R410")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 222.25) (xy 88.9 226.06))
-		(stroke (width 0) (type default))
-		(uuid "4aac41da-b0f9-56ef-90e0-28f6e8318c57")
-	)
-	(global_label "SPI0-MISO"
-		(shape bidirectional)
-		(at 88.9 226.06 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "5814bf8d-dd5c-5353-8d59-7d9e2fa0b9fc")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 114.3 226.06 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "f62160cb-1979-53e3-97ba-d317b47d7c4e")
-		(property "Reference" "#PWR410"
-			(at 116.84 224.79 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 114.3 231.14 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 114.3 226.06 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR410")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 114.3 210.82) (xy 114.3 214.63))
-		(stroke (width 0) (type default))
-		(uuid "16c29e82-efd5-5b96-8606-50fb2cbcb5d1")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 114.3 218.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "6430c046-16e7-54f2-9fa4-25b7fd8f8f7c")
-		(property "Reference" "R411"
-			(at 111.76 217.17 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "2.2k"
-			(at 111.76 220.345 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 114.3 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.4"
-			(at 114.3 218.44 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R411")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 114.3 222.25) (xy 114.3 226.06))
-		(stroke (width 0) (type default))
-		(uuid "0290fec1-e919-57f8-95d3-29dce7600daf")
-	)
-	(global_label "SPI0-MISO"
-		(shape bidirectional)
-		(at 114.3 210.82 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "3d7d6244-d416-5cc2-88c7-5293f3b435dc")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 38.1 242.57 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "53e06866-8a8d-59df-8a39-958f3d1b95ef")
-		(property "Reference" "#PWR411"
-			(at 40.64 241.3 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 38.1 237.49 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 242.57 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR411")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 242.57) (xy 38.1 246.38))
-		(stroke (width 0) (type default))
-		(uuid "bbb7b885-5228-55a7-82a1-c4e515c6ede3")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 38.1 250.19 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "c1eafc8c-809a-5cac-b0f1-20b88cbd2092")
-		(property "Reference" "C401"
-			(at 35.56 248.92 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "0.1u"
-			(at 35.56 252.095 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 38.1 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.6 флешка"
-			(at 38.1 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "C401")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 38.1 254) (xy 38.1 257.81))
-		(stroke (width 0) (type default))
-		(uuid "5df94487-4335-5204-bc9c-05c0be53f7d2")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 38.1 257.81 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "15ffd7db-3ab4-51f9-8838-9a212b676c11")
-		(property "Reference" "#PWR412"
-			(at 40.64 256.54 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 38.1 262.89 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 257.81 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR412")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 63.5 242.57 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "eb9c5b8b-4aba-5724-830e-09fd9ae36493")
-		(property "Reference" "#PWR413"
-			(at 66.04 241.3 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 63.5 237.49 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 242.57 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR413")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 242.57) (xy 63.5 246.38))
-		(stroke (width 0) (type default))
-		(uuid "241ad024-8d5b-58e2-b1f1-08f2dcce609e")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 63.5 250.19 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "5fe736d7-83f5-5599-be68-9a39327f5a65")
-		(property "Reference" "C402"
-			(at 60.96 248.92 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "0.1u"
-			(at 60.96 252.095 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 63.5 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.6 карта"
-			(at 63.5 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "C402")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 63.5 254) (xy 63.5 257.81))
-		(stroke (width 0) (type default))
-		(uuid "e415c1bc-b736-5c23-8491-0ce4cbd38f5d")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 63.5 257.81 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8bd83bc1-7b81-5cb2-956e-08db7c6650ea")
-		(property "Reference" "#PWR414"
-			(at 66.04 256.54 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 63.5 262.89 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 257.81 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR414")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 88.9 242.57 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1569673f-894a-50c9-8034-31fa926f0759")
-		(property "Reference" "#PWR415"
-			(at 91.44 241.3 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 88.9 237.49 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 88.9 242.57 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR415")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 242.57) (xy 88.9 246.38))
-		(stroke (width 0) (type default))
-		(uuid "d7903ea0-c9c0-51ca-b62c-ca459c1e6e68")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 88.9 250.19 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "5ebd7006-3e88-5c39-9a66-d98b0a1e1ed9")
-		(property "Reference" "C403"
-			(at 86.36 248.92 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10u"
-			(at 86.36 252.095 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 88.9 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "04-storage.md §6.6, §7.5"
-			(at 88.9 250.19 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "C403")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 88.9 254) (xy 88.9 257.81))
-		(stroke (width 0) (type default))
-		(uuid "663f8979-1879-5059-85f4-198f0466c032")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 88.9 257.81 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bba25772-b936-5e65-8ddd-855dbaba533f")
-		(property "Reference" "#PWR416"
-			(at 91.44 256.54 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 88.9 262.89 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 88.9 257.81 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR416")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(text "шесть линий к флешке, а не четыре: SPI0 умеет Quad, PC6 и PC7 больше никому не нужны"
-		(exclude_from_sim yes)
-		(at 24 172.72 0)
-		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
-		(uuid "69353832-7811-57e3-acc9-de136ca9dd3d")
-	)
-	(text "R409 и R410 — места под смену приоритета загрузки, запаяны R408 и R411: SD → SPI NOR → прочее"
-		(exclude_from_sim yes)
-		(at 24 201.93 0)
-		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
-		(uuid "2903e7c9-f30e-59b0-8e59-246bd39acf1a")
-	)
-	(text "посадочного места под слот в KiCad нет — рисуется по чертежу"
-		(exclude_from_sim yes)
-		(at 114.3 262 0)
-		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
-		(uuid "7a48ad20-7846-52b0-b218-79fc083a1bfb")
-	)
 	(global_label "HPOUTL"
 		(shape bidirectional)
 		(at 393.7 165.1 180)
@@ -20742,6 +18944,1462 @@
 		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
 		(uuid "68beb329-8bff-5d05-ad5c-584155e8f42c")
 	)
+	(symbol
+		(lib_id "Connector_Generic_MountingPin:Conn_01x40_MountingPin")
+		(at 546.1 285.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d53b83e7-8b98-5f7f-be08-c2ca8d7a7d90")
+		(property "Reference" "J601"
+			(at 549.91 236.22 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "FFC-40 0.5mm"
+			(at 549.91 238.76 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "console:FH12-40S-0.5SH_ContactsReversed"
+			(at 546.1 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.1, §7.2"
+			(at 546.1 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C202114"
+			(at 546.1 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "J601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(no_connect
+		(at 541.02 237.49)
+		(uuid "94208777-095b-55d3-a2d3-96bd0375d7ea")
+	)
+	(no_connect
+		(at 541.02 240.03)
+		(uuid "21b0ec69-b407-5439-8979-becbbaced022")
+	)
+	(no_connect
+		(at 541.02 242.57)
+		(uuid "7e2dbf7e-c090-5864-8ad5-7e4f7545d99e")
+	)
+	(no_connect
+		(at 541.02 245.11)
+		(uuid "1763864f-b861-54f5-8ba1-e7ac2d39c9f8")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 247.65 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "a1332bf1-c193-51ca-adb4-59316d3aa78e")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 541.02 250.19 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "65046894-a941-5563-8656-2694627f5fe1")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 541.02 252.73 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "8bafeafa-87a5-500f-b8cf-18819ec42618")
+	)
+	(no_connect
+		(at 541.02 255.27)
+		(uuid "8c936550-1726-56b3-b540-442fba8ec938")
+	)
+	(global_label "LCD-CS"
+		(shape bidirectional)
+		(at 541.02 257.81 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "aa180900-25fa-5846-8de0-2af79dd11c8e")
+	)
+	(global_label "LCD-DC"
+		(shape bidirectional)
+		(at 541.02 260.35 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "ecc82258-3118-5884-acde-7678f8a3c46c")
+	)
+	(global_label "LCD-SCL"
+		(shape bidirectional)
+		(at 541.02 262.89 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "ec3c5ad0-ccec-58ce-9fec-e4e8ee3e8594")
+	)
+	(global_label "LCD-RD"
+		(shape bidirectional)
+		(at 541.02 265.43 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "0aec1246-f4d7-56ae-9e05-66b49032a41b")
+	)
+	(global_label "LCD-SDA"
+		(shape bidirectional)
+		(at 541.02 267.97 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "168b689e-d84d-5d12-8cd7-b1bf46203f5c")
+	)
+	(no_connect
+		(at 541.02 270.51)
+		(uuid "7b10b1db-51bf-5881-8cd9-be9a7ddf8f05")
+	)
+	(global_label "LCD-RST"
+		(shape bidirectional)
+		(at 541.02 273.05 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "7ef0661c-75e1-55e3-bd02-3077d5d7ecf6")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 275.59 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "9f414a50-6761-533e-a3b0-5412c2207754")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 278.13 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "f6594e61-bfde-5c8a-9d1d-fe9447074e4d")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 280.67 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "5701e992-7eaa-5d65-bd7e-3caa392fee14")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 283.21 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "8abab9ea-108f-5ccf-b61d-2b1931375e93")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 285.75 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "21524b62-f16a-50d1-ba9e-6feecfc7e8c5")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 288.29 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "226f3883-544e-5c65-83eb-01dce5948c1b")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 290.83 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "2d6a732f-bf19-5667-a3bb-2e5ba4c2e317")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 293.37 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "41139f2f-3429-5d23-b983-32aaa25c3571")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 295.91 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "745163ea-5501-52d2-9e07-fd7d15538e22")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 298.45 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "759598e9-4b04-50f8-ae92-eb2c702cbaa6")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 300.99 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "36457a9b-21cb-562c-b3e5-fdcdc301ff8e")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 303.53 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "3cd6f494-1fc2-5a7e-91e7-4b7a21c91c94")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 306.07 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "d2496e2a-89d3-5d2e-b439-32975d382a16")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 308.61 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "0b191127-4c03-55ac-903f-dc5a4079722c")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 311.15 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "555f351d-b2a4-5cbc-acc3-77aa266974aa")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 313.69 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "5fa0c2c2-047d-5016-a469-22185fa173ac")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 316.23 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "7ae804ca-62f1-521d-b71f-7ffc10988f56")
+	)
+	(global_label "LCD-LEDA"
+		(shape bidirectional)
+		(at 541.02 318.77 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "f37ab41c-7a3c-552d-bcfd-47f89e1bdc90")
+	)
+	(global_label "LCD-LEDK"
+		(shape bidirectional)
+		(at 541.02 321.31 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "41113c4e-be47-5cd7-94cd-897b990eda34")
+	)
+	(global_label "LCD-LEDK"
+		(shape bidirectional)
+		(at 541.02 323.85 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "9b2a2cb4-36bd-597d-badf-5dc2fa10c68f")
+	)
+	(global_label "LCD-LEDK"
+		(shape bidirectional)
+		(at 541.02 326.39 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "e79345b4-8ae0-5300-9c86-1d6b74366df6")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 541.02 328.93 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "a8115bf7-fb0e-5cb4-b32c-0f62ec7349e4")
+	)
+	(global_label "LCD-IM"
+		(shape bidirectional)
+		(at 541.02 331.47 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "15ad90cf-275d-5139-9a6e-7eafbe939ab4")
+	)
+	(global_label "+3V3"
+		(shape bidirectional)
+		(at 541.02 334.01 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "4308feb7-9c35-5e4c-9aae-63c27c3d5558")
+	)
+	(global_label "LCD-IM"
+		(shape bidirectional)
+		(at 541.02 336.55 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "7cc843ac-6624-5e48-898f-77ec1e67db1b")
+	)
+	(wire
+		(pts (xy 546.1 341.63) (xy 533.4 341.63))
+		(stroke (width 0) (type default))
+		(uuid "fc1db428-4fe3-5314-b98c-434fe6699e03")
+	)
+	(global_label "GND"
+		(shape bidirectional)
+		(at 533.4 341.63 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "ab779905-6de0-5506-9d0f-b93b53ffe6f9")
+	)
+	(wire
+		(pts (xy 401.32 243.84) (xy 420.37 243.84))
+		(stroke (width 0) (type default))
+		(uuid "91738438-10d1-5958-9825-e9f8d3deee9f")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 424.18 243.84 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "afce4fe9-762d-55b0-bf53-54e6acac04e0")
+		(property "Reference" "R603"
+			(at 424.18 241.3 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Value" "33"
+			(at 424.18 246.38 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 424.18 243.84 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.4"
+			(at 424.18 243.84 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R603")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 427.99 243.84) (xy 447.04 243.84))
+		(stroke (width 0) (type default))
+		(uuid "aa61d0cf-a34f-54d5-86d1-3ed0b929242d")
+	)
+	(global_label "SPI0-CLK"
+		(shape bidirectional)
+		(at 401.32 243.84 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "413f28f9-e62e-5325-a06c-11c8a98918d7")
+	)
+	(global_label "LCD-SCL"
+		(shape bidirectional)
+		(at 447.04 243.84 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "cc991e29-97af-5e19-96ce-231f390f31b2")
+	)
+	(wire
+		(pts (xy 401.32 256.54) (xy 420.37 256.54))
+		(stroke (width 0) (type default))
+		(uuid "5d14fe31-6c64-5928-b665-e459678b4954")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 424.18 256.54 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "38c6e9ed-d224-5a5d-9269-8ee789147ccd")
+		(property "Reference" "R604"
+			(at 424.18 254 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Value" "33"
+			(at 424.18 259.08 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 424.18 256.54 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.4"
+			(at 424.18 256.54 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R604")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 427.99 256.54) (xy 447.04 256.54))
+		(stroke (width 0) (type default))
+		(uuid "1d752447-b1d8-5391-8f08-c064b85656dd")
+	)
+	(global_label "SPI0-MOSI"
+		(shape bidirectional)
+		(at 401.32 256.54 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "4e9660c6-2db2-52ad-b1d7-7c44baa49299")
+	)
+	(global_label "LCD-SDA"
+		(shape bidirectional)
+		(at 447.04 256.54 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "bf8feff2-3730-5709-9144-346212184d67")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 396.24 287.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a91ecc59-1129-58b4-9fcc-3530d1c65d4c")
+		(property "Reference" "#PWR600"
+			(at 398.78 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 396.24 281.94 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 396.24 287.02 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR600")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 396.24 287.02) (xy 396.24 290.83))
+		(stroke (width 0) (type default))
+		(uuid "eebd3eeb-c9a5-588c-b9f4-9ce86b17b945")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 396.24 294.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e510f8c4-cbc0-5bb6-b4cf-e0c551a1d28f")
+		(property "Reference" "R606"
+			(at 393.7 293.37 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 393.7 296.545 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 396.24 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.5"
+			(at 396.24 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R606")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 396.24 298.45) (xy 396.24 302.26))
+		(stroke (width 0) (type default))
+		(uuid "66c0b77a-886c-53e0-8a6c-13c170994ccd")
+	)
+	(global_label "LCD-RD"
+		(shape bidirectional)
+		(at 396.24 302.26 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "be9b2a1d-d5e7-592a-a24f-9f0a99610206")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 421.64 287.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9b5398a6-47ba-5dcc-a6f5-969dbd0a842c")
+		(property "Reference" "#PWR601"
+			(at 424.18 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 421.64 281.94 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 421.64 287.02 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 421.64 287.02) (xy 421.64 290.83))
+		(stroke (width 0) (type default))
+		(uuid "60dd5c75-c7bd-5205-b8fa-6abcd978927b")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 421.64 294.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3128d98f-9b9e-597e-8a4f-5b358bb38eaa")
+		(property "Reference" "R607"
+			(at 419.1 293.37 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 419.1 296.545 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 421.64 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.5"
+			(at 421.64 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R607")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 421.64 298.45) (xy 421.64 302.26))
+		(stroke (width 0) (type default))
+		(uuid "3eaf231e-1fb9-583e-895a-5587cf2ae308")
+	)
+	(global_label "LCD-CS"
+		(shape bidirectional)
+		(at 421.64 302.26 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "f9b06764-49b7-5cde-a52c-2794f65cac82")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 447.04 302.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b9c26c00-5893-54fb-97ff-ee810df7974e")
+		(property "Reference" "#PWR602"
+			(at 449.58 300.99 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 447.04 307.34 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 447.04 302.26 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR602")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 447.04 287.02) (xy 447.04 290.83))
+		(stroke (width 0) (type default))
+		(uuid "9833524c-5826-5834-9604-576d6093982f")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 447.04 294.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "00364683-6e28-5924-8250-43162c4da7fd")
+		(property "Reference" "R608"
+			(at 444.5 293.37 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 444.5 296.545 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 447.04 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.5"
+			(at 447.04 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R608")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 447.04 298.45) (xy 447.04 302.26))
+		(stroke (width 0) (type default))
+		(uuid "69290c4c-9d76-54cf-9830-bc470d4ce502")
+	)
+	(global_label "LCD-RST"
+		(shape bidirectional)
+		(at 447.04 287.02 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "406caba5-c403-55f6-8879-f94c54e707e3")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 472.44 287.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d5750207-52b6-5ed4-a593-47306640ec61")
+		(property "Reference" "#PWR603"
+			(at 474.98 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 472.44 281.94 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 472.44 287.02 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR603")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 472.44 287.02) (xy 472.44 290.83))
+		(stroke (width 0) (type default))
+		(uuid "8093ccd2-f907-500d-8c90-d28d6cd81cb7")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 472.44 294.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7f8bc5c0-1304-5632-b39d-844d44738f75")
+		(property "Reference" "R609"
+			(at 469.9 293.37 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 469.9 296.545 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 472.44 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.5"
+			(at 472.44 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R609")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 472.44 298.45) (xy 472.44 302.26))
+		(stroke (width 0) (type default))
+		(uuid "c76dca3b-7210-5875-8fad-b4cb8b7ee138")
+	)
+	(global_label "LCD-IM"
+		(shape bidirectional)
+		(at 472.44 302.26 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "95783f84-52c4-5f6e-b04d-edbcc2a4e398")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 497.84 287.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a7e26a8a-2602-534d-a2c0-1ab9ce2b21a0")
+		(property "Reference" "#PWR604"
+			(at 500.38 285.75 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 497.84 281.94 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 497.84 287.02 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR604")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 497.84 287.02) (xy 497.84 290.83))
+		(stroke (width 0) (type default))
+		(uuid "ec8ab866-35bb-5651-87fa-a169a77746e2")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 497.84 294.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1c88afea-2386-5f02-aafe-dcfdc13c55f5")
+		(property "Reference" "R602"
+			(at 495.3 293.37 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 495.3 296.545 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 497.84 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.5"
+			(at 497.84 294.64 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R602")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 497.84 298.45) (xy 497.84 302.26))
+		(stroke (width 0) (type default))
+		(uuid "14c0a5f0-09d5-5ae5-86a3-b094c0884717")
+	)
+	(global_label "LCD-BL"
+		(shape bidirectional)
+		(at 497.84 302.26 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "0ca52619-e86f-5a83-aa50-2f915fdde637")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 388.62 322.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a174d5fb-5d9d-572a-a7b0-be7e0bdc5c31")
+		(property "Reference" "#PWR605"
+			(at 391.16 321.31 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 388.62 317.5 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 388.62 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR605")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 388.62 322.58) (xy 397.51 322.58))
+		(stroke (width 0) (type default))
+		(uuid "3c130e77-b3c2-5cf5-aa2b-733ffa2ae305")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 401.32 322.58 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "59e21638-ae58-5bc6-b594-5f6411cbd741")
+		(property "Reference" "R601"
+			(at 401.32 318.77 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Value" "0"
+			(at 401.32 326.39 270)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 401.32 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.6"
+			(at 401.32 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 405.13 322.58) (xy 414.02 322.58))
+		(stroke (width 0) (type default))
+		(uuid "e61affe2-8f91-5525-b923-bf7cb140f9d3")
+	)
+	(global_label "LCD-LEDA"
+		(shape bidirectional)
+		(at 414.02 322.58 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "06134833-6cdd-58ff-863c-1c460e5390d3")
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 462.28 322.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5eae65a7-2ba9-588b-8893-78a928709cce")
+		(property "Reference" "Q601"
+			(at 468.63 320.04 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Value" "AO3400A"
+			(at 468.63 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 462.28 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.6, §7.1"
+			(at 462.28 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "Q601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 464.82 317.5) (xy 464.82 309.88))
+		(stroke (width 0) (type default))
+		(uuid "6e358e2d-ea3a-5bcd-9210-f239530b2bf1")
+	)
+	(global_label "LCD-LEDK"
+		(shape bidirectional)
+		(at 464.82 309.88 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "1d8fcfda-c8d8-5db1-9dd4-aeb691dd3ed8")
+	)
+	(wire
+		(pts (xy 457.2 322.58) (xy 449.58 322.58))
+		(stroke (width 0) (type default))
+		(uuid "3ea3155c-1e1b-5ef4-8ce8-46fee3345700")
+	)
+	(global_label "LCD-BL"
+		(shape bidirectional)
+		(at 449.58 322.58 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "35094dcc-167a-5a19-8a92-98dba5a99810")
+	)
+	(wire
+		(pts (xy 464.82 327.66) (xy 464.82 332.74))
+		(stroke (width 0) (type default))
+		(uuid "97a0c5e4-1a82-53e5-be82-1b730a9e670b")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 464.82 332.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f77ed684-0af2-5643-ac45-a5c1e02f2730")
+		(property "Reference" "#PWR606"
+			(at 467.36 331.47 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 464.82 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 464.82 332.74 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR606")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 500.38 322.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "17ad95e4-10c6-5bdb-b71b-91ce587b7f39")
+		(property "Reference" "#PWR607"
+			(at 502.92 321.31 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 500.38 317.5 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 500.38 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR607")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 500.38 322.58) (xy 500.38 326.39))
+		(stroke (width 0) (type default))
+		(uuid "23159c0a-6c35-56af-a14b-d82fe2dc6d43")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 500.38 330.2 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9d6ff9c9-b38c-5e3a-99db-14cde1601cf2")
+		(property "Reference" "C601"
+			(at 497.84 328.93 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "0.1u"
+			(at 497.84 332.105 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 500.38 330.2 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.2"
+			(at 500.38 330.2 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 500.38 334.01) (xy 500.38 337.82))
+		(stroke (width 0) (type default))
+		(uuid "0fb61832-2363-5f75-9038-4bb2d57e51b6")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 500.38 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4f497d0b-e928-56ff-a20b-81b0ba601621")
+		(property "Reference" "#PWR608"
+			(at 502.92 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 500.38 342.9 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 500.38 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR608")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 513.08 322.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8c0390e5-bbe0-5433-9fc8-a7fe12052928")
+		(property "Reference" "#PWR609"
+			(at 515.62 321.31 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 513.08 317.5 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 513.08 322.58 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR609")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 513.08 322.58) (xy 513.08 326.39))
+		(stroke (width 0) (type default))
+		(uuid "7ddf1a22-ef50-5d67-81ad-ec28bff16e70")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 513.08 330.2 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3d0c7afe-9cc8-5855-8e10-6c4182e60959")
+		(property "Reference" "C602"
+			(at 510.54 328.93 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10u"
+			(at 510.54 332.105 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 513.08 330.2 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "06-display.md §6.2"
+			(at 513.08 330.2 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "C602")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 513.08 334.01) (xy 513.08 337.82))
+		(stroke (width 0) (type default))
+		(uuid "6d05da58-b91a-5f38-87c6-81ab784d770c")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 513.08 337.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "574271ec-6272-550f-8474-6f064cf8ebd2")
+		(property "Reference" "#PWR610"
+			(at 515.62 336.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 513.08 342.9 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 513.08 337.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR610")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "контакты 1..4 — тачскрин, 8 FMARK, 14 SDO: спека велит оставить в воздухе"
+		(exclude_from_sim yes)
+		(at 382 240 0)
+		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
+		(uuid "f01e01bb-78e8-5a96-b4e0-d5daaa8ec234")
+	)
+	(text "детали вынесены из столбца разъёма: шаг контактов 2.54, подписи не помещаются"
+		(exclude_from_sim yes)
+		(at 382 279.4 0)
+		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
+		(uuid "b3c91b05-fdac-5eec-b8c1-07e212329504")
+	)
 	(wire
 		(pts (xy 234.95 213.36) (xy 232.41 213.36))
 		(stroke (width 0) (type default))
@@ -21203,83 +20861,6 @@
 		(at 361.95 231.14 0)
 		(effects (font (size 1.27 1.27)) (justify left))
 		(uuid "fe91b26e-3ff5-59d4-8e93-b37c1c6ff333")
-	)
-	(wire
-		(pts (xy 234.95 175.26) (xy 232.41 175.26))
-		(stroke (width 0) (type default))
-		(uuid "db59441a-48ff-5b8f-bfd5-f5cb0dfe330f")
-	)
-	(global_label "SDC0-D1"
-		(shape bidirectional)
-		(at 232.41 175.26 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d439ff8d-9a89-55ef-99ab-1fee32c183e5")
-	)
-	(wire
-		(pts (xy 234.95 177.8) (xy 232.41 177.8))
-		(stroke (width 0) (type default))
-		(uuid "061fd22d-9189-500d-870f-bff4ec7ef71e")
-	)
-	(global_label "SDC0-D0"
-		(shape bidirectional)
-		(at 232.41 177.8 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "a2a46ae4-5c5b-578a-b2b4-1c4593599a2a")
-	)
-	(wire
-		(pts (xy 234.95 180.34) (xy 232.41 180.34))
-		(stroke (width 0) (type default))
-		(uuid "c38f407c-a099-56d7-a423-247718769396")
-	)
-	(global_label "SDC0-CLK"
-		(shape bidirectional)
-		(at 232.41 180.34 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "690c89ed-e30c-5498-b63d-3bc62127e1fc")
-	)
-	(wire
-		(pts (xy 234.95 182.88) (xy 232.41 182.88))
-		(stroke (width 0) (type default))
-		(uuid "89a292cd-e190-5f71-95c0-80b561e38aff")
-	)
-	(global_label "SDC0-CMD"
-		(shape bidirectional)
-		(at 232.41 182.88 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "622cd085-0a6d-57c4-a32f-3e7ed6793d44")
-	)
-	(wire
-		(pts (xy 234.95 185.42) (xy 232.41 185.42))
-		(stroke (width 0) (type default))
-		(uuid "b1e99726-f2d6-5b06-a8c6-c9ed76f2f4b0")
-	)
-	(global_label "SDC0-D3"
-		(shape bidirectional)
-		(at 232.41 185.42 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4358221a-cb39-52e8-989d-8f4ddaf86064")
-	)
-	(wire
-		(pts (xy 234.95 187.96) (xy 232.41 187.96))
-		(stroke (width 0) (type default))
-		(uuid "e109fa98-e1eb-5cf5-a131-d2c11c348487")
-	)
-	(global_label "SDC0-D2"
-		(shape bidirectional)
-		(at 232.41 187.96 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ecacdeb3-f3ab-56cb-b764-536a4b97e45e")
-	)
-	(wire
-		(pts (xy 234.95 190.5) (xy 232.41 190.5))
-		(stroke (width 0) (type default))
-		(uuid "b6d91a87-488c-562c-8901-9b4ad1b8436e")
-	)
-	(global_label "SDC0-DET"
-		(shape bidirectional)
-		(at 232.41 190.5 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "b04a65ba-8f60-5514-91f2-436f0ae7b8e4")
 	)
 	(wire
 		(pts (xy 234.95 195.58) (xy 232.41 195.58))
@@ -21751,6 +21332,34 @@
 	(no_connect
 		(at 359.41 220.98)
 		(uuid "940dda58-2a21-5e46-a33e-03e582c63482")
+	)
+	(no_connect
+		(at 234.95 175.26)
+		(uuid "49b09db3-c647-5f6e-9b43-f2f2f3034259")
+	)
+	(no_connect
+		(at 234.95 177.8)
+		(uuid "452264a4-766b-5e80-8324-247edaff7e9e")
+	)
+	(no_connect
+		(at 234.95 180.34)
+		(uuid "474ba7d6-1755-542a-afe2-67a62bdeb73e")
+	)
+	(no_connect
+		(at 234.95 182.88)
+		(uuid "38cab314-b0cc-5afc-a484-e2b0b69f352a")
+	)
+	(no_connect
+		(at 234.95 185.42)
+		(uuid "bbb69af1-796c-51ff-9be7-46e4b8fc818b")
+	)
+	(no_connect
+		(at 234.95 187.96)
+		(uuid "4f420f0d-f1db-5d75-a1fa-d3b3a52d69d8")
+	)
+	(no_connect
+		(at 234.95 190.5)
+		(uuid "a4fc3297-d07f-5295-a399-9ddf46fa9648")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -26222,46 +25831,46 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic_MountingPin:Conn_01x40_MountingPin")
-		(at 546.1 285.75 0)
+		(lib_id "Memory_Flash:W25Q32JVSS")
+		(at 177.8 165.1 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d53b83e7-8b98-5f7f-be08-c2ca8d7a7d90")
-		(property "Reference" "J601"
-			(at 549.91 236.22 0)
+		(uuid "6b5aa568-755f-5973-9094-78eba36d36e1")
+		(property "Reference" "U401"
+			(at 154.94 146.05 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 			)
 		)
-		(property "Value" "FFC-40 0.5mm"
-			(at 549.91 238.76 0)
+		(property "Value" "W25Q32JVSSIQ"
+			(at 154.94 148.59 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 			)
 		)
-		(property "Footprint" "console:FH12-40S-0.5SH_ContactsReversed"
-			(at 546.1 285.75 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.1, §7.2"
-			(at 546.1 285.75 0)
+		(property "Footprint" "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm"
+			(at 177.8 165.1 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C202114"
-			(at 546.1 285.75 0)
+		(property "Источник" "04-storage.md §6.2"
+			(at 177.8 165.1 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C179173"
+			(at 177.8 165.1 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26271,398 +25880,59 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "J601")
+					(reference "U401")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(no_connect
-		(at 541.02 237.49)
-		(uuid "94208777-095b-55d3-a2d3-96bd0375d7ea")
-	)
-	(no_connect
-		(at 541.02 240.03)
-		(uuid "21b0ec69-b407-5439-8979-becbbaced022")
-	)
-	(no_connect
-		(at 541.02 242.57)
-		(uuid "7e2dbf7e-c090-5864-8ad5-7e4f7545d99e")
-	)
-	(no_connect
-		(at 541.02 245.11)
-		(uuid "1763864f-b861-54f5-8ba1-e7ac2d39c9f8")
-	)
-	(global_label "GND"
+	(global_label "SPI0-CS0"
 		(shape bidirectional)
-		(at 541.02 247.65 180)
+		(at 167.64 157.48 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "a1332bf1-c193-51ca-adb4-59316d3aa78e")
+		(uuid "04d46cfc-59c8-51ef-a723-ac09c4fedeb0")
 	)
-	(global_label "+3V3"
+	(global_label "NOR-CLK"
 		(shape bidirectional)
-		(at 541.02 250.19 180)
+		(at 167.64 160.02 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "65046894-a941-5563-8656-2694627f5fe1")
-	)
-	(global_label "+3V3"
-		(shape bidirectional)
-		(at 541.02 252.73 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "8bafeafa-87a5-500f-b8cf-18819ec42618")
-	)
-	(no_connect
-		(at 541.02 255.27)
-		(uuid "8c936550-1726-56b3-b540-442fba8ec938")
-	)
-	(global_label "LCD-CS"
-		(shape bidirectional)
-		(at 541.02 257.81 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "aa180900-25fa-5846-8de0-2af79dd11c8e")
-	)
-	(global_label "LCD-DC"
-		(shape bidirectional)
-		(at 541.02 260.35 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ecc82258-3118-5884-acde-7678f8a3c46c")
-	)
-	(global_label "LCD-SCL"
-		(shape bidirectional)
-		(at 541.02 262.89 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ec3c5ad0-ccec-58ce-9fec-e4e8ee3e8594")
-	)
-	(global_label "LCD-RD"
-		(shape bidirectional)
-		(at 541.02 265.43 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "0aec1246-f4d7-56ae-9e05-66b49032a41b")
-	)
-	(global_label "LCD-SDA"
-		(shape bidirectional)
-		(at 541.02 267.97 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "168b689e-d84d-5d12-8cd7-b1bf46203f5c")
-	)
-	(no_connect
-		(at 541.02 270.51)
-		(uuid "7b10b1db-51bf-5881-8cd9-be9a7ddf8f05")
-	)
-	(global_label "LCD-RST"
-		(shape bidirectional)
-		(at 541.02 273.05 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "7ef0661c-75e1-55e3-bd02-3077d5d7ecf6")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 275.59 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "9f414a50-6761-533e-a3b0-5412c2207754")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 278.13 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "f6594e61-bfde-5c8a-9d1d-fe9447074e4d")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 280.67 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "5701e992-7eaa-5d65-bd7e-3caa392fee14")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 283.21 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "8abab9ea-108f-5ccf-b61d-2b1931375e93")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 285.75 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "21524b62-f16a-50d1-ba9e-6feecfc7e8c5")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 288.29 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "226f3883-544e-5c65-83eb-01dce5948c1b")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 290.83 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2d6a732f-bf19-5667-a3bb-2e5ba4c2e317")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 293.37 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "41139f2f-3429-5d23-b983-32aaa25c3571")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 295.91 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "745163ea-5501-52d2-9e07-fd7d15538e22")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 298.45 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "759598e9-4b04-50f8-ae92-eb2c702cbaa6")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 300.99 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "36457a9b-21cb-562c-b3e5-fdcdc301ff8e")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 303.53 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "3cd6f494-1fc2-5a7e-91e7-4b7a21c91c94")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 306.07 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d2496e2a-89d3-5d2e-b439-32975d382a16")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 308.61 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "0b191127-4c03-55ac-903f-dc5a4079722c")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 311.15 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "555f351d-b2a4-5cbc-acc3-77aa266974aa")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 313.69 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "5fa0c2c2-047d-5016-a469-22185fa173ac")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 316.23 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "7ae804ca-62f1-521d-b71f-7ffc10988f56")
-	)
-	(global_label "LCD-LEDA"
-		(shape bidirectional)
-		(at 541.02 318.77 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "f37ab41c-7a3c-552d-bcfd-47f89e1bdc90")
-	)
-	(global_label "LCD-LEDK"
-		(shape bidirectional)
-		(at 541.02 321.31 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "41113c4e-be47-5cd7-94cd-897b990eda34")
-	)
-	(global_label "LCD-LEDK"
-		(shape bidirectional)
-		(at 541.02 323.85 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "9b2a2cb4-36bd-597d-badf-5dc2fa10c68f")
-	)
-	(global_label "LCD-LEDK"
-		(shape bidirectional)
-		(at 541.02 326.39 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "e79345b4-8ae0-5300-9c86-1d6b74366df6")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 541.02 328.93 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "a8115bf7-fb0e-5cb4-b32c-0f62ec7349e4")
-	)
-	(global_label "LCD-IM"
-		(shape bidirectional)
-		(at 541.02 331.47 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "15ad90cf-275d-5139-9a6e-7eafbe939ab4")
-	)
-	(global_label "+3V3"
-		(shape bidirectional)
-		(at 541.02 334.01 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4308feb7-9c35-5e4c-9aae-63c27c3d5558")
-	)
-	(global_label "LCD-IM"
-		(shape bidirectional)
-		(at 541.02 336.55 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "7cc843ac-6624-5e48-898f-77ec1e67db1b")
-	)
-	(wire
-		(pts (xy 546.1 341.63) (xy 533.4 341.63))
-		(stroke (width 0) (type default))
-		(uuid "fc1db428-4fe3-5314-b98c-434fe6699e03")
-	)
-	(global_label "GND"
-		(shape bidirectional)
-		(at 533.4 341.63 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "ab779905-6de0-5506-9d0f-b93b53ffe6f9")
-	)
-	(wire
-		(pts (xy 401.32 243.84) (xy 420.37 243.84))
-		(stroke (width 0) (type default))
-		(uuid "91738438-10d1-5958-9825-e9f8d3deee9f")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 424.18 243.84 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "afce4fe9-762d-55b0-bf53-54e6acac04e0")
-		(property "Reference" "R603"
-			(at 424.18 241.3 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Value" "33"
-			(at 424.18 246.38 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 424.18 243.84 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.4"
-			(at 424.18 243.84 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R603")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 427.99 243.84) (xy 447.04 243.84))
-		(stroke (width 0) (type default))
-		(uuid "aa61d0cf-a34f-54d5-86d1-3ed0b929242d")
-	)
-	(global_label "SPI0-CLK"
-		(shape bidirectional)
-		(at 401.32 243.84 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "413f28f9-e62e-5325-a06c-11c8a98918d7")
-	)
-	(global_label "LCD-SCL"
-		(shape bidirectional)
-		(at 447.04 243.84 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "cc991e29-97af-5e19-96ce-231f390f31b2")
-	)
-	(wire
-		(pts (xy 401.32 256.54) (xy 420.37 256.54))
-		(stroke (width 0) (type default))
-		(uuid "5d14fe31-6c64-5928-b665-e459678b4954")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 424.18 256.54 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "38c6e9ed-d224-5a5d-9269-8ee789147ccd")
-		(property "Reference" "R604"
-			(at 424.18 254 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Value" "33"
-			(at 424.18 259.08 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 424.18 256.54 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.4"
-			(at 424.18 256.54 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R604")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 427.99 256.54) (xy 447.04 256.54))
-		(stroke (width 0) (type default))
-		(uuid "1d752447-b1d8-5391-8f08-c064b85656dd")
+		(uuid "e72992c5-7902-5c1b-abb5-ee1640dbd1a4")
 	)
 	(global_label "SPI0-MOSI"
 		(shape bidirectional)
-		(at 401.32 256.54 180)
+		(at 167.64 162.56 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "4e9660c6-2db2-52ad-b1d7-7c44baa49299")
+		(uuid "283d792c-c782-5a53-9a44-26ce0e23515c")
 	)
-	(global_label "LCD-SDA"
+	(global_label "SPI0-MISO"
 		(shape bidirectional)
-		(at 447.04 256.54 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "bf8feff2-3730-5709-9144-346212184d67")
+		(at 167.64 165.1 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "f4f0e0f7-57b5-5107-bf6f-8ea0fc1ef840")
+	)
+	(global_label "SPI0-WP"
+		(shape bidirectional)
+		(at 167.64 167.64 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "2f3442b0-0bde-58a9-865b-a2c7b283ae98")
+	)
+	(global_label "SPI0-HOLD"
+		(shape bidirectional)
+		(at 167.64 170.18 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "d67b063d-d041-54d9-9d46-5afb03dd2144")
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 396.24 287.02 0)
+		(at 177.8 152.4 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "a91ecc59-1129-58b4-9fcc-3530d1c65d4c")
-		(property "Reference" "#PWR600"
-			(at 398.78 285.75 0)
+		(uuid "02b58c9a-995f-59d5-a8f6-5eaa84b795aa")
+		(property "Reference" "#PWR400"
+			(at 180.34 151.13 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26670,13 +25940,13 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 396.24 281.94 0)
+			(at 177.8 147.32 0)
 			(effects
 				(font (size 1.27 1.27))
 			)
 		)
 		(property "Footprint" ""
-			(at 396.24 287.02 0)
+			(at 177.8 152.4 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26686,191 +25956,23 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR600")
+					(reference "#PWR400")
 					(unit 1)
 				)
 			)
 		)
-	)
-	(wire
-		(pts (xy 396.24 287.02) (xy 396.24 290.83))
-		(stroke (width 0) (type default))
-		(uuid "eebd3eeb-c9a5-588c-b9f4-9ce86b17b945")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 396.24 294.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "e510f8c4-cbc0-5bb6-b4cf-e0c551a1d28f")
-		(property "Reference" "R606"
-			(at 393.7 293.37 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 393.7 296.545 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 396.24 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.5"
-			(at 396.24 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R606")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 396.24 298.45) (xy 396.24 302.26))
-		(stroke (width 0) (type default))
-		(uuid "66c0b77a-886c-53e0-8a6c-13c170994ccd")
-	)
-	(global_label "LCD-RD"
-		(shape bidirectional)
-		(at 396.24 302.26 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "be9b2a1d-d5e7-592a-a24f-9f0a99610206")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 421.64 287.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9b5398a6-47ba-5dcc-a6f5-969dbd0a842c")
-		(property "Reference" "#PWR601"
-			(at 424.18 285.75 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 421.64 281.94 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 421.64 287.02 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR601")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 421.64 287.02) (xy 421.64 290.83))
-		(stroke (width 0) (type default))
-		(uuid "60dd5c75-c7bd-5205-b8fa-6abcd978927b")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 421.64 294.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3128d98f-9b9e-597e-8a4f-5b358bb38eaa")
-		(property "Reference" "R607"
-			(at 419.1 293.37 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 419.1 296.545 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 421.64 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.5"
-			(at 421.64 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R607")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 421.64 298.45) (xy 421.64 302.26))
-		(stroke (width 0) (type default))
-		(uuid "3eaf231e-1fb9-583e-895a-5587cf2ae308")
-	)
-	(global_label "LCD-CS"
-		(shape bidirectional)
-		(at 421.64 302.26 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "f9b06764-49b7-5cde-a52c-2794f65cac82")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 447.04 302.26 0)
+		(at 177.8 177.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b9c26c00-5893-54fb-97ff-ee810df7974e")
-		(property "Reference" "#PWR602"
-			(at 449.58 300.99 0)
+		(uuid "58650b6d-6eec-5e03-b8dd-1acf66c96640")
+		(property "Reference" "#PWR401"
+			(at 180.34 176.53 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26878,13 +25980,13 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 447.04 307.34 0)
+			(at 177.8 182.88 0)
 			(effects
 				(font (size 1.27 1.27))
 			)
 		)
 		(property "Footprint" ""
-			(at 447.04 302.26 0)
+			(at 177.8 177.8 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26894,50 +25996,48 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR602")
+					(reference "#PWR401")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 447.04 287.02) (xy 447.04 290.83))
+		(pts (xy 38.1 152.4) (xy 57.15 152.4))
 		(stroke (width 0) (type default))
-		(uuid "9833524c-5826-5834-9604-576d6093982f")
+		(uuid "0931d125-3ae2-551c-bf92-47bc2b788bbe")
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 447.04 294.64 0)
+		(at 60.96 152.4 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "00364683-6e28-5924-8250-43162c4da7fd")
-		(property "Reference" "R608"
-			(at 444.5 293.37 0)
+		(uuid "40510894-3754-543b-8230-f55058fad71a")
+		(property "Reference" "R404"
+			(at 60.96 149.86 270)
 			(effects
 				(font (size 1.27 1.27))
-				(justify right)
 			)
 		)
-		(property "Value" "10k"
-			(at 444.5 296.545 0)
+		(property "Value" "33"
+			(at 60.96 154.94 270)
 			(effects
 				(font (size 1.27 1.27))
-				(justify right)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 447.04 294.64 0)
+			(at 60.96 152.4 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Источник" "06-display.md §6.5"
-			(at 447.04 294.64 0)
+		(property "Источник" "04-storage.md §6.5"
+			(at 60.96 152.4 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -26947,366 +26047,54 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R608")
+					(reference "R404")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 447.04 298.45) (xy 447.04 302.26))
+		(pts (xy 64.77 152.4) (xy 83.82 152.4))
 		(stroke (width 0) (type default))
-		(uuid "69290c4c-9d76-54cf-9830-bc470d4ce502")
+		(uuid "000bf43a-6475-5948-b22a-5431250835af")
 	)
-	(global_label "LCD-RST"
+	(global_label "SPI0-CLK"
 		(shape bidirectional)
-		(at 447.04 287.02 180)
+		(at 38.1 152.4 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "406caba5-c403-55f6-8879-f94c54e707e3")
+		(uuid "9ecae0b9-fa27-5ddb-964f-6aa0b5995f8e")
 	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 472.44 287.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d5750207-52b6-5ed4-a593-47306640ec61")
-		(property "Reference" "#PWR603"
-			(at 474.98 285.75 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 472.44 281.94 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 472.44 287.02 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR603")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 472.44 287.02) (xy 472.44 290.83))
-		(stroke (width 0) (type default))
-		(uuid "8093ccd2-f907-500d-8c90-d28d6cd81cb7")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 472.44 294.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7f8bc5c0-1304-5632-b39d-844d44738f75")
-		(property "Reference" "R609"
-			(at 469.9 293.37 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 469.9 296.545 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 472.44 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.5"
-			(at 472.44 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R609")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 472.44 298.45) (xy 472.44 302.26))
-		(stroke (width 0) (type default))
-		(uuid "c76dca3b-7210-5875-8fad-b4cb8b7ee138")
-	)
-	(global_label "LCD-IM"
+	(global_label "NOR-CLK"
 		(shape bidirectional)
-		(at 472.44 302.26 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "95783f84-52c4-5f6e-b04d-edbcc2a4e398")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 497.84 287.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a7e26a8a-2602-534d-a2c0-1ab9ce2b21a0")
-		(property "Reference" "#PWR604"
-			(at 500.38 285.75 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 497.84 281.94 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 497.84 287.02 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR604")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 497.84 287.02) (xy 497.84 290.83))
-		(stroke (width 0) (type default))
-		(uuid "ec8ab866-35bb-5651-87fa-a169a77746e2")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 497.84 294.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1c88afea-2386-5f02-aafe-dcfdc13c55f5")
-		(property "Reference" "R602"
-			(at 495.3 293.37 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10k"
-			(at 495.3 296.545 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 497.84 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.5"
-			(at 497.84 294.64 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R602")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 497.84 298.45) (xy 497.84 302.26))
-		(stroke (width 0) (type default))
-		(uuid "14c0a5f0-09d5-5ae5-86a3-b094c0884717")
-	)
-	(global_label "LCD-BL"
-		(shape bidirectional)
-		(at 497.84 302.26 180)
-		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "0ca52619-e86f-5a83-aa50-2f915fdde637")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 388.62 322.58 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a174d5fb-5d9d-572a-a7b0-be7e0bdc5c31")
-		(property "Reference" "#PWR605"
-			(at 391.16 321.31 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 388.62 317.5 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 388.62 322.58 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR605")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 388.62 322.58) (xy 397.51 322.58))
-		(stroke (width 0) (type default))
-		(uuid "3c130e77-b3c2-5cf5-aa2b-733ffa2ae305")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 401.32 322.58 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "59e21638-ae58-5bc6-b594-5f6411cbd741")
-		(property "Reference" "R601"
-			(at 401.32 318.77 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Value" "0"
-			(at 401.32 326.39 270)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 401.32 322.58 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.6"
-			(at 401.32 322.58 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "R601")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 405.13 322.58) (xy 414.02 322.58))
-		(stroke (width 0) (type default))
-		(uuid "e61affe2-8f91-5525-b923-bf7cb140f9d3")
-	)
-	(global_label "LCD-LEDA"
-		(shape bidirectional)
-		(at 414.02 322.58 0)
+		(at 83.82 152.4 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "06134833-6cdd-58ff-863c-1c460e5390d3")
+		(uuid "61967f1b-8711-5c42-abea-162a94efecd5")
 	)
 	(symbol
-		(lib_id "Transistor_FET:Q_NMOS_GSD")
-		(at 462.28 322.58 0)
+		(lib_id "power:+3V3")
+		(at 38.1 180.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "5eae65a7-2ba9-588b-8893-78a928709cce")
-		(property "Reference" "Q601"
-			(at 468.63 320.04 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Value" "AO3400A"
-			(at 468.63 322.58 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 462.28 322.58 0)
+		(uuid "35370274-2e30-5e48-ad95-ba054a624767")
+		(property "Reference" "#PWR402"
+			(at 40.64 179.07 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Источник" "06-display.md §6.6, §7.1"
-			(at 462.28 322.58 0)
+		(property "Value" "+3V3"
+			(at 38.1 175.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 180.34 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27316,50 +26104,399 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "Q601")
+					(reference "#PWR402")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 464.82 317.5) (xy 464.82 309.88))
+		(pts (xy 38.1 180.34) (xy 38.1 184.15))
 		(stroke (width 0) (type default))
-		(uuid "6e358e2d-ea3a-5bcd-9210-f239530b2bf1")
+		(uuid "0d76a020-1b62-52c2-9c63-59a1653cb3bd")
 	)
-	(global_label "LCD-LEDK"
-		(shape bidirectional)
-		(at 464.82 309.88 0)
-		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "1d8fcfda-c8d8-5db1-9dd4-aeb691dd3ed8")
+	(symbol
+		(lib_id "Device:R")
+		(at 38.1 187.96 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9f6dca7a-acca-5cec-a24b-1fa677c90e1e")
+		(property "Reference" "R401"
+			(at 35.56 186.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 35.56 189.865 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 38.1 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.2"
+			(at 38.1 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R401")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(wire
-		(pts (xy 457.2 322.58) (xy 449.58 322.58))
+		(pts (xy 38.1 191.77) (xy 38.1 195.58))
 		(stroke (width 0) (type default))
-		(uuid "3ea3155c-1e1b-5ef4-8ce8-46fee3345700")
+		(uuid "c6ed4b3f-8c48-5c75-98ff-b0cd3a12005b")
 	)
-	(global_label "LCD-BL"
+	(global_label "SPI0-CS0"
 		(shape bidirectional)
-		(at 449.58 322.58 180)
+		(at 38.1 195.58 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "35094dcc-167a-5a19-8a92-98dba5a99810")
+		(uuid "cd056fbf-bd4b-51b2-a801-fb696b508e35")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 63.5 180.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fa21cbc1-1abf-5a10-8da7-68497bf7db46")
+		(property "Reference" "#PWR403"
+			(at 66.04 179.07 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 63.5 175.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 63.5 180.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR403")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(wire
-		(pts (xy 464.82 327.66) (xy 464.82 332.74))
+		(pts (xy 63.5 180.34) (xy 63.5 184.15))
 		(stroke (width 0) (type default))
-		(uuid "97a0c5e4-1a82-53e5-be82-1b730a9e670b")
+		(uuid "5abc8ed2-a4d7-577c-8ce6-0922188324e0")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 63.5 187.96 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d4539088-a7bc-58e5-9b31-54ff06f146a1")
+		(property "Reference" "R402"
+			(at 60.96 186.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 60.96 189.865 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 63.5 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.2"
+			(at 63.5 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R402")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 63.5 191.77) (xy 63.5 195.58))
+		(stroke (width 0) (type default))
+		(uuid "7c4e96c3-7150-5296-97df-a68c3d110c26")
+	)
+	(global_label "SPI0-WP"
+		(shape bidirectional)
+		(at 63.5 195.58 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "ae246126-3795-53f6-b68d-829205114f32")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 88.9 180.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a2ae56af-abd6-50cd-ab16-c5a842a82d0c")
+		(property "Reference" "#PWR404"
+			(at 91.44 179.07 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 88.9 175.26 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 88.9 180.34 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR404")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 88.9 180.34) (xy 88.9 184.15))
+		(stroke (width 0) (type default))
+		(uuid "59e013bc-a885-50be-b6bb-1acd006cecf5")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 88.9 187.96 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e36ea1a8-58e7-5e47-ba47-ccb87795f41b")
+		(property "Reference" "R403"
+			(at 86.36 186.69 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 86.36 189.865 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 88.9 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.2"
+			(at 88.9 187.96 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R403")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 88.9 191.77) (xy 88.9 195.58))
+		(stroke (width 0) (type default))
+		(uuid "9cd078dc-ffee-55c1-ad81-bfebfbf2efc4")
+	)
+	(global_label "SPI0-HOLD"
+		(shape bidirectional)
+		(at 88.9 195.58 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "55f392b8-1a9d-5379-8f1d-e27bb204de27")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 38.1 210.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e6194a9b-454f-5218-b28c-5a055f82bb2d")
+		(property "Reference" "#PWR405"
+			(at 40.64 209.55 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 38.1 205.74 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 210.82 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR405")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 38.1 210.82) (xy 38.1 214.63))
+		(stroke (width 0) (type default))
+		(uuid "c62fbc91-9bf0-5c4c-820c-d909802f9d2f")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 38.1 218.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7658c99d-2c6e-5f08-9483-c7e7b15f13c6")
+		(property "Reference" "R408"
+			(at 35.56 217.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 35.56 220.345 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 38.1 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.4"
+			(at 38.1 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R408")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 38.1 222.25) (xy 38.1 226.06))
+		(stroke (width 0) (type default))
+		(uuid "0b981a3b-5def-5339-88c6-5e551387d42e")
+	)
+	(global_label "SPI0-MOSI"
+		(shape bidirectional)
+		(at 38.1 226.06 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "42a219b8-9024-554c-badc-4b5a5ff396ed")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 464.82 332.74 0)
+		(at 63.5 226.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f77ed684-0af2-5643-ac45-a5c1e02f2730")
-		(property "Reference" "#PWR606"
-			(at 467.36 331.47 0)
+		(uuid "7c1ad282-7418-57e7-a4fa-eb028f0b4f86")
+		(property "Reference" "#PWR406"
+			(at 66.04 224.79 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27367,13 +26504,13 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 464.82 337.82 0)
+			(at 63.5 231.14 0)
 			(effects
 				(font (size 1.27 1.27))
 			)
 		)
 		(property "Footprint" ""
-			(at 464.82 332.74 0)
+			(at 63.5 226.06 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27383,23 +26520,87 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR606")
+					(reference "#PWR406")
 					(unit 1)
 				)
 			)
 		)
 	)
+	(wire
+		(pts (xy 63.5 210.82) (xy 63.5 214.63))
+		(stroke (width 0) (type default))
+		(uuid "56a7adff-f398-5423-bf1b-2f3e8b474fc2")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 63.5 218.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(uuid "ab610649-dd11-5da1-9e0f-cafcfc1cf662")
+		(property "Reference" "R409"
+			(at 60.96 217.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "2.2k"
+			(at 60.96 220.345 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 63.5 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.4"
+			(at 63.5 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R409")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 63.5 222.25) (xy 63.5 226.06))
+		(stroke (width 0) (type default))
+		(uuid "2772e258-347b-5b79-9dc1-d0a15bb642c1")
+	)
+	(global_label "SPI0-MOSI"
+		(shape bidirectional)
+		(at 63.5 210.82 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "289c3bd1-77e0-59a7-89ce-dc3fac22d635")
+	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 500.38 322.58 0)
+		(at 88.9 210.82 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "17ad95e4-10c6-5bdb-b71b-91ce587b7f39")
-		(property "Reference" "#PWR607"
-			(at 502.92 321.31 0)
+		(uuid "84f2c78c-6074-55c3-90d7-30d69dbefaf3")
+		(property "Reference" "#PWR407"
+			(at 91.44 209.55 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27407,13 +26608,13 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 500.38 317.5 0)
+			(at 88.9 205.74 0)
 			(effects
 				(font (size 1.27 1.27))
 			)
 		)
 		(property "Footprint" ""
-			(at 500.38 322.58 0)
+			(at 88.9 210.82 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27423,50 +26624,258 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR607")
+					(reference "#PWR407")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 500.38 322.58) (xy 500.38 326.39))
+		(pts (xy 88.9 210.82) (xy 88.9 214.63))
 		(stroke (width 0) (type default))
-		(uuid "23159c0a-6c35-56af-a14b-d82fe2dc6d43")
+		(uuid "a7cd72d0-83c3-504c-91b4-762aeb2fdfc3")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 88.9 218.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(uuid "56855b9c-7e00-53ca-bfb6-7b42f4ca0e46")
+		(property "Reference" "R410"
+			(at 86.36 217.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "10k"
+			(at 86.36 220.345 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 88.9 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.4"
+			(at 88.9 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R410")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 88.9 222.25) (xy 88.9 226.06))
+		(stroke (width 0) (type default))
+		(uuid "4aac41da-b0f9-56ef-90e0-28f6e8318c57")
+	)
+	(global_label "SPI0-MISO"
+		(shape bidirectional)
+		(at 88.9 226.06 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "5814bf8d-dd5c-5353-8d59-7d9e2fa0b9fc")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 114.3 226.06 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "643d237e-a4a2-5403-8fbd-5fdbac6d5968")
+		(property "Reference" "#PWR408"
+			(at 116.84 224.79 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 114.3 231.14 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 114.3 226.06 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR408")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 114.3 210.82) (xy 114.3 214.63))
+		(stroke (width 0) (type default))
+		(uuid "16c29e82-efd5-5b96-8606-50fb2cbcb5d1")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 114.3 218.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6430c046-16e7-54f2-9fa4-25b7fd8f8f7c")
+		(property "Reference" "R411"
+			(at 111.76 217.17 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Value" "2.2k"
+			(at 111.76 220.345 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 114.3 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Источник" "04-storage.md §6.4"
+			(at 114.3 218.44 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "R411")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 114.3 222.25) (xy 114.3 226.06))
+		(stroke (width 0) (type default))
+		(uuid "0290fec1-e919-57f8-95d3-29dce7600daf")
+	)
+	(global_label "SPI0-MISO"
+		(shape bidirectional)
+		(at 114.3 210.82 180)
+		(effects (font (size 1.27 1.27)) (justify right))
+		(uuid "3d7d6244-d416-5cc2-88c7-5293f3b435dc")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 38.1 242.57 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8f16ca61-3b3e-5672-9c0b-52b143a6a051")
+		(property "Reference" "#PWR409"
+			(at 40.64 241.3 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 38.1 237.49 0)
+			(effects
+				(font (size 1.27 1.27))
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 242.57 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "console"
+				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
+					(reference "#PWR409")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts (xy 38.1 242.57) (xy 38.1 246.38))
+		(stroke (width 0) (type default))
+		(uuid "bbb7b885-5228-55a7-82a1-c4e515c6ede3")
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 500.38 330.2 0)
+		(at 38.1 250.19 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "9d6ff9c9-b38c-5e3a-99db-14cde1601cf2")
-		(property "Reference" "C601"
-			(at 497.84 328.93 0)
+		(uuid "c1eafc8c-809a-5cac-b0f1-20b88cbd2092")
+		(property "Reference" "C401"
+			(at 35.56 248.92 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify right)
 			)
 		)
 		(property "Value" "0.1u"
-			(at 497.84 332.105 0)
+			(at 35.56 252.095 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify right)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 500.38 330.2 0)
+			(at 38.1 250.19 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Источник" "06-display.md §6.2"
-			(at 500.38 330.2 0)
+		(property "Источник" "04-storage.md §6.6 флешка"
+			(at 38.1 250.19 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27476,28 +26885,28 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "C601")
+					(reference "C401")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(wire
-		(pts (xy 500.38 334.01) (xy 500.38 337.82))
+		(pts (xy 38.1 254) (xy 38.1 257.81))
 		(stroke (width 0) (type default))
-		(uuid "0fb61832-2363-5f75-9038-4bb2d57e51b6")
+		(uuid "5df94487-4335-5204-bc9c-05c0be53f7d2")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 500.38 337.82 0)
+		(at 38.1 257.81 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4f497d0b-e928-56ff-a20b-81b0ba601621")
-		(property "Reference" "#PWR608"
-			(at 502.92 336.55 0)
+		(uuid "f62160cb-1979-53e3-97ba-d317b47d7c4e")
+		(property "Reference" "#PWR410"
+			(at 40.64 256.54 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27505,13 +26914,13 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 500.38 342.9 0)
+			(at 38.1 262.89 0)
 			(effects
 				(font (size 1.27 1.27))
 			)
 		)
 		(property "Footprint" ""
-			(at 500.38 337.82 0)
+			(at 38.1 257.81 0)
 			(effects
 				(font (size 1.27 1.27))
 				(justify left)
@@ -27521,161 +26930,29 @@
 		(instances
 			(project "console"
 				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR608")
+					(reference "#PWR410")
 					(unit 1)
 				)
 			)
 		)
 	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 513.08 322.58 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8c0390e5-bbe0-5433-9fc8-a7fe12052928")
-		(property "Reference" "#PWR609"
-			(at 515.62 321.31 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 513.08 317.5 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 513.08 322.58 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR609")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 513.08 322.58) (xy 513.08 326.39))
-		(stroke (width 0) (type default))
-		(uuid "7ddf1a22-ef50-5d67-81ad-ec28bff16e70")
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 513.08 330.2 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3d0c7afe-9cc8-5855-8e10-6c4182e60959")
-		(property "Reference" "C602"
-			(at 510.54 328.93 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Value" "10u"
-			(at 510.54 332.105 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify right)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 513.08 330.2 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Источник" "06-display.md §6.2"
-			(at 513.08 330.2 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "C602")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts (xy 513.08 334.01) (xy 513.08 337.82))
-		(stroke (width 0) (type default))
-		(uuid "6d05da58-b91a-5f38-87c6-81ab784d770c")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 513.08 337.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "574271ec-6272-550f-8474-6f064cf8ebd2")
-		(property "Reference" "#PWR610"
-			(at 515.62 336.55 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 513.08 342.9 0)
-			(effects
-				(font (size 1.27 1.27))
-			)
-		)
-		(property "Footprint" ""
-			(at 513.08 337.82 0)
-			(effects
-				(font (size 1.27 1.27))
-				(justify left)
-				(hide yes)
-			)
-		)
-		(instances
-			(project "console"
-				(path "/2c95ea68-c905-5549-acc9-040ef4143065"
-					(reference "#PWR610")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(text "контакты 1..4 — тачскрин, 8 FMARK, 14 SDO: спека велит оставить в воздухе"
+	(text "шесть линий к флешке, а не четыре: SPI0 умеет Quad, PC6 и PC7 больше никому не нужны"
 		(exclude_from_sim yes)
-		(at 382 240 0)
+		(at 24 172.72 0)
 		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
-		(uuid "f01e01bb-78e8-5a96-b4e0-d5daaa8ec234")
+		(uuid "69353832-7811-57e3-acc9-de136ca9dd3d")
 	)
-	(text "детали вынесены из столбца разъёма: шаг контактов 2.54, подписи не помещаются"
+	(text "R409 и R410 — места под смену приоритета загрузки, запаяны R408 и R411: SD → SPI NOR → прочее. Карты нет, SD просто пропускается"
 		(exclude_from_sim yes)
-		(at 382 279.4 0)
+		(at 24 201.93 0)
 		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
-		(uuid "b3c91b05-fdac-5eec-b8c1-07e212329504")
+		(uuid "48e87fa2-7342-56ec-a08d-09f6c7f858c8")
+	)
+	(text "посадочного места под слот в KiCad нет — рисуется по чертежу"
+		(exclude_from_sim yes)
+		(at 114.3 262 0)
+		(effects (font (size 1.6 1.6) (italic yes)) (justify left bottom))
+		(uuid "7a48ad20-7846-52b0-b218-79fc083a1bfb")
 	)
 	(sheet_instances
 		(path "/"

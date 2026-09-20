@@ -158,6 +158,9 @@ def main():
     if not a.no_more:
         print("добор:")
         step("pcb11_more.py", [], keep=("добор",))
+        print("rip-up:")
+        step("pcb13_rip.py", [], keep=("круг", "не хватает", "подвинули",
+                                       "исчерпан", "остановлен"))
     print("заливки и сшивка:")
     step("pcb06_planes.py", [], keep=("сшивки", "полигон", "островков"))
     print("добивка земли:")

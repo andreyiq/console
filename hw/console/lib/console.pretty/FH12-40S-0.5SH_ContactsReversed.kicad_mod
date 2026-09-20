@@ -97,9 +97,10 @@
 		)
 		(layer "F.SilkS")
 	)
-	(fp_rect
-		(start -13.05 -3)
-		(end 13.05 4.9)
+	(fp_poly
+		(pts
+			(xy -13.05 -3) (xy -13.05 4.9) (xy 13.05 4.9) (xy 13.05 -3)
+		)
 		(stroke
 			(width 0.05)
 			(type solid)

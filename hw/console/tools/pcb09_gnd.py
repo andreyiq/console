@@ -160,6 +160,16 @@ def main():
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
         if added == 0:
             break
+    # Кусок, которому заклёпка не влезла, ещё не приговорён: к нему можно
+    # ПОДВЕСТИ ДОРОЖКУ от уже связанной земли. Это не роскошь — в одном из
+    # таких кусков сидит земляной вывод усилителя `U501`, то есть без этого
+    # у него земля висит в воздухе, а плата едет в производство.
+    if left:
+        bridged = bridge(board, code, left)
+        if bridged:
+            pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+            left = [x for x in left if x[2] not in bridged]
+
     zones = list(board.Zones())
     front = pieces(zones, pcbnew.F_Cu, code)
     back = pieces(zones, pcbnew.B_Cu, code)
@@ -170,6 +180,77 @@ def main():
           f"осталось без связи: {len(left)}")
     for area, why, (x, y) in sorted(left, reverse=True)[:8]:
         print(f"    кусок {area:7.2f} мм² в ({x}, {y}) — {why}")
+
+
+def bridge(board, code, left):
+    """Подвести дорожку от связанной земли к куску, куда не влезла заклёпка.
+
+    Земля у нас не разводится вовсе — она идёт заливкой, и `pcb10_route.py`
+    её нарочно пропускает. Но для ОСТАТКОВ это правило вредит: кусок заливки
+    с выводом детали внутри и без связи с плоскостью — это деталь без земли,
+    а не косметика.
+
+    Считаем тем же волновым поиском и на той же сетке, что и обычная разводка:
+    старт — площадка земли внутри осиротевшего куска, цель — ближайшая
+    заклёпка земли, у которой связь с плоскостью есть. Ширину берём 0.4: это
+    земля, и лишняя медь ей на пользу.
+    """
+    import pcb10_route as R10
+
+    pads, vias, wires = [], [], []
+    for f in board.GetFootprints():
+        for p in f.Pads():
+            pads.append((p.GetNetCode(), R10.pad_box(p)))
+    for t in board.GetTracks():
+        if isinstance(t, pcbnew.PCB_VIA):
+            q = t.GetPosition()
+            vias.append((t.GetNetCode(), pcbnew.ToMM(q.x) - R10.OX,
+                         pcbnew.ToMM(q.y) - R10.OY))
+            continue
+        a, b = t.GetStart(), t.GetEnd()
+        wires.append((t.GetNetCode(),
+                      pcbnew.ToMM(a.x) - R10.OX, pcbnew.ToMM(a.y) - R10.OY,
+                      pcbnew.ToMM(b.x) - R10.OX, pcbnew.ToMM(b.y) - R10.OY,
+                      0 if t.GetLayer() == pcbnew.F_Cu else 1,
+                      pcbnew.ToMM(t.GetWidth())))
+    g = R10.build(board, pads, vias, [], wires)
+
+    anchors = [R10.to_cell(pcbnew.ToMM(t.GetPosition().x) - R10.OX,
+                           pcbnew.ToMM(t.GetPosition().y) - R10.OY)
+               for t in board.GetTracks()
+               if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == code]
+    if not anchors:
+        return set()
+
+    gnd = board.FindNet("GND")
+    done = set()
+    for area, why, (cx, cy) in left:
+        # Площадка земли внутри куска — от неё и ведём.
+        start = None
+        for f in board.GetFootprints():
+            for p in f.Pads():
+                if p.GetNetCode() != code:
+                    continue
+                x = pcbnew.ToMM(p.GetPosition().x)
+                y = pcbnew.ToMM(p.GetPosition().y)
+                if abs(x - cx) < 2.0 and abs(y - cy) < 2.0:
+                    start = R10.to_cell(x - R10.OX, y - R10.OY)
+                    break
+            if start:
+                break
+        if start is None:
+            continue
+        near = sorted(anchors, key=lambda c: (c[0] - start[0]) ** 2
+                      + (c[1] - start[1]) ** 2)[:12]
+        path = R10.route(g, [start + (0,)], near, code,
+                         margin=R10.MARGIN, toll=())
+        if not path:
+            continue
+        R10.lay(board, path, gnd, g, width=0.4)
+        done.add((cx, cy))
+        print(f"    кусок {area:7.2f} мм² в ({cx}, {cy}) — подведена дорожка, "
+              f"{len(path)} клеток")
+    return done
 
 
 def place(board, gnd, code, front, back, gpads, pierce):
