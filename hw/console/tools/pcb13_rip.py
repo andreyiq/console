@@ -275,10 +275,34 @@ def main():
     backup = board_path.with_suffix(".rip-bak")
     t0 = time.monotonic()
 
+    base = missing(pcbnew.LoadBoard(str(board_path)))
+    print(f"до rip-up не хватает связей: {base}", flush=True)
+    rounds = 0
+    while True:
+        rounds += 1
+        before = base
+        base = one_round(board_path, backup, base, t0, rounds)
+        if base >= before:
+            print(f"rip-up исчерпан: кругов {rounds}, "
+                  f"не хватает связей {base}")
+            return
+        if time.monotonic() - t0 > DEADLINE:
+            print(f"rip-up остановлен ВРЕМЕНЕМ, а не предметом: "
+                  f"кругов {rounds}, не хватает связей {base}")
+            return
+
+
+def one_round(board_path, backup, base, t0, rounds):
+    """Один проход по кандидатам. Возвращает, сколько связей не хватает после.
+
+    Круги нужны потому, что после каждой удачной подвижки кандидаты другие:
+    медь легла иначе, и держат уже не те. А вот КРУГ, не давший ничего, значит
+    исчерпание — приём детерминированный, и повторять его незачем. Померено:
+    круги 5…8 дали по 18 кандидатов и ноль успехов каждый, то есть двадцать
+    четыре минуты впустую. Поэтому останов здесь, а не у того, кто зовёт.
+    """
     board = pcbnew.LoadBoard(str(board_path))
     name_of, pads, vias, wires, edges, by_net = scan(board)
-    base = missing(board)
-    print(f"до rip-up не хватает связей: {base}", flush=True)
 
     g = R.build(board, pads, vias, [], wires)
 
@@ -335,8 +359,10 @@ def main():
             shutil.copy2(backup, board_path)
             lost += 1
     backup.unlink(missing_ok=True)
-    print(f"rip-up кончен: попыток {n}, помогло {won}, откачено {lost}; "
-          f"не хватает связей {base}, прошло {(time.monotonic() - t0) / 60:.0f} мин")
+    print(f"  круг {rounds}: попыток {n}, помогло {won}, откачено {lost}; "
+          f"не хватает связей {base}, прошло "
+          f"{(time.monotonic() - t0) / 60:.0f} мин", flush=True)
+    return base
 
 
 if __name__ == "__main__":
