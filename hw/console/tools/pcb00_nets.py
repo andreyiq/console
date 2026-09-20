@@ -58,7 +58,7 @@ def main():
     board = pcbnew.LoadBoard(str(BOARD))
     known = {n.GetNetname(): n for n in board.GetNetsByName().values()}
 
-    changed, missing = [], set()
+    changed, missing, added = [], set(), set()
     for f in board.GetFootprints():
         ref = f.GetReference()
         for p in f.Pads():
@@ -67,21 +67,50 @@ def main():
                 continue
             net = known.get(name)
             if net is None:
-                missing.add(name)
-                continue
+                # Цепи, которой на плате ещё нет, заводим здесь же. Раньше
+                # скрипт умел только раздавать уже заведённые и честно писал
+                # «нужен F8» — а F8 живёт в окне KiCad, то есть оставался
+                # ручной шаг ровно там, где правка схемы и требуется: новое имя
+                # цепи появляется при КАЖДОМ переименовании сигнала. На снятии
+                # параллельной шины дисплея так застряли четыре цепи из четырёх
+                # новых (`LCD-DC`, `LCD-SCL`, `LCD-SDA`, `LCD-SDO`).
+                net = pcbnew.NETINFO_ITEM(board, name)
+                board.Add(net)
+                known[name] = net
+                added.add(name)
             changed.append(f"{ref}-{p.GetPadName()}: "
                            f"{p.GetNetname() or '—'} → {name}")
             p.SetNet(net)
 
-    if changed:
+    # Цепи, которых больше нет в схеме, но которые ещё держат медь на плате.
+    # Сами по себе они безвредны (пустая цепь ничего не значит), а вот ДОРОЖКИ
+    # на них — вредны: это медь, которой в схеме соответствия нет. Разводка её
+    # снимает своим `pcb07_fanout.py`, но сказать о ней надо здесь, пока видно.
+    live = set(want.values())
+    stale = {}
+    for t in board.GetTracks():
+        n = t.GetNetname()
+        if n and n not in live:
+            stale[n] = stale.get(n, 0) + 1
+
+    if changed or added:
         board.Save(str(BOARD))
-    print(f"цепей на площадках исправлено: {len(changed)}")
+    print(f"цепей на площадках исправлено: {len(changed)}, "
+          f"заведено новых: {len(added)}")
     for line in changed[:12]:
         print("   ", line)
     if len(changed) > 12:
         print(f"    … и ещё {len(changed) - 12}")
+    if added:
+        print("    новые:", ", ".join(sorted(added)[:10]))
     if missing:
-        print("НЕТ на плате (нужен F8):", ", ".join(sorted(missing)[:10]))
+        print("НЕ УДАЛОСЬ завести:", ", ".join(sorted(missing)[:10]))
+    if stale:
+        top = sorted(stale.items(), key=lambda kv: -kv[1])[:6]
+        print(f"  медь на цепях, которых в схеме нет: {sum(stale.values())} "
+              f"отрезков по {len(stale)} цепям — "
+              + ", ".join(f"{k}×{v}" for k, v in top))
+        print("  снимется при следующем pcb07_fanout.py")
 
 
 if __name__ == "__main__":
