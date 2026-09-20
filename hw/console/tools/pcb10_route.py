@@ -432,7 +432,12 @@ class Grid:
                     self._mark(g, k, net)
 
     def add_copper(self, i, j, L, net):
-        self.copper.setdefault(net, set()).add((i, j, L))
+        # Медь ЗА ПРЕДЕЛАМИ платы в сетку не попадает, и записывать её нельзя:
+        # клетка (i, j) вне [0, NX)×[0, NY) даёт либо чужой индекс, либо выход
+        # за список. Это не теоретический случай: `pcb_park.py` увозит детали
+        # на стоянку правее платы, и веер честно выводит им лучи.
+        if 0 <= i < NX and 0 <= j < NY:
+            self.copper.setdefault(net, set()).add((i, j, L))
 
     def free(self, i, j, L, net):
         """Можно ли встать в клетку и уйти из неё ПРЯМЫМ шагом."""
@@ -460,6 +465,8 @@ class Grid:
 
     def can_via(self, i, j, net):
         """Переходная занимает обе стороны и шире дорожки."""
+        if not (0 <= i < NX and 0 <= j < NY):
+            return False
         if self.nohole[self.idx(i, j)]:
             return False
         for L in (0, 1):
