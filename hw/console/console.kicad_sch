@@ -22079,99 +22079,99 @@
 		(stroke (width 0) (type default))
 		(uuid "21a7fccc-f5fb-5ad1-b5d8-34e542bfad7d")
 	)
-	(global_label "KEY-C"
+	(global_label "KEY-SELECT"
 		(shape bidirectional)
 		(at 232.41 157.48 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "2fed85a8-4ace-5c52-bc90-b20aade4157c")
+		(uuid "238b7ac3-68b3-5a5d-8d3e-007b75fda9b7")
 	)
 	(wire
 		(pts (xy 234.95 160.02) (xy 232.41 160.02))
 		(stroke (width 0) (type default))
 		(uuid "64ba574b-fe5c-5f31-b675-f4eb031e4ae8")
 	)
-	(global_label "KEY-A"
+	(global_label "KEY-START"
 		(shape bidirectional)
 		(at 232.41 160.02 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "8c437660-57b8-5643-b294-593395da664c")
+		(uuid "bc363a28-fa1d-539f-a3f0-797fa2efd922")
 	)
 	(wire
 		(pts (xy 234.95 162.56) (xy 232.41 162.56))
 		(stroke (width 0) (type default))
 		(uuid "4efa16d7-5595-529e-9f8b-6e81d86032eb")
 	)
-	(global_label "KEY-B"
+	(global_label "KEY-C"
 		(shape bidirectional)
 		(at 232.41 162.56 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "d67ffaa4-e92b-55cc-a04d-3e502bf3adef")
+		(uuid "3fc544fd-0775-5602-b7a6-8cd47567bbc4")
 	)
 	(wire
 		(pts (xy 234.95 165.1) (xy 232.41 165.1))
 		(stroke (width 0) (type default))
 		(uuid "f2bb807d-9a9c-541f-ad65-ce5e870f8c4f")
 	)
-	(global_label "KEY-D"
+	(global_label "KEY-B"
 		(shape bidirectional)
 		(at 232.41 165.1 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "b9d1bdbd-5380-52e6-b349-1b39a5100772")
+		(uuid "85345043-9f5a-5e1e-8de4-a6b3239391fc")
 	)
 	(wire
 		(pts (xy 234.95 167.64) (xy 232.41 167.64))
 		(stroke (width 0) (type default))
 		(uuid "338d2644-93df-5043-b32b-515f10055da7")
 	)
-	(global_label "KEY-SELECT"
+	(global_label "KEY-A"
 		(shape bidirectional)
 		(at 232.41 167.64 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "97a79d04-52d9-5411-8648-51d4d7de6de6")
+		(uuid "d0d55c08-50d8-53a6-9ba0-f5f730dc9dee")
 	)
 	(wire
 		(pts (xy 234.95 170.18) (xy 232.41 170.18))
 		(stroke (width 0) (type default))
 		(uuid "576021b0-1999-5b0d-8f3c-241c9cd2247e")
 	)
-	(global_label "KEY-START"
+	(global_label "KEY-D"
 		(shape bidirectional)
 		(at 232.41 170.18 180)
 		(effects (font (size 1.27 1.27)) (justify right))
-		(uuid "212a0863-75f2-50cf-873d-7a1a353ab1d3")
+		(uuid "cd9f9632-cabe-58c0-9d97-afec4cb4c9a7")
 	)
 	(wire
 		(pts (xy 256.54 143.51) (xy 256.54 133.35))
 		(stroke (width 0) (type default))
 		(uuid "698ae360-8e37-5327-a47c-a46de8f5d260")
 	)
-	(global_label "KEY-RIGHT"
+	(global_label "KEY-LEFT"
 		(shape bidirectional)
 		(at 256.54 133.35 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "43584c82-cfcc-5283-8d2b-22f7891c11c9")
+		(uuid "411ba3b5-236a-5652-afc8-c3ad7fe115b4")
 	)
 	(wire
 		(pts (xy 259.08 143.51) (xy 259.08 135.89))
 		(stroke (width 0) (type default))
 		(uuid "19ea51d2-b083-56bf-8a3c-b8fd0d10f767")
 	)
-	(global_label "KEY-LEFT"
+	(global_label "KEY-DOWN"
 		(shape bidirectional)
 		(at 259.08 135.89 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "f848708d-6bab-58c8-80e2-c3d274183266")
+		(uuid "47cbd6fd-51a1-5593-a2be-99e25011b3f0")
 	)
 	(wire
 		(pts (xy 261.62 143.51) (xy 261.62 138.43))
 		(stroke (width 0) (type default))
 		(uuid "03530ae3-7487-59fa-ae96-1122f4b1a711")
 	)
-	(global_label "KEY-DOWN"
+	(global_label "KEY-RIGHT"
 		(shape bidirectional)
 		(at 261.62 138.43 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "44585cdb-6bc3-5159-ac40-2bc8400cc1ce")
+		(uuid "3d4504c1-f79a-5904-81a6-69661f78911a")
 	)
 	(wire
 		(pts (xy 264.16 143.51) (xy 264.16 140.97))
