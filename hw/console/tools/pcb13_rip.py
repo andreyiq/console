@@ -32,13 +32,13 @@
 | четвёртый, порог 3 | 48 -> **46** | 30 | 2 | 8 мин |
 | пятый…восьмой | 46 | по 18 | по 0 | 24 мин впустую |
 | порог 4 | 46 | 33 | **0** | 10 мин |
-#
-# Сошлось на 46, и порог «до четырёх чужих цепей» не даёт НИЧЕГО: 33 кандидата
-# и ни одного успеха. То есть дело не в том, что мы выдираем мало, — дело в
-# том, что выдранным негде лечь обратно. Дальше этот приём не поднимет.
-#
-# Осталось 46 связей на 38 цепях, по одной-три на цепь, без единого скопления:
-# целиться больше не во что, теснота размазана.
+
+Сошлось на 46, и порог «до четырёх чужих цепей» не даёт НИЧЕГО: 33 кандидата
+и ни одного успеха. То есть дело не в том, что мы выдираем мало, — дело в том,
+что выдранным негде лечь обратно. Дальше этот приём не поднимет.
+
+Осталось 46 связей на 38 цепях, по одной-три на цепь, без единого скопления:
+целиться больше не во что, теснота размазана.
 
 Для сравнения: добор (`pcb11_more.py`) за 10 минут убирает 4…5 связей и
 дальше упирается, а все правки размещения и очереди дают ±2 (замеры в
@@ -82,6 +82,13 @@ SOFT = 40.0          # цена шага сквозь чужую медь, в к
 MAX_BLOCK = int(os.environ.get("PCB_RIP_BLOCK", 2))
 TRIES = int(ARGS[0]) if ARGS else 40
 DEADLINE = float(os.environ.get("PCB_RIP_DEADLINE", 2400))
+# Предел на РАЗБОР кандидатов отдельно от предела на весь приём. Разбор —
+# самое долгое место, и упереться он может так, что до попыток дело не дойдёт
+# вовсе; тогда честнее взять тех кандидатов, что уже нашлись, и начать двигать.
+SCAN_LIMIT = float(os.environ.get("PCB_RIP_SCAN", 600))
+# Бюджет мягкого поиска. Он ищет НЕ путь, а виновника, и виновник обычно рядом:
+# 400000 узлов на пару — это минуты на безнадёжной паре и ничего сверх того.
+SOFT_BUDGET = int(os.environ.get("PCB_RIP_SOFT", 80000))
 
 
 # ------------------------------------------------------------ чтение платы
@@ -184,7 +191,7 @@ def soft_route(g, starts, goals, net, margin):
         i, j, L = c if len(c) == 3 else (c[0], c[1], 0)
         best[(i, j, L)] = 0.0
         heapq.heappush(heap, (h(i, j), 0.0, (i, j, L), None))
-    budget = 400000
+    budget = SOFT_BUDGET
     while heap:
         budget -= 1
         if budget < 0:
@@ -292,10 +299,14 @@ def main():
     while True:
         rounds += 1
         before = base
-        base = one_round(board_path, backup, base, t0, rounds)
+        base, capped = one_round(board_path, backup, base, t0, rounds)
         if base >= before:
-            print(f"rip-up исчерпан: кругов {rounds}, "
-                  f"не хватает связей {base}")
+            # «Упёрлись в потолок попыток» и «кандидаты кончились» — разные
+            # вещи, и путать их нельзя: первое лечится числом, второе значит,
+            # что приём отработал. Пока отчёт говорил «исчерпан» в обоих
+            # случаях, по нему нельзя было решить, стоит ли гонять дальше.
+            print(f"rip-up {'упёрся в потолок попыток' if capped else 'исчерпан'}"
+                  f": кругов {rounds}, не хватает связей {base}")
             return
         if time.monotonic() - t0 > DEADLINE:
             print(f"rip-up остановлен ВРЕМЕНЕМ, а не предметом: "
@@ -318,10 +329,25 @@ def one_round(board_path, backup, base, t0, rounds):
     g = R.build(board, pads, vias, [], wires)
 
     # Кандидаты: несошедшиеся пары и кто их держит.
+    #
+    # Этот разбор — самое долгое место всего приёма, и он ДОЛЖЕН говорить по
+    # ходу. Пока он молчал, отличить «ищет» от «повис» было нельзя: один раз
+    # он сорок девять минут не печатал ни строки, и это справедливо назвали
+    # зависанием. Мягкий поиск здесь идёт по каждой несошедшейся паре, а пар
+    # под сотню.
     cand = []
-    for code, pts in sorted(by_net.items()):
-        if len(pts) < 2 or name_of.get(code) == "GND":
-            continue
+    todo = [(c, p) for c, p in sorted(by_net.items())
+            if len(p) > 1 and name_of.get(c) != "GND"]
+    t_scan = time.monotonic()
+    for k, (code, pts) in enumerate(todo, 1):
+        if time.monotonic() - t_scan > SCAN_LIMIT:
+            print(f"  разбор оборван ВРЕМЕНЕМ на {k} цепи из {len(todo)}: "
+                  f"кандидатов уже {len(cand)}", flush=True)
+            break
+        if k % 20 == 0:
+            print(f"  разбор: {k} цепей из {len(todo)}, "
+                  f"кандидатов {len(cand)}, "
+                  f"{time.monotonic() - t_scan:.0f} c", flush=True)
         cells, groups = pieces_of(code, pts, edges)
         if len(groups) < 2:
             continue
@@ -343,10 +369,11 @@ def one_round(board_path, backup, base, t0, rounds):
     print(f"кандидатов на выдирание: {len(cand)} "
           f"(держат не больше {MAX_BLOCK} чужих цепей)", flush=True)
 
-    won, lost, n = 0, 0, 0
+    won, lost, n, capped = 0, 0, 0, False
     for k, mine, blockers in cand:
         if n >= TRIES:
             print(f"  упёрлись в потолок {TRIES} попыток")
+            capped = True
             break
         if time.monotonic() - t0 > DEADLINE:
             print(f"  упёрлись во ВРЕМЯ ({DEADLINE / 60:.0f} мин), "
@@ -373,7 +400,7 @@ def one_round(board_path, backup, base, t0, rounds):
     print(f"  круг {rounds}: попыток {n}, помогло {won}, откачено {lost}; "
           f"не хватает связей {base}, прошло "
           f"{(time.monotonic() - t0) / 60:.0f} мин", flush=True)
-    return base
+    return base, capped
 
 
 if __name__ == "__main__":
