@@ -29,6 +29,8 @@ import tempfile
 import time
 from pathlib import Path
 
+import pcbnew
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 BOARD = ROOT / "console.kicad_pcb"
@@ -146,9 +148,17 @@ def main():
     bad, gap = drc()
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
     print("\nСВОДКА")
+    # Медь считаем ПО ПЛАТЕ, а не по последнему прогону роутера. Последний
+    # заход добора кладёт ноль отрезков — тем он и кончается, — и «переходных
+    # 0, отрезков 0» на полностью разведённой плате читается как «ничего не
+    # вышло». Ноль как отсутствие предмета и ноль как результат — разные вещи.
+    board = pcbnew.LoadBoard(str(BOARD))
+    vias = sum(1 for t in board.GetTracks() if isinstance(t, pcbnew.PCB_VIA))
+    segs = sum(1 for t in board.GetTracks() if not isinstance(t, pcbnew.PCB_VIA))
     print(f"  связей проложено: {st.get('done', '—')}, "
-          f"не сошлось: {st.get('fail', '—')}, "
-          f"переходных {st.get('vias', '—')}")
+          f"не сошлось: {st.get('fail', '—')}")
+    print(f"  на плате: отрезков {segs}, заклёпок {vias} "
+          f"(их паять руками с двух сторон)")
     print(f"  нарушений DRC: {sum(bad.values())}"
           + (f" — {', '.join(f'{k} {v}' for k, v in sorted(bad.items()))}"
              if bad else " (чисто)"))
