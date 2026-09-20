@@ -38,6 +38,30 @@ GAP = 0.6                      # просвет между courtyard сосед�
 # и лишний ряд стал не поблажкой, а просто ещё одним местом на выбор.
 MAX_ROWS = int(os.environ.get("PCB_ROWS", 4))
 
+# Ставить ли кольцо развязки на ИЗНАНКУ, как делает Xassette.
+#
+# Гипотеза была сильная и взята не с потолка: Xassette — тот же F133, тот же
+# корпус LQFP-128 шаг 0.4, та же двуслойная плата, — и у него 10 конденсаторов
+# из 26 стоят на `B.Cu`, ближайшие в 5.5…6.4 мм от центра корпуса, то есть
+# прямо под чипом. У нас все 27 на лице, до вывода в среднем 8.4 мм.
+#
+# ПРОВЕРЕНО НА КОПИИ, и отвергнуто дважды:
+#
+# | что пробовали | связей | разрывов по DRC | нарушений |
+# |---|---|---|---|
+# | как есть, лицо | 191 | 63 | 0 |
+# | изнанка, кольцо там же | 191 | **81** | 0 |
+# | изнанка + под корпус (отступ −3.5) | **189** | **87** | **7, из них 2 замыкания** |
+#
+# Первое: земляные выводы конденсаторов перестают касаться ЛИЦЕВОЙ заливки у
+# выводов чипа, и рвётся земля аналога (`AGND×5`). Второе: под корпусом уже
+# стоят термопад и его сшивка, конденсаторы на них налезают — наложения
+# корпусов, перемычки маски и настоящие замыкания.
+#
+# Развязке при этом становится лучше (средняя до вывода 8.4 -> 6.0 мм), так
+# что гипотеза не глупая — она просто стоит дороже, чем даёт.
+BACK = bool(os.environ.get("PCB_DECOUP_BACK"))
+
 # Отступ кольца развязки от края площадок корпуса. Вынесен в окружение, чтобы
 # цену этого миллиметра можно было померить одной константой, а не спорить о
 # ней:  PCB_ROWS=4 PCB_RING=0.7 python3 pcb04_fine.py
@@ -185,11 +209,11 @@ def size(fp):
     return w, h
 
 
-def put(board, ref, x, y, rot, lock=True):
+def put(board, ref, x, y, rot, lock=True, back=False):
     fp = board.FindFootprintByReference(ref)
     if fp is None:
         return None
-    if fp.IsFlipped():
+    if fp.IsFlipped() != back:
         fp.Flip(fp.GetPosition(), False)
     fp.SetOrientationDegrees(rot)
     fp.SetPosition(pcbnew.VECTOR2I(mm(OX + x), mm(OY + y)))
@@ -296,6 +320,10 @@ def ring(board):
     mine = set(DECOUP) | {"U1"}
     for f in board.GetFootprints():
         if f.GetReference() in mine:
+            continue
+        # Развязка на изнанке лицевых соседей не видит — они на другой стороне
+        # платы. Пока они считались препятствиями, кольцо обходило пустоту.
+        if BACK and not f.IsFlipped():
             continue
         f.BuildCourtyardCaches()
         c = f.GetCourtyard(pcbnew.F_CrtYd)
@@ -437,7 +465,7 @@ def ring(board):
                 return False
         t, px, py, _ = spot(k, lo)
         rows[k] = lo + along
-        put(board, ref, px, py, rot)
+        put(board, ref, px, py, rot, back=BACK)
         return ok
 
     for s, items in groups.items():
