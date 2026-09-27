@@ -1,156 +1,52 @@
-"Refs","Value","Footprint","Qty","DNP"
-"C1","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C2","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C3","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C4","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C5","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C6","22u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C7","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C8","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C9","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C10","22p","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C11","0.47u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C12","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C13","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C14","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C15","22p","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C16","22p","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C17","22p","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C18","22p","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C19","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C401","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C402","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C403","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C501","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C502","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C503","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C504","1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C505","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C601","0.1u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C602","10u","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","1",""
-"C801","10u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C802","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C803","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C804","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C805","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C806","10u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C807","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C808","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C809","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C810","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C811","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C812","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C813","10u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C814","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C815","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C816","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C817","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C818","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C819","2.2u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C820","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C821","2.2u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C822","2.2u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C823","2.2u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C824","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C825","0.1u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C826","0.47u","Capacitor_SMD:C_0805_2012Metric","1",""
-"C827","0.47u","Capacitor_SMD:C_0805_2012Metric","1",""
-"D1","красный","LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder","1",""
-"D2","зелёный","LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder","1",""
-"D301","USBLC6-2SC6","Package_TO_SOT_SMD:SOT-23-6","1",""
-"D901","жёлтый","LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder","1",""
-"J1","Batt","Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical","1",""
-"J301","USB-C 16P","Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12","1",""
-"J401","DM3AT-SF-PEJM5","Connector_Card:microSD_HC_Hirose_DM3AT-SF-PEJM5","1",""
-"J501","SPK 8R","Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical","1",""
-"J601","FFC-40 0.5mm","console:FH12-40S-0.5SH_ContactsReversed","1",""
-"J901","UART","Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical","1",""
-"JP1","RESET","Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm","1",""
-"JP301","FEL","Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm","1",""
-"L1","2.2u","Inductor_SMD:L_Sunlord_SWPA3015S","1",""
-"L2","2.2u","Inductor_SMD:L_Sunlord_SWPA3015S","1",""
-"L3","2.2u","Inductor_SMD:L_Sunlord_SWPA3015S","1",""
-"Q601","AO3400A","Package_TO_SOT_SMD:SOT-23","1",""
-"R1","680k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R2","150k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R3","300k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R4","150k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R5","75k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R6","150k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R7","1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R8","1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R9","1M","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R10","47k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R11","1.1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R12","1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R13","1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R14","100k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R15","68k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R16","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R17","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R18","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R19","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R20","680k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R301","5.1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R302","5.1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R401","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R402","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R403","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R404","33","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R405","33","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R406","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R407","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R408","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R409","2.2k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1","DNP"
-"R410","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1","DNP"
-"R411","2.2k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R501","47k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R502","47k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R503","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R504","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R601","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R602","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R603","33","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R604","33","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R605","33","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R606","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R607","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R608","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R609","10k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R801","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R802","240","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R803","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R804","0","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"R901","1k","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","1",""
-"SW1","Движок","Button_Switch_SMD:SW_SPDT_Shouhan_MSK12C02","1",""
-"SW101","UP","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW102","DOWN","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW103","LEFT","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW104","RIGHT","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW105","SELECT","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW106","START","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW107","A","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW108","B","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW109","C","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"SW110","D","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","1",""
-"TP1","+3V3","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP2","+1V8","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP3","+0V9","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP4","VSYS","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP5","GND","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP801","REFCLK","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP802","GND","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP901","TMS","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP902","TDI","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP903","TDO","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP904","TCK","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"TP905","GND","TestPoint:TestPoint_Pad_D1.5mm","1",""
-"U1","F133-A","console:eLQFP-128_14x14_Pitch0.4mm_EPAD_5.72mm","1",""
-"U2","SY8089AAAC","Package_TO_SOT_SMD:SOT-23-5_HandSoldering","1",""
-"U3","SY8089AAAC","Package_TO_SOT_SMD:SOT-23-5_HandSoldering","1",""
-"U4","SY8089AAAC","Package_TO_SOT_SMD:SOT-23-5_HandSoldering","1",""
-"U5","TP4056","Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm","1",""
-"U401","W25Q32JVSSIQ","Package_SO:SOIC-8_5.3x5.3mm_P1.27mm","1",""
-"U501","PAM8301","Package_TO_SOT_SMD:SOT-23-6","1",""
-"Y1","24 МГц","Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering","1",""
-"Y2","32.768 кГц","Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm","1",""
+Кол,Что искать,Характеристики,Позиции
+4,"конденсатор керамический 22uФ, 0805","X5R/X7R, 10 В",C1 C2 C3 C4
+2,"конденсатор керамический 22uФ, 0805","X5R/X7R, 6.3 В",C5 C6
+11,"конденсатор керамический 0.1uФ, 0805","X7R, 10 В",C7 C14 C19 C401 C503 C601 C802 C803 C804 C805 C820
+14,"конденсатор керамический 0.1uФ, 0805","X7R, 6.3 В",C8 C9 C807 C808 C809 C810 C811 C812 C814 C815 C816 C817 C818 C824
+5,"конденсатор керамический 22pФ, 0805","C0G (NP0), 50 В",C10 C15 C16 C17 C18
+1,"конденсатор керамический 0.47uФ, 0805","X7R, 10 В",C11
+1,"конденсатор керамический 10uФ, 0805","X5R/X7R, 16 В",C12
+5,"конденсатор керамический 10uФ, 0805","X5R/X7R, 10 В",C13 C501 C505 C602 C801
+1,"конденсатор керамический 1uФ, 0805","X7R, 10 В",C504
+2,"конденсатор керамический 10uФ, 0805","X5R/X7R, 6.3 В",C806 C813
+1,"конденсатор керамический 2.2uФ, 0805","X5R/X7R, 10 В",C819
+3,"конденсатор керамический 2.2uФ, 0805","X5R/X7R, 6.3 В",C821 C822 C823
+2,"конденсатор керамический 0.47uФ, 0805","X7R, 6.3 В",C826 C827
+1,светодиод 0805 красный,,D1
+1,светодиод 0805 зелёный,,D2
+1,"USBLC6-2SC6, защита USB, SOT-23-6",,D301
+1,светодиод 0805 жёлтый,,D901
+1,"JST B2B-PH-SM4-TB, PH 2.0 мм, 2 контакта, вертикальный SMD (+ ответная PHR-2 с проводами на банку)",,J1
+1,"USB-C 16P, HRO TYPE-C-31-M-12",,J301
+1,"штыревой разъём 1×2, шаг 2.54, прямой (провода динамика)",,J501
+1,"Hirose FH12-40S-0.5SH(55), FFC 40 контактов, шаг 0.5, нижний контакт",,J601
+1,"штыревой разъём 1×4, шаг 2.54, прямой (UART)",,J901
+3,"Sunlord SWPA3015S2R2NT, 2.2 мкГн, Isat ≥ 1.6 А, 3×3×1.5",,L1 L2 L3
+1,"AO3400A, N-MOSFET, SOT-23",,Q601
+1,"резистор 680kОм, 0805",1 %,R1
+3,"резистор 150kОм, 0805",1 %,R2 R4 R6
+1,"резистор 300kОм, 0805",1 %,R3
+1,"резистор 75kОм, 0805",1 %,R5
+5,"резистор 1kОм, 0805",5 %,R7 R8 R12 R13 R901
+1,"резистор 1MОм, 0805",5 %,R9
+1,"резистор 47kОм, 0805",5 %,R10
+1,"резистор 1.1kОм, 0805",1 %,R11
+1,"резистор 100kОм, 0805",1 %,R14
+1,"резистор 68kОм, 0805",1 %,R15
+8,"резистор 0Ом, 0805","перемычка 0 Ом, до 2 А",R16 R17 R18 R503 R601 R801 R803 R804
+6,"резистор 10kОм, 0805",5 %,R19 R602 R606 R607 R608 R609
+1,"резистор 680kОм, 0805",5 %,R20
+2,"резистор 5.1kОм, 0805",5 %,R301 R302
+1,"резистор 2.2kОм, 0805",5 %,R411
+1,"резистор 24kОм, 0805",5 %,R501
+2,"резистор 33Ом, 0805",5 %,R603 R604
+1,"резистор 240Ом, 0805",1 %,R802
+1,"движковый переключатель MSK-12C02, SMD",,SW1
+10,"тактовая кнопка PTS645, SMD 6×6",,SW101 SW102 SW103 SW104 SW105 SW106 SW107 SW108 SW109 SW110
+1,"Allwinner F133-A, eLQFP-128 14×14 (есть на руках)",,U1
+3,"SY8089AAAC, понижающий 2 А, SOT-23-5",,U2 U3 U4
+1,"TP4056, зарядник Li-Ion, ESOP-8 с термопадом",,U5
+1,"W25Q32JVSNIQ, SPI NOR 4 МБ, SOIC-8 150 mil (НЕ SSIQ 208 mil)",,U401
+1,"PAM8301AAF, УНЧ класса D, SOT-23-6",,U501
+1,"кварц 24 МГц SMD 3225, 4 вывода, CL 18 пФ, ±20 ppm",,Y1
+1,"кварц 32.768 кГц SMD 3215, CL 12.5 пФ",,Y2

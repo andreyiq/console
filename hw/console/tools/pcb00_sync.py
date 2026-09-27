@@ -67,9 +67,10 @@ def sync(board):
 
     Цепи переносятся **по номеру площадки**, и это единственно верный способ:
     схема говорит «вывод N разъёма несёт цепь X», номер вывода и есть связь.
-    Именно поэтому подмена штатного FH12 на наш `..._ContactsReversed`
-    работает без единой правки цепей — площадка `N` просто оказывается в
-    другом месте корпуса (06-display.md §7.2.1).
+    Именно поэтому подмена корпуса работает без единой правки цепей —
+    площадка `N` просто оказывается в другом месте корпуса (так `J601`
+    переходил на свой корпус с обратной нумерацией и обратно на штатный,
+    06-display.md §7.2.1).
 
     Порядок вызовов важен: новый корпус сначала добавляется на плату и только
     потом переворачивается и получает цепи. Если сделать наоборот, pcbnew
@@ -291,6 +292,20 @@ def main():
     for line in lost:
         print("  НЕ ЗАВЕДЕНА:", line)
     fresh_of = preload(want, {"console": ROOT / "lib" / "console.pretty"})
+    # Номиналы — у ВСЕХ корпусов, а не только у заведённых сейчас. Прежде
+    # номинал переносился только новой детали, и смена номинала в схеме
+    # оставляла на плате старый: `J1` «Batt» против «JST-PH 2P» поймал DRC
+    # (`footprint_symbol_mismatch`). Делается до подмены корпусов — после
+    # `board.Remove` перебор корпусов в этом процессе испорчен.
+    values = want_values()
+    revalued = []
+    for fp in board.GetFootprints():
+        v = values.get(fp.GetReference())
+        if v is not None and fp.GetValue() != v:
+            revalued.append(f"{fp.GetReference()}: {fp.GetValue()} -> {v}")
+            fp.SetValue(v)
+    for line in revalued:
+        print("  номинал:", line)
     # Сверка нумерации — ДО подмены корпусов, а не после. После первого
     # `board.Remove` контейнер корпусов отдаёт сырой SwigPyObject, и
     # `FindFootprintByReference` возвращает объект без методов. Порядок при
@@ -305,7 +320,7 @@ def main():
         changed = changed or [""]
     for line in changed or ["корпуса уже совпадают со схемой"]:
         print(" ", line)
-    if changed or added:
+    if changed or added or revalued:
         board.Save(str(BOARD))
 
     missing, extra = audit(board, have)

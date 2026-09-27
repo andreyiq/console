@@ -24,3 +24,12 @@
 (rule "F133: у корпуса зазор теснее общего правила"
 	(condition "A.memberOfFootprint('U1') || B.memberOfFootprint('U1')")
 	(constraint clearance (min 0.15mm)))
+
+# Розетка USB-C выступает за торец на 0.46 мм — так велит чертёж HRO
+# TYPE-C-31-M-12 (край в 5.79 мм от оси отверстий), иначе штекер не садится
+# до конца. Её контур на шелкографии поэтому пересекает рез. Шелкографии на
+# ЛУТ-плате нет вовсе, а медь розетки до реза держит обычное правило.
+(rule "USB-C: контур шелкографии за торцом — по чертежу"
+	(condition "A.memberOfFootprint('J301') && A.Layer == 'F.Silkscreen'")
+	(constraint silk_clearance (min 0mm))
+	(severity ignore))

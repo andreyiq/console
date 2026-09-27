@@ -84,7 +84,11 @@ def check_outline(board):
         x1, y1, x2, y2 = box(f)
         if f.GetReference().startswith("H"):
             continue                      # крепёж стоит по своим правилам
-        if x1 < -0.01 or y1 < -0.01 or x2 > BOARD_W + 0.01 or y2 > BOARD_H + 0.01:
+        # Розетка USB-C выступает за нижний торец по чертежу HRO на 0.5 мм
+        # (`pcb04_fine.py`, `USB_AT`), её courtyard — корпус плюс 0.5, то
+        # есть за резом 1.0. Это законно; больше — уже нет.
+        over = 1.05 if f.GetReference() == "J301" else 0.01
+        if x1 < -0.01 or y1 < -0.01 or x2 > BOARD_W + 0.01 or y2 > BOARD_H + over:
             bad.append(f"{f.GetReference()} вне контура")
     return len(parts(board)), bad
 
@@ -349,16 +353,24 @@ def check_nets(board):
 
 
 def check_j601(board):
-    """14. Разъём шлейфа: вывод 1 сверху, окно влево (06-display.md §7.2.1)."""
+    """14. Разъём шлейфа: вывод 1 сверху, окно влево (06-display.md §7.2.1).
+
+    Окно у FH12 — со стороны, ПРОТИВОПОЛОЖНОЙ площадкам (даташит Hirose,
+    стр. 17). Значит «окно влево» — это площадки правее центра корпуса.
+    Прежняя проверка требовала свой корпус с обратной нумерацией и об окне не
+    спрашивала вовсе — и пропустила разъём, развёрнутый входом к чипу.
+    """
     f = board.FindFootprintByReference("J601")
     if f is None:
         return 0, ["J601 нет на плате"]
     d = {p.GetNumber(): p.GetPosition() for p in f.Pads()}
     bad = []
-    if not f.GetFPIDAsString().endswith("ContactsReversed"):
-        bad.append("корпус не с обратной нумерацией")
+    if "Hirose_FH12-40S" not in f.GetFPIDAsString():
+        bad.append(f"корпус не штатный FH12: {f.GetFPIDAsString()}")
     if d["1"].y >= d["40"].y:
         bad.append("вывод 1 не сверху")
+    if d["1"].x <= f.GetPosition().x:
+        bad.append("площадки левее корпуса — окно смотрит вправо, к чипу")
     if f.IsFlipped():
         bad.append("разъём не на лицевой стороне")
     return len(d), bad
