@@ -98,6 +98,61 @@ def deep_inside(poly, x, y, r=RING):
 # петля замыкается через изнанку под корпусом, а не вокруг ячейки.
 REQUIRED = [("C1", "2"), ("U2", "2"), ("C2", "2"), ("U3", "2"),
             ("C3", "2"), ("U4", "2")]
+
+# Под корпусами микросхем и кварцев заклёпок нет. Под SOIC и кварцем зазор
+# до платы ~0.1 мм, и головка проволочки не даст корпусу лечь. Заклёпки
+# термопадов F133 и TP4056 — другое дело: они задуманы, ставятся до посадки
+# и расклёпываются заподлицо (`pcb06_planes.py`, 10-mech.md §7). Вторая
+# ревизия: добивка поставила заклёпку земли под флешкой, между её рядами.
+BODY_PREFIX = ("U", "Y")
+BODIES = []          # courtyard корпусов, мм; заполняет `main`
+
+
+def fed_pieces(board, code, front, pierce):
+    """Номера кусков, у которых связь с изнанкой уже есть — свою или через
+    соседей, сшитых с ними земляными дорожками.
+
+    Прежде кусок считался связанным, только если заклёпка стоит в нём самом.
+    Вторая ревизия: земля флешки выведена дорожкой к земле кварца, где
+    заклёпка есть, DRC видит 0 несоединённых, а добивка твердила «кусок без
+    связи» и искала место под корпусом. Касание дорожки проверяем по точкам
+    вдоль неё: концы лежат на площадках, а площадка в полигон заливки не
+    входит.
+    """
+    n = len(front)
+    root = list(range(n))
+
+    def find(a):
+        while root[a] != a:
+            root[a] = root[root[a]]
+            a = root[a]
+        return a
+
+    for t in board.GetTracks():
+        if isinstance(t, pcbnew.PCB_VIA) or t.GetNetCode() != code \
+                or t.GetLayer() != pcbnew.F_Cu:
+            continue
+        a, b = t.GetStart(), t.GetEnd()
+        steps = max(2, int(pcbnew.ToMM(t.GetLength()) / 0.2) + 1)
+        hit = set()
+        for k in range(steps + 1):
+            p = pcbnew.VECTOR2I(int(a.x + (b.x - a.x) * k / steps),
+                                int(a.y + (b.y - a.y) * k / steps))
+            for i, o in enumerate(front):
+                if o.Contains(p) or o.Collide(p, int(t.GetWidth() / 2)):
+                    hit.add(i)
+        hit = sorted(hit)
+        for i in hit[1:]:
+            ra, rb = find(hit[0]), find(i)
+            if ra != rb:
+                root[ra] = rb
+    fed = {find(i) for i, o in enumerate(front)
+           if any(o.Contains(pt(x, y)) for x, y in pierce)}
+    return {i for i in range(n) if find(i) in fed}
+
+
+def under_body(x, y):
+    return any(x1 < x < x2 and y1 < y < y2 for x1, y1, x2, y2 in BODIES)
 REACH = 2.0          # дальше — уже не «у вывода»
 
 
@@ -128,7 +183,7 @@ def required(board, gnd, front, back, gpads, pierce):
                 d = (x - px) ** 2 + (y - py) ** 2
                 if d > REACH * REACH or (best_d is not None and d >= best_d):
                     continue
-                if not deep_inside(whole, x, y):
+                if not deep_inside(whole, x, y) or under_body(x, y):
                     continue
                 if any(q.Contains(pt(x, y))
                        or any(q.Contains(pt(x + dx * rd, y + dy * rd))
@@ -204,6 +259,16 @@ def main():
     # запасе на радиусе, см. `RING`. Объединение оставлено потому, что кольцо
     # вокруг площадки с термозазором — случай реальный, но записано честно:
     # здесь оно не помогло.
+    for f in board.GetFootprints():
+        if f.GetReference().startswith(BODY_PREFIX):
+            f.BuildCourtyardCaches()
+            cy = f.GetCourtyard(pcbnew.F_CrtYd)
+            if cy.OutlineCount():
+                bb = cy.BBox()
+                BODIES.append((pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
+                               pcbnew.ToMM(bb.GetRight()),
+                               pcbnew.ToMM(bb.GetBottom())))
+
     gpads = []
     for f in board.GetFootprints():
         for p in f.Pads():
@@ -336,9 +401,10 @@ def bridge(board, code, left):
 def place(board, gnd, code, front, back, gpads, pierce):
     """Один заход: заклёпка в каждый кусок, который её примет."""
     added, left = 0, []
-    for one in front:
+    fed = fed_pieces(board, code, front, pierce)
+    for idx, one in enumerate(front):
         area = one.Area() / 1e12
-        if any(one.Contains(pt(x, y)) for x, y in pierce):
+        if idx in fed or any(one.Contains(pt(x, y)) for x, y in pierce):
             continue
         bb = one.BBox()
         x1, y1 = pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop())
@@ -360,6 +426,9 @@ def place(board, gnd, code, front, back, gpads, pierce):
                 x, y = x1 + i * GRID, y1 + j * GRID
                 if not deep_inside(whole, x, y):
                     stop["мало своей меди"] += 1
+                    continue
+                if under_body(x, y):
+                    stop["под корпусом микросхемы"] += 1
                     continue
                 # Сверло не должно ЗАДЕВАТЬ площадку детали — иначе у неё
                 # выест середину и паять деталь будет нечем. Радиус ровно

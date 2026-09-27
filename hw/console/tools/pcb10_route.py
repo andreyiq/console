@@ -314,6 +314,8 @@ TIP_ORDER = os.environ.get("PCB_TIP_ORDER", "code")
 # не открывает проходов, а размазывает бюджет: обход в тридцать миллиметров
 # на двуслойной плате всё равно дороже, чем непроложенная связь.
 MARGIN = int(os.environ.get("PCB_MARGIN", 60))
+# Рамка второй попытки — для связей, которым в `MARGIN` пути не нашлось.
+MARGIN_WIDE = int(os.environ.get("PCB_MARGIN_WIDE", 150))
 
 
 def mm(v):
@@ -620,15 +622,18 @@ def build(board, pads, vias, keepouts, wires=(), tips=()):
             # полдорожки. Через число клеток это округлялось вверх и врало.
             g.fill_rect_near(*box, code, None, CLEAR + TRACK / 2)
         g.no_via_on_pad(*box)
-    for x1, y1, x2, y2 in keepouts:
+    for k in keepouts:
         # Зоны запрета живут внутри футпринтов — у `J401` это «No conductive
         # traces» из каталога Hirose, стр. 3, под механикой лотка. Закрываем
-        # наглухо: там нельзя вести медь никакой цепи.
+        # наглухо: там нельзя вести медь никакой цепи. Пятое поле — слой
+        # (None — оба); заклёпку закрывает и однослойная зона.
+        x1, y1, x2, y2 = k[:4]
+        layer = k[4] if len(k) > 4 else None
         i1, j1 = to_cell(x1, y1)
         i2, j2 = to_cell(x2, y2)
         for i in range(max(0, i1 - PAD), min(NX, i2 + PAD + 1)):
             for j in range(max(0, j1 - PAD), min(NY, j2 + PAD + 1)):
-                g.wall(i, j)
+                g.wall(i, j, layer)
     for code, x, y in vias:
         r = 0.45          # переходная 0.9, см. pcb06_planes.py
         g.fill_box(x - r, y - r, x + r, y + r, code)
@@ -1098,10 +1103,15 @@ def main():
                                     for z in f.Zones()]:
         if z.GetIsRuleArea():
             bb = z.GetBoundingBox()
+            # Слой — какой у зоны. Прежде зона закрывала оба слоя всегда, и
+            # запрет «только изнанка под кварцем» был бы стеной и на лице,
+            # где к кварцу подходят его же линии.
+            on_f, on_b = z.IsOnLayer(pcbnew.F_Cu), z.IsOnLayer(pcbnew.B_Cu)
+            layer = None if on_f == on_b else (0 if on_f else 1)
             keepouts.append((pcbnew.ToMM(bb.GetLeft()) - OX,
                              pcbnew.ToMM(bb.GetTop()) - OY,
                              pcbnew.ToMM(bb.GetRight()) - OX,
-                             pcbnew.ToMM(bb.GetBottom()) - OY))
+                             pcbnew.ToMM(bb.GetBottom()) - OY, layer))
 
     # Объекты цепей берём ДО любых правок платы. После `Remove` контейнеры
     # pcbnew портятся, и `FindNet` начинает отдавать сырой SwigPyObject —
@@ -1303,6 +1313,14 @@ def main():
                 if not path:
                     path = route(g, sorted(own), goals, code, margin=MARGIN,
                                  toll=toll)
+                # Не прошло в своей рамке — вторая попытка в широкой, только
+                # для этой связи. Вторая ревизия: три куска +3V3 (C819 над
+                # отладкой, вывод 83, питание флешки) не находили пути в 12 мм,
+                # а общая рамка 24 мм сводила их ценой обходов по изнанке у всех
+                # связей подряд (изнанка 136 → 219 мм).
+                if not path and route.why == "нет пути":
+                    path = route(g, sorted(own), goals, code,
+                                 margin=MARGIN_WIDE, toll=toll)
                 if path:
                     # Где просторно — на полную ширину, прочее горлышком.
                     # Считаем ДО разметки пути: своя свежая медь чужой не

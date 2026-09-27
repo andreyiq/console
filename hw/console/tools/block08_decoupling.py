@@ -179,9 +179,14 @@ PINS += [(str(n), "B", net, "§6.6 → 06-display.md §6.1", 13.97)
 # носителя BROM уходит в FEL при любом их значении.
 from block04_storage import FLASH, SD_CARD
 
+# Вторая ревизия: флешка вернулась, но на четырёх линиях, а не на шести.
+# `/WP` и `/HOLD` к чипу не идут — только подтяжки у самой флешки
+# (`block04_storage.py`, `pulls`). BROM читает boot0 в однобитном SPI, Quad
+# нам не нужен, а два лишних сигнала в полосе справа от корпуса (5 мм между
+# линиями кварца и полосами кнопок) не помещались. `PC6`/`PC7` (15, 14)
+# свободны.
 STORAGE = {
-    14: "SPI0-HOLD", 15: "SPI0-WP", 16: "SPI0-MISO", 17: "SPI0-MOSI",
-    18: "SPI0-CS0", 19: "SPI0-CLK",
+    16: "SPI0-MISO", 17: "SPI0-MOSI", 18: "SPI0-CS0", 19: "SPI0-CLK",
 } if FLASH else {}
 
 PINS += [(str(n), "L", net, "§6.6 → 04-storage.md §6.1")
@@ -329,6 +334,11 @@ if not SD_CARD:
 # 14…19.
 if not FLASH:
     NC += [str(n) for n in range(14, 20)]
+else:
+    NC += ["14", "15"]            # `PC7`/`PC6`: /HOLD и /WP не к чипу
+    # REFCLK (21) без контрольной точки — не подключён (см. `TP801` ниже)
+    PINS = [p for p in PINS if p[0] != "21"]
+    NC += ["21"]
 
 # Развязка: рельс → (ряд, объёмный номинал, выводы под 0.1 мкФ)
 RAILS = [
@@ -490,12 +500,17 @@ def island_a(s):
     column(s, AX + 2 * AP, AY, "LDOA-OUT", "C821", "2.2u", "§6.4 вывод 28")
     column(s, AX + 3 * AP, AY, "LDOB-OUT", "C822", "2.2u", "§6.4 вывод 30")
 
-    # контрольная точка на выводе 21 — требование 07-clock-reset.md §6.4
-    x = AX + 4 * AP
-    s.glabel("REFCLK", (x, AY), 0)
-    s.wire((x, AY), (x, AY + 5.08))
-    s.sym("Connector:TestPoint", "TP801", "REFCLK", x, AY + 5.08, 180,
-          src=f"{DOC} §6.5", show_value=False, rdx=0.0, rdy=5.08, just=None)
+    # контрольная точка на выводе 21 — требование 07-clock-reset.md §6.4.
+    # Во второй ревизии её нет: выход 21 зажат между линиями кварца (22/23)
+    # и CLK флешки, и дорожка к точке прошла бы в 0.2 мм от обеих. Частоту
+    # кварца на этой ревизии мерить нечем — потеря записана в 07 §6.4.
+    if not FLASH:
+        x = AX + 4 * AP
+        s.glabel("REFCLK", (x, AY), 0)
+        s.wire((x, AY), (x, AY + 5.08))
+        s.sym("Connector:TestPoint", "TP801", "REFCLK", x, AY + 5.08, 180,
+              src=f"{DOC} §6.5", show_value=False, rdx=0.0, rdy=5.08,
+              just=None)
 
     column(s, AX + 5 * AP, AY, "DZQ", "R802", "240", "§6.4 вывод 47",
            kind="Device:R")

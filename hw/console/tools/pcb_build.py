@@ -60,7 +60,8 @@ REST_ENV = {"PCB_VIA": os.environ.get("PCB_VIA", "100"),
 
 def step(title, args, env=None, keep=("проложено связей", "лучей выведено",
                                         "courtyard", "положено своих",
-                                        "сужено по зазору")):
+                                        "сужено по зазору", "не разошлись",
+                                        "мест, где не прошло", ") — ")):
     t0 = time.time()
     print(f"-- {title} ...", flush=True)
     full = {**os.environ, **(env or {})}

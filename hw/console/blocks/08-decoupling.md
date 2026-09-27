@@ -468,7 +468,7 @@ MangoPi последователен, берём его.
 | Выводы | Цепи |
 |---|---|
 | 7…13 | `SDC0-D1`, `SDC0-D0`, `SDC0-CLK`, `SDC0-CMD`, `SDC0-D3`, `SDC0-D2`, `SDC0-DET` |
-| 14…19 | `SPI0-HOLD`, `SPI0-WP`, `SPI0-MISO`, `SPI0-MOSI`, `SPI0-CS0`, `SPI0-CLK` |
+| 14…19 | `SPI0-HOLD`, `SPI0-WP`, `SPI0-MISO`, `SPI0-MOSI`, `SPI0-CS0`, `SPI0-CLK` — во второй ревизии 14/15 не подключены (IO2/IO3 флешки посажены у неё самой, 04-storage.md, шапка), 21 (`REFCLK`) тоже: `TP801` снята (07 §6.4) |
 
 Блок 3 рисует USB, блок 2 — делитель батареи:
 

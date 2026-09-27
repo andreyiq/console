@@ -206,6 +206,53 @@ def relabel(board, want, fresh_of):
     return fixed, checked
 
 
+def want_values():
+    """ref -> номинал, как записано в схеме."""
+    s = (ROOT / "console.kicad_sch").read_text()
+    out = {}
+    for m in re.finditer(r'\(property "Reference" "([A-Z]+\d+)"', s):
+        tail = s[m.end():m.end() + 400]
+        v = re.search(r'\(property "Value" "([^"]*)"', tail)
+        if v:
+            out[m.group(1)] = v.group(1)
+    return out
+
+
+def add_missing(board, want, have):
+    """Завести на плату детали, которые есть в схеме, а на плате нет.
+
+    Раньше это была работа F8 в окне KiCad, и конвейер без окна на ней
+    останавливался: вторая ревизия вернула флешку, и её корпусов на плате не
+    было. Корпус берётся из библиотеки по полю `Footprint` схемы, ставится на
+    стоянку (`pcb_park.py` всё равно перевезёт), цепи ему назначит
+    `pcb00_nets.py`. Загрузка — ДО любой правки платы: после `Remove`
+    `FootprintLoad` падает (см. `preload`).
+    """
+    values = want_values()
+    added, lost = [], []
+    fresh = []
+    for ref in sorted(set(want) - have):
+        fpid = want[ref]
+        if ":" not in fpid:
+            lost.append(f"{ref}: в схеме нет корпуса")
+            continue
+        nick, name = fpid.split(":", 1)
+        fp = pcbnew.FootprintLoad(str(lib_dir(nick)), name)
+        if fp is None:
+            lost.append(f"{ref}: НЕ НАЙДЕН {fpid}")
+            continue
+        fresh.append((ref, fp, nick, name))
+    for i, (ref, fp, nick, name) in enumerate(fresh):
+        fp.SetReference(ref)
+        fp.SetValue(values.get(ref, ""))
+        fp.SetFPID(pcbnew.LIB_ID(nick, name))
+        fp.SetPosition(pcbnew.VECTOR2I(pcbnew.FromMM(260 + 6 * (i % 6)),
+                                       pcbnew.FromMM(40 + 6 * (i // 6))))
+        board.Add(fp)
+        added.append(ref)
+    return added, lost
+
+
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
     # Состав снимаем ДО подмены корпусов: подмена делает `Remove`, после
@@ -213,6 +260,12 @@ def main():
     have = {f.GetReference() for f in board.GetFootprints()
             if not f.GetReference().startswith("H")}
     want = want_footprints()
+    added, lost = add_missing(board, want, have)
+    if added:
+        print("  заведены на плату (были только в схеме):", " ".join(added))
+        have |= set(added)
+    for line in lost:
+        print("  НЕ ЗАВЕДЕНА:", line)
     fresh_of = preload(want, {"console": ROOT / "lib" / "console.pretty"})
     # Сверка нумерации — ДО подмены корпусов, а не после. После первого
     # `board.Remove` контейнер корпусов отдаёт сырой SwigPyObject, и
@@ -228,7 +281,7 @@ def main():
         changed = changed or [""]
     for line in changed or ["корпуса уже совпадают со схемой"]:
         print(" ", line)
-    if changed:
+    if changed or added:
         board.Save(str(BOARD))
 
     missing, extra = audit(board, have)
@@ -238,7 +291,13 @@ def main():
     # умолчанию снята: после переименования `SW2` -> `JP1` на плате остаются
     # оба. Крепёж `H*` под удаление не попадает — его в схеме нет и не должно
     # быть, он ставится скриптом контура.
-    if extra:
+    if extra and changed:
+        # После подмены корпуса (`sync` делает `Remove`) контейнер корпусов
+        # в этом процессе испорчен — перебор падал на `GetReference`. Снимать
+        # лишнее — следующим запуском, на свежей загрузке.
+        print("  лишние на плате:", " ".join(extra),
+              "— снимутся при следующем запуске (был заменён корпус)")
+    elif extra:
         for fp in list(board.GetFootprints()):
             if fp.GetReference() in extra:
                 board.Remove(fp)

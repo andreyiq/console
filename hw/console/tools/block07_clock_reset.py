@@ -109,9 +109,13 @@ def reset(s):
 def main():
     s = Sheet(root_uuid(), 7, FRAME)
 
+    # Корпус 3225 штатный, а не «HandSoldering»: площадки 1.4×1.2 вместо
+    # 2.1×1.8. Вторая ревизия ставит кварц в полосу 5 мм справа от F133 рядом
+    # с флешкой (04-storage.md, шапка), и лишние 0.7 мм с каждой стороны там
+    # решают. Паяется феном, как и всё на плате.
     crystal(s, 60.96, "Device:Crystal_GND24", "Y1", "24 МГц",
             "DXOUT", "DXIN", ("C15", "C16"), f"{DOC} §6.1",
-            "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering")
+            "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm")
     s.note("24 МГц: 22/2 + 6.5 = 17.5 пФ при CL 18 пФ (§6.1)",
            (35.56, 287.02), 1.4)
 

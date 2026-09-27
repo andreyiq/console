@@ -165,12 +165,16 @@ def main():
     # перемычке делать нечего. Флаг берём из блока 4, а не заводим свой:
     # правило одно, и спрашивать его должны оба читателя.
     from block04_storage import FLASH
+    FEL_JUMPER = False
 
     s = Sheet(root_uuid(), 3, FRAME)
     j = connector(s)
     cc(s, j)
     esd(s)
-    if FLASH:
+    # Вторая ревизия: флешка есть, а перемычки нет. Вход в FEL — пинцетом
+    # поперёк страпа `R411` (block04_storage.py, `straps`): та же цепь
+    # `MISO` на ту же землю, без отдельной детали.
+    if FLASH and FEL_JUMPER:
         fel(s)
     notes(s, FLASH)
     write(s)
