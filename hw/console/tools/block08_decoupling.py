@@ -550,7 +550,10 @@ def island_b(s):
     part(s, BX, BY + 6.35, "Device:R", "R803", "0", "§6.3")
     s.wire((BX, BY + 10.16), (BX, av))
 
-    bus(s, av, [xs[0], flag_av, xs[1], xs[2]], [xs[0], flag_av, xs[1]])
+    # Узел — только где сходятся три провода. При выключенном кодеке у `xs[0]`
+    # их два (`R803` сверху и шина вправо): `C823` под ним снят.
+    bus(s, av, [xs[0], flag_av, xs[1], xs[2]],
+        [xs[0], flag_av, xs[1]] if CODEC else [flag_av, xs[1]])
     s.glabel("AVCC", (xs[2], av), 0)
     s.wire((flag_av, av), (flag_av, av - 5.08))
     pwr(s, "power:PWR_FLAG", flag_av, av - 5.08, 0, "§6.3", show=False)
@@ -576,7 +579,15 @@ def island_b(s):
         part(s, x, av + 6.35, "Device:C", ref, val, sect)
         s.wire((x, av + 10.16), (x, ag))
 
-    bus(s, ag, xs + [flag_ag], xs[1:4] + [flag_ag])
+    # Шина `AGND` — только между теми, кто на ней стоит. Нарисованная на все
+    # пять прежних позиций при `CODEC = False`, она оставляла левый конец
+    # висеть в воздухе (ERC `unconnected_wire_endpoint`, 12.7 мм) и ставила
+    # узлы там, где уже ничего не сходится. Поймал аудит схемы: я гонял ERC
+    # только на ошибки, а это предупреждение.
+    if CODEC:
+        bus(s, ag, xs + [flag_ag], xs[1:4] + [flag_ag])
+    else:
+        bus(s, ag, [xs[1], flag_ag, xs[4]], [xs[1], flag_ag])
     s.glabel("AGND", (xs[4], ag), 0)
     s.wire((flag_ag, ag), (flag_ag, ag + 5.08))
     pwr(s, "power:PWR_FLAG", flag_ag, ag + 5.08, 180, "§6.3", show=False)
