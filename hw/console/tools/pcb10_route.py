@@ -44,7 +44,22 @@ OX, OY = 50.0, 40.0
 BOARD_W, BOARD_H = 156.0, 74.0
 STEP = 0.2                      # шаг сетки, мм
 TRACK = 0.2                     # ширина дорожки
-CLEAR = 0.2                     # зазор
+# Зазор, которым ведёт трассировщик. Правило платы — 0.2 (предел ЛУТ, его
+# проверяет DRC), а вести можно и свободнее: `pcb_fab.py` считает места
+# теснее 0.25/0.3, где тонер сливается первым. Ручка для замера.
+#
+# Замерено и отвергнуто (`PCB_CLEAR=… pcb_build.py`, затем `pcb_fab.py`):
+#
+#     | зазор | разрывов | заклёпок | теснее 0.25 | теснее 0.3 |
+#     |---|---|---|---|---|
+#     | 0.20 | 0 | 79 | 180 | 501 |
+#     | 0.25 | 4 | 76 | 136 | 501 |
+#     | 0.30 | 4 | 77 | 140 | 501 |
+#
+# Тесноту дают не дорожки трассировщика, а корпуса и ручные полосы: шаг 0.5
+# шлейфа, розетка USB, выводы TP4056. Свободнее вести — значит потерять
+# разводку розетки и питания и не выиграть почти ничего.
+CLEAR = float(os.environ.get("PCB_CLEAR", 0.2))
 EDGE = 0.5                      # отступ меди от реза
 PAD = int(math.ceil((TRACK / 2 + CLEAR) / STEP))     # раздутие препятствий
 
@@ -154,6 +169,30 @@ POWER = {"+3V3", "+1V8", "+0V9", "VSYS", "VBUS", "AVCC", "AGND",
 # придётся расширить, чинить надо модель, а не только это число.
 POWER_TRACK = 0.2
 
+# Широкие цепи — по току (02-power.md §7.1) и по IPC-2152 для наружного слоя
+# 35 мкм. Модель теперь это умеет, и не так, как описано выше (ширина в
+# клетке), а проще: широкая цепь ищет путь, где свободно не только под
+# осью, но и на `wide_cells` клеток вокруг, — чужая медь размечена под
+# соседа 0.2, и лишний запас покрывает разницу. В тесноте у площадок
+# (`NECK` клеток от любой площадки своей цепи) дорожка сужается до 0.2 —
+# иначе к выводу F133 с шагом 0.4 не подойти вовсе. Сужение пишется на
+# отрезок: ширина у каждого отрезка своя.
+#
+# Числа. `VSYS`: батарея → три бака, ≈0.9 А, пик 1.2 А при 3.3 В на банке;
+# 0.2 мм на 140 мм давали ≈0.3 В падения. `+0V9`: 0.6 А на ядро с допуском
+# в единицы процентов, 0.2 мм на 30 мм — 44 мВ из 900.
+WIDE = {"VSYS": 0.8, "+0V9": 0.5, "+3V3": 0.4, "+1V8": 0.4}
+# Ручка для замера: `PCB_WIDE="+3V3=0.2 +1V8=0.3"`.
+for _kv in os.environ.get("PCB_WIDE", "").split():
+    _n, _w = _kv.split("=")
+    WIDE[_n] = float(_w)
+NECK = 5
+
+
+def wide_cells(width):
+    """Сколько клеток запаса вокруг оси нужно дорожке шире `TRACK`."""
+    return max(0, math.ceil((width - TRACK) / 2 / STEP - 1e-9))
+
 # Вести ли рельсы раньше сигналов. Замер против этого — см. `tasks.sort()`, —
 # но он старый, сделанный при сломанной модели зазоров. Ручка оставлена, чтобы
 # перепроверять было одной командой: `PCB_POWER_FIRST=1 python3 pcb10_route.py`
@@ -170,6 +209,8 @@ POWER_FIRST = bool(os.environ.get("PCB_POWER_FIRST"))
 VIA_COST = float(os.environ.get("PCB_VIA", 12.0))
 BACK_COST = float(os.environ.get("PCB_BACK", 1.2))
 VIA_PAD_CELLS = 4               # 0.9 мм площадка плюс зазор
+VIA_PAD = 0.7                   # площадка переходной трассировщика, мм
+VIA_PAD_GAP = 0.2               # от неё до площадки детали, мм
 # Между центрами двух отверстий: сверло 0.4 плюс 0.2495 между кромками.
 HOLE = 0.4 + 0.2495
 
@@ -253,6 +294,15 @@ NODE_BUDGET = int(os.environ.get("PCB_BUDGET", 300000))
 # портили только время, втрое. Один проход даёт те же 191 за 150 секунд вместо
 # 450, и на таком конвейере это разница между «померить» и «не мерить».
 PASSES = int(os.environ.get("PCB_PASSES", 1))
+# Проходы после полного успеха — за меньшим числом заклёпок (см. конец
+# цикла проходов): цепи, которым понадобились заклёпки, идут раньше.
+# Замерено: 0, 3 и 6 проходов дают одно и то же — 30 сигнальных заклёпок, а
+# время 83 → 274 → 406 с. Выключено, ручка оставлена для перепроверки.
+VIA_PASSES = int(os.environ.get("PCB_VIA_PASSES", 0))
+# Порядок разметки коридоров у концов лучей. Коридор забирает спорные клетки,
+# и кто размечен первым, тот и прав — порядок влияет на итог. `code`: по
+# номеру цепи, `xy`: по месту на плате слева направо.
+TIP_ORDER = os.environ.get("PCB_TIP_ORDER", "code")
 
 # На сколько клеток раздуть коробку поиска вокруг концов связи. Это предел
 # обхода: 60 клеток — двенадцать миллиметров, и всё, что дальше, объявляется
@@ -446,6 +496,26 @@ class Grid:
         o = self.own[L][self.idx(i, j)]
         return o == 0 or o == net
 
+    def free_wide(self, i, j, L, net, k):
+        """Свободно ли в круге `k` клеток вокруг — для широкой дорожки."""
+        if k <= 0:
+            return self.free(i, j, L, net)
+        # Уровень «диагональный», а не прямой: широкая дорожка чаще всего
+        # косая, и провис её кромки между клетками на прямом уровне не виден.
+        # На прямом первая же проба дала 0.186 мм до катода D2 при норме 0.2.
+        o = self.diag[L]
+        for di in range(-k, k + 1):
+            for dj in range(-k, k + 1):
+                if di * di + dj * dj > k * k:
+                    continue
+                ii, jj = i + di, j + dj
+                if not (0 <= ii < NX and 0 <= jj < NY):
+                    return False
+                v = o[self.idx(ii, jj)]
+                if v != 0 and v != net:
+                    return False
+        return True
+
     def free_diag(self, i, j, L, net):
         """Можно ли пройти через клетку ДИАГОНАЛЬНЫМ отрезком."""
         if not (0 <= i < NX and 0 <= j < NY):
@@ -461,6 +531,24 @@ class Grid:
             dx = (i * STEP - x) ** 2
             for j in range(max(0, j0 - r), min(NY, j0 + r + 1)):
                 if dx + (j * STEP - y) ** 2 < HOLE * HOLE:
+                    self.nohole[self.idx(i, j)] = 1
+
+    def no_via_on_pad(self, x1, y1, x2, y2):
+        """Запретить заклёпки, чья площадка заходит на площадку детали.
+
+        Любой цепи, и СВОЕЙ тоже. Для `can_via` своя медь — «свободно», и
+        заклёпки садились прямо в площадки своих же конденсаторов: девять
+        штук (`R10`, `C803`, `C807`…). Электрически это верно, а паять нельзя:
+        головка проволочки торчит там, куда ложится вывод детали.
+        """
+        d = VIA_PAD / 2 + VIA_PAD_GAP
+        i1, j1 = to_cell(x1 - d, y1 - d)
+        i2, j2 = to_cell(x2 + d, y2 + d)
+        for i in range(max(0, i1), min(NX, i2 + 1)):
+            dx = max(x1 - i * STEP, i * STEP - x2, 0.0)
+            for j in range(max(0, j1), min(NY, j2 + 1)):
+                dy = max(y1 - j * STEP, j * STEP - y2, 0.0)
+                if dx * dx + dy * dy < d * d:
                     self.nohole[self.idx(i, j)] = 1
 
     def can_via(self, i, j, net):
@@ -531,6 +619,7 @@ def build(board, pads, vias, keepouts, wires=(), tips=()):
             # Раздутие площадки — ровно по правилу, в миллиметрах: зазор плюс
             # полдорожки. Через число клеток это округлялось вверх и врало.
             g.fill_rect_near(*box, code, None, CLEAR + TRACK / 2)
+        g.no_via_on_pad(*box)
     for x1, y1, x2, y2 in keepouts:
         # Зоны запрета живут внутри футпринтов — у `J401` это «No conductive
         # traces» из каталога Hirose, стр. 3, под механикой лотка. Закрываем
@@ -639,7 +728,7 @@ def components(edge_list):
     return {c: find(c) for c in root}, out
 
 
-def route(g, starts, goals, net, margin=60, toll=()):
+def route(g, starts, goals, net, margin=60, toll=(), wide=0, neck=()):
     """A* от множества стартов к множеству целей. Возвращает путь `(i, j, слой)`.
 
     Поиск ограничен прямоугольником вокруг концов, раздутым на `margin` клеток.
@@ -706,6 +795,9 @@ def route(g, starts, goals, net, margin=60, toll=()):
                 continue
             if not g.free(ni, nj, L, net):
                 continue
+            if wide and (ni, nj) not in neck \
+                    and not g.free_wide(ni, nj, L, net, wide):
+                continue
             # Диагональный отрезок провисает к препятствию, прямой нет. Спрос
             # разный, поэтому и уровень занятости разный, и спрашиваем оба
             # конца отрезка: провис посередине зависит от обоих.
@@ -750,22 +842,125 @@ def simplify(path):
     return out
 
 
-def lay_rec(out, path, width, code):
+def lay_rec(out, path, width, code, wide_at=None):
     """Записать путь в список (а не на плату): проходов несколько, кладём лучший.
 
     Номер цепи записывается здесь же. Пока его не было, укладка на плату
     молча не делала ничего — при том что счётчик рапортовал успех.
+
+    `wide_at` — множество точек пути, где просторно для `width`. Остальные
+    идут шириной `TRACK`. Излом ставится и там, где ширина меняется, иначе
+    узкое горлышко растянулось бы на весь прямой участок или наоборот.
     """
-    pts = simplify(path)
+    if wide_at is None:
+        pts = simplify(path)
+        flag = {p: True for p in pts}
+    else:
+        pts = [path[0]]
+        for a, b, c in zip(path, path[1:], path[2:]):
+            if (a[2] != b[2] or b[2] != c[2]
+                    or (b[0] - a[0], b[1] - a[1]) != (c[0] - b[0], c[1] - b[1])
+                    or (a in wide_at) != (b in wide_at)
+                    or (b in wide_at) != (c in wide_at)):
+                pts.append(b)
+        if len(path) > 1:
+            pts.append(path[-1])
+        flag = {p: p in wide_at for p in pts}
     vias = 0
     for a, b in zip(pts, pts[1:]):
         if a[2] != b[2]:
             out.append(("via", to_mm(a[0], a[1]), None, width, a[2], code))
             vias += 1
         else:
+            w = width if flag[a] and flag[b] else TRACK
             out.append(("seg", to_mm(a[0], a[1]), to_mm(b[0], b[1]),
-                        width, a[2], code))
+                        w, a[2], code))
     return vias
+
+
+def _pt_seg(px, py, x1, y1, x2, y2):
+    dx, dy = x2 - x1, y2 - y1
+    n = dx * dx + dy * dy
+    t = 0.0 if n == 0 else max(0.0, min(1.0, ((px - x1) * dx + (py - y1) * dy) / n))
+    return math.hypot(px - x1 - t * dx, py - y1 - t * dy)
+
+
+def _seg_seg(a, b):
+    (x1, y1, x2, y2), (x3, y3, x4, y4) = a, b
+
+    def side(ax, ay, bx, by, cx, cy):
+        return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+    if (side(x1, y1, x2, y2, x3, y3) * side(x1, y1, x2, y2, x4, y4) < 0
+            and side(x3, y3, x4, y4, x1, y1) * side(x3, y3, x4, y4, x2, y2) < 0):
+        return 0.0
+    return min(_pt_seg(x1, y1, *b), _pt_seg(x2, y2, *b),
+               _pt_seg(x3, y3, *a), _pt_seg(x4, y4, *a))
+
+
+def _seg_box(s, box):
+    x1, y1, x2, y2 = s
+    bx1, by1, bx2, by2 = box
+    if bx1 <= x1 <= bx2 and by1 <= y1 <= by2:
+        return 0.0
+    edges = ((bx1, by1, bx2, by1), (bx2, by1, bx2, by2),
+             (bx2, by2, bx1, by2), (bx1, by2, bx1, by1))
+    return min(_seg_seg(s, e) for e in edges)
+
+
+def narrow_tight(laid, pads, vias, wires):
+    """Сузить до `TRACK` каждый широкий отрезок, которому тесно по-настоящему.
+
+    Проверка — в миллиметрах, до всей чужой меди: площадок, переходных,
+    дорожек с платы и только что проложенных. Сужение зазор только
+    увеличивает, поэтому один проход по списку достаточен и порядок не важен.
+    Возвращает, сколько отрезков сужено и сколько миллиметров широких осталось.
+    """
+    other = []                   # (код, слой или None для обоих, фигура)
+    for code, box in pads:
+        other.append((code, None, ("box", box, 0.0)))
+    for code, x, y in vias:
+        other.append((code, None, ("pt", (x, y), 0.45)))
+    for code, x1, y1, x2, y2, L, w in wires:
+        other.append((code, L, ("seg", (x1, y1, x2, y2), w / 2)))
+    for kind, a, b, w, L, code in laid:
+        if kind == "via":
+            other.append((code, None, ("pt", a, 0.35)))
+        else:
+            other.append((code, L, ("seg", (a[0], a[1], b[0], b[1]), w / 2)))
+    cut, left = 0, 0.0
+    for n, (kind, a, b, w, L, code) in enumerate(laid):
+        if kind != "seg" or w <= TRACK:
+            continue
+        s = (a[0], a[1], b[0], b[1])
+        need = w / 2 + CLEAR
+        lo_x, hi_x = min(s[0], s[2]) - need - 1.0, max(s[0], s[2]) + need + 1.0
+        lo_y, hi_y = min(s[1], s[3]) - need - 1.0, max(s[1], s[3]) + need + 1.0
+        tight = False
+        for oc, oL, (shape, geo, half) in other:
+            if oc == code or (oL is not None and oL != L):
+                continue
+            if shape == "box":
+                if geo[2] < lo_x or geo[0] > hi_x or geo[3] < lo_y or geo[1] > hi_y:
+                    continue
+                d = _seg_box(s, geo)
+            elif shape == "pt":
+                if not (lo_x < geo[0] < hi_x and lo_y < geo[1] < hi_y):
+                    continue
+                d = _pt_seg(geo[0], geo[1], *s)
+            else:
+                if max(geo[0], geo[2]) < lo_x or min(geo[0], geo[2]) > hi_x \
+                        or max(geo[1], geo[3]) < lo_y or min(geo[1], geo[3]) > hi_y:
+                    continue
+                d = _seg_seg(s, geo)
+            if d - half < need - 1e-6:
+                tight = True
+                break
+        if tight:
+            laid[n] = (kind, a, b, TRACK, L, code)
+            cut += 1
+        else:
+            left += math.dist(a, b)
+    return cut, left
 
 
 def lay(board, path, net, g, width=TRACK):
@@ -837,7 +1032,9 @@ def main():
                 (to_cell(vx, vy) + (0,), to_cell(vx, vy) + (1,)))
             continue
         name = t.GetNetname()
-        if wanted and name in wanted and not t.IsLocked():
+        grp = t.GetParentGroup()
+        hand = grp is not None and grp.GetName() == "hand"   # `pcb_hand.py`
+        if wanted and name in wanted and not t.IsLocked() and not hand:
             mine.append(t)          # своё прежнее — снимем и проложим заново
             continue
         a, b = t.GetStart(), t.GetEnd()
@@ -866,10 +1063,35 @@ def main():
         # видел сплошное «уже соединено» и не делал ничего. Отсюда и
         # расхождение: он рапортовал успех, DRC показывал сорок разрывов.
         # Копим рёбра, связность считаем ниже.
+        #
+        # Рёбра — по КАЖДОЙ клетке отрезка, а не только по концам. С одними
+        # концами середина длинного отрезка была «своей медью без куска»:
+        # отвод, упёртый в середину (Т-образный стык), считался оторванным,
+        # и трассировщик прокладывал к нему вторую дорожку поверх ручной —
+        # у подковы `+0V9` под чипом так появился дубль через весь корпус.
         L = 0 if t.GetLayer() == pcbnew.F_Cu else 1
-        edges.setdefault(t.GetNetCode(), []).append(
-            (to_cell(pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY) + (L,),
-             to_cell(pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY) + (L,)))
+        ax, ay = pcbnew.ToMM(a.x) - OX, pcbnew.ToMM(a.y) - OY
+        bx, by = pcbnew.ToMM(b.x) - OX, pcbnew.ToMM(b.y) - OY
+        n = max(1, int(max(abs(bx - ax), abs(by - ay)) / STEP + 0.5))
+        run = [to_cell(ax + (bx - ax) * k / n, ay + (by - ay) * k / n) + (L,)
+               for k in range(n + 1)]
+        edges.setdefault(t.GetNetCode(), []).extend(zip(run, run[1:]))
+
+    # Порядок — по геометрии, а не по файлу. KiCad раскладывает объекты в
+    # файле по их UUID, а UUID новые при каждой сборке; модель же зависит от
+    # порядка (спорные клетки, равные расстояния между кусками). Итог плыл:
+    # одна и та же сборка давала то 0, то 1 разрыв +3V3.
+    pads.sort()
+    vias.sort()
+    wires.sort()
+    tips.sort(key=(lambda t: (t[1], t[2], t[0])) if TIP_ORDER == "xy"
+              else (lambda t: (-t[0], t[1], t[2])) if TIP_ORDER == "rcode"
+              else None)
+    for k in by_net:
+        by_net[k].sort()
+    by_net = dict(sorted(by_net.items()))
+    for k in edges:
+        edges[k].sort()
 
     keepouts = []
     for z in list(board.Zones()) + [z for f in board.GetFootprints()
@@ -947,8 +1169,11 @@ def main():
     # поведение) и накопительный счёт дают одинаково 191. Оставлено потому, что
     # цикл сам по себе врёт про пользу проходов, а не потому, что помогло.
     hist = collections.Counter()
+    via_hist = collections.Counter()
+    code_name = {code: name for code, name in by_net}
+    extra = 0
     best_state = None
-    for attempt in range(PASSES):
+    for attempt in range(PASSES + VIA_PASSES):
         g = build(board, pads, vias, keepouts, wires, tips)
         laid = []
         done = fail = nvias = 0
@@ -969,12 +1194,20 @@ def main():
                 return (1, b, -i)
             if POWER_FIRST and name in POWER:
                 return (2, 0, span)
-            return (3, -hist[name], span)
+            return (3, -hist[name], -via_hist[name], span)
 
         ordered = sorted(tasks, key=key)
         for span, code, name, pts in ordered:
             net = netobj[name]
-            width = POWER_TRACK if name in POWER else TRACK
+            width = WIDE.get(name, POWER_TRACK if name in POWER else TRACK)
+            k_wide = wide_cells(width)
+            neck = set()
+            if k_wide:
+                for q in pts:
+                    ci, cj = to_cell(*q)
+                    for di in range(-NECK, NECK + 1):
+                        for dj in range(-NECK, NECK + 1):
+                            neck.add((ci + di, cj + dj))
             toll = tuple(to_cell(a, b) + to_cell(c, d)
                          for a, b, c, d, who in RESERVED
                          if not name.startswith(who))
@@ -1063,20 +1296,37 @@ def main():
                 a, b = pair
                 own = groups[a][0]
                 goals = [cells[i] for i in groups[b][1]]
-                path = route(g, sorted(own), goals, code, margin=MARGIN,
-                             toll=toll)
+                path = None
+                if k_wide:
+                    path = route(g, sorted(own), goals, code, margin=MARGIN,
+                                 toll=toll, wide=k_wide, neck=neck)
+                if not path:
+                    path = route(g, sorted(own), goals, code, margin=MARGIN,
+                                 toll=toll)
                 if path:
-                    nvias += lay_rec(laid, path, width, code)
+                    # Где просторно — на полную ширину, прочее горлышком.
+                    # Считаем ДО разметки пути: своя свежая медь чужой не
+                    # мешает, а чужая уже учтена.
+                    # Окончательно ширину проверяет `narrow_tight` по
+                    # настоящей геометрии: сетка 0.2 теряет сотые на косых
+                    # отрезках (ось VSYS легла в 0.686 мм от угла катода D2
+                    # при нужных 0.7 — DRC 0.186).
+                    wide_at = ({p for p in path
+                                if g.free_wide(p[0], p[1], p[2], code, k_wide)}
+                               if k_wide else None)
+                    nvias += lay_rec(laid, path, width, code, wide_at)
                     prev_L = None
-                    for i, j, L in path:
+                    for p in path:
+                        i, j, L = p
                         x, y = to_mm(i, j)
+                        w = width if wide_at is None or p in wide_at else TRACK
                         # Тем же способом, что чужая медь с платы, и это не
                         # придирка: пока свежая дорожка занимала место по числу
                         # клеток, а прочитанная с платы — по миллиметрам, одна
                         # и та же пара дорожек была законной внутри прохода и
                         # незаконной на следующем.
                         g.fill_near(x, y, code, L,
-                                    width / 2 + CLEAR + TRACK / 2)
+                                    w / 2 + CLEAR + TRACK / 2)
                         g.add_copper(i, j, L, code)
                         own.add((i, j, L))
                         if prev_L is not None and L != prev_L:
@@ -1108,16 +1358,31 @@ def main():
         print(f"  проход {attempt + 1}: проложено {done}, не удалось {fail} "
               f"({', '.join(f'{k} {v}' for k, v in why.most_common())}), "
               f"переходных {nvias}")
-        if best_state is None or done > best_state[0]:
+        # Лучший — больше связей, при равных — меньше заклёпок.
+        if best_state is None or (done, -nvias) > (best_state[0],
+                                                   -best_state[2]):
             best_state = (done, fail, nvias, laid, list(failed), list(spots))
         if os.environ.get("PCB_LASTFAIL"):
             hist.clear()        # прежнее поведение, для сравнения одной командой
         for n in failed:
             hist[n] += 1
+        # Заклёпки по цепям: в следующем проходе такие цепи идут раньше —
+        # им достаются коридоры, пока плата пуста. Проходы «за заклёпками»
+        # идут и после полного успеха, `VIA_PASSES` штук; выбирает
+        # `best_state`, так что хуже итог стать не может.
+        for kind, a, b, w, L, c in laid:
+            if kind == "via":
+                via_hist[code_name[c]] += 1
         if fail == 0:
-            break
+            extra += 1
+            if extra > VIA_PASSES:
+                break
 
     done, fail, nvias, laid, failed, spots = best_state
+    cut, wide_mm = narrow_tight(laid, pads, vias, wires)
+    if cut or wide_mm:
+        print(f"  широких отрезков сужено по зазору: {cut}, "
+              f"широкими осталось {wide_mm:.0f} мм")
     # Одна и та же переходная может попасть в список дважды: две ветви цепи
     # проходят через одну клетку и каждая честно записывает переход. На плате
     # это два отверстия в одной точке — сверлить их будут дважды.

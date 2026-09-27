@@ -22,6 +22,7 @@
     python3 tools/pcb_view.py --net LCD-CS          — только эти цепи
     python3 tools/pcb_view.py -o /tmp/x.png 105 55 162 98
 """
+import math
 import sys
 from pathlib import Path
 
@@ -80,59 +81,90 @@ def pieces(items):
 
 
 def touch(a, b):
-    """Касаются ли два куска меди.
+    """Касаются ли два куска меди — по меди, как считает сам KiCad.
 
-    Площадка — прямоугольник, а не точка. Пока она считалась точкой (центром),
-    дорожка, доведённая до КРАЯ площадки, выглядела неподключённой: девять
-    честных соединений подряд показывались разрывом. Такая смотрелка врёт в
-    опасную сторону — она заставляет чинить то, что не сломано.
+    Каждый кусок — это осевая геометрия (точка площадки/заклёпки или отрезок
+    дорожки) плюс то, насколько медь выходит за неё: у дорожки полширины, у
+    площадки — её прямоугольник. Два куска соединены, если медь касается.
+
+    Прежде касание проверялось по концам с допуском 0.06 мм, и это врало в
+    обе стороны. Сперва площадка считалась точкой — дорожка, доведённая до
+    КРАЯ площадки, выглядела разрывом (девять ложных тревог подряд). Потом
+    трассировщик начал дорожку на сетке 0.2, а луч веера кончился на 85.35 —
+    между осями 0.05 мм, медь перекрыта на 0.15, `kicad-cli` соединения видит,
+    а смотрелка показывала разрыв пары USB. Ложная тревога опасна: она
+    заставляет чинить то, что не сломано.
     """
-    la, pa, ba, pada = a
-    lb, pb, bb, padb = b
+    la, pa, ba, pada, ra = a
+    lb, pb, bb, padb, rb = b
     if not (la & lb):
         return False
-    if ba[2] < bb[0] - 0.05 or bb[2] < ba[0] - 0.05:
+    r = ra + rb + 1e-6
+    if ba[2] + r < bb[0] or bb[2] + r < ba[0]:
         return False
-    if ba[3] < bb[1] - 0.05 or bb[3] < ba[1] - 0.05:
+    if ba[3] + r < bb[1] or bb[3] + r < ba[1]:
         return False
-    if pada and in_box(ba, pb):
-        return True
-    if padb and in_box(bb, pa):
-        return True
-    for x1, y1 in pa:
-        for x2, y2 in pb:
-            if abs(x1 - x2) < 0.06 and abs(y1 - y2) < 0.06:
-                return True
-    return seg_near(a, b) or seg_near(b, a)
+    if pada and padb:
+        return True                     # прямоугольники пересеклись выше
+    if pada:
+        return seg_rect(pb, ba) <= rb + 1e-6
+    if padb:
+        return seg_rect(pa, bb) <= ra + 1e-6
+    return seg_seg(pa, pb) <= r
 
 
-def in_box(box, pts):
-    """Попадает ли хоть одна точка внутрь прямоугольника площадки."""
-    x0, y0, x1, y1 = box
-    for x, y in pts:
-        if x0 - 0.05 <= x <= x1 + 0.05 and y0 - 0.05 <= y <= y1 + 0.05:
-            return True
-    return False
-
-
-def seg_near(a, b):
-    """Конец одного отрезка лежит на теле другого (Т-образный стык)."""
-    pa, pb = a[1], b[1]
-    if len(pb) != 2:
-        return False
-    (x1, y1), (x2, y2) = pb
+def pt_seg(p, s):
+    """Расстояние от точки до отрезка (отрезок может быть точкой)."""
+    (x1, y1), (x2, y2) = s[0], s[-1]
     dx, dy = x2 - x1, y2 - y1
     ln = dx * dx + dy * dy
-    if ln < 1e-9:
-        return False
-    for px, py in pa:
-        t = ((px - x1) * dx + (py - y1) * dy) / ln
-        if not 0.0 <= t <= 1.0:
-            continue
-        qx, qy = x1 + t * dx, y1 + t * dy
-        if (px - qx) ** 2 + (py - qy) ** 2 < 0.06 ** 2:
-            return True
-    return False
+    if ln < 1e-12:
+        return math.dist(p, (x1, y1))
+    t = max(0.0, min(1.0, ((p[0] - x1) * dx + (p[1] - y1) * dy) / ln))
+    return math.dist(p, (x1 + t * dx, y1 + t * dy))
+
+
+def cross(a, b):
+    """Пересекаются ли два отрезка (строго, без касаний в общей точке)."""
+    (x1, y1), (x2, y2) = a
+    (x3, y3), (x4, y4) = b
+    for p in (a[0], a[1]):
+        for q in (b[0], b[1]):
+            if abs(p[0] - q[0]) < 1e-6 and abs(p[1] - q[1]) < 1e-6:
+                return False
+
+    def side(px, py, qx, qy, rx, ry):
+        return (qx - px) * (ry - py) - (qy - py) * (rx - px)
+
+    d1 = side(x1, y1, x2, y2, x3, y3)
+    d2 = side(x1, y1, x2, y2, x4, y4)
+    d3 = side(x3, y3, x4, y4, x1, y1)
+    d4 = side(x3, y3, x4, y4, x2, y2)
+    return ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0))
+
+
+def seg_seg(a, b):
+    """Кратчайшее расстояние между двумя отрезками."""
+    a = (a[0], a[-1])
+    b = (b[0], b[-1])
+    if cross(a, b):
+        return 0.0
+    return min(pt_seg(a[0], b), pt_seg(a[1], b),
+               pt_seg(b[0], a), pt_seg(b[1], a))
+
+
+def seg_rect(s, box):
+    """Расстояние от отрезка до прямоугольника площадки (0 — если задевает)."""
+    x0, y0, x1, y1 = box
+    s = (s[0], s[-1])
+    for x, y in s:
+        if x0 <= x <= x1 and y0 <= y <= y1:
+            return 0.0
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    edges = list(zip(corners, corners[1:] + corners[:1]))
+    if any(cross(s, e) for e in edges):
+        return 0.0
+    return min([seg_seg(s, e) for e in edges])
 
 
 def air_lines(board, nets):
@@ -149,10 +181,14 @@ def air_lines(board, nets):
             for L in (pcbnew.F_Cu, pcbnew.B_Cu):
                 if p.IsOnLayer(L):
                     layers.add(L)
-            sz = p.GetSize()
-            w, h = MM(sz.x) / 2, MM(sz.y) / 2
+            # Прямоугольник площадки — габарит с учётом поворота корпуса:
+            # у повёрнутой на 90° площадки ширина и высота меняются местами,
+            # а `GetSize` отдаёт их неповёрнутыми.
+            bb = p.GetBoundingBox()
             by_net.setdefault(n, []).append(
-                (layers, [(x, y)], (x - w, y - h, x + w, y + h), True))
+                (layers, [(x, y)],
+                 (MM(bb.GetX()), MM(bb.GetY()),
+                  MM(bb.GetRight()), MM(bb.GetBottom())), True, 0.0))
     for t in board.GetTracks():
         n = t.GetNetname()
         if not n:
@@ -160,16 +196,17 @@ def air_lines(board, nets):
         if isinstance(t, pcbnew.PCB_VIA):
             p = t.GetPosition()
             x, y = MM(p.x), MM(p.y)
-            r = MM(t.GetWidth()) / 2
+            r = MM(t.GetWidth(pcbnew.F_Cu)) / 2
             by_net.setdefault(n, []).append(
                 ({pcbnew.F_Cu, pcbnew.B_Cu}, [(x, y)],
-                 (x - r, y - r, x + r, y + r), True))
+                 (x - r, y - r, x + r, y + r), True, 0.0))
         else:
             s, e = t.GetStart(), t.GetEnd()
             x1, y1, x2, y2 = MM(s.x), MM(s.y), MM(e.x), MM(e.y)
             by_net.setdefault(n, []).append(
                 ({t.GetLayer()}, [(x1, y1), (x2, y2)],
-                 (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)), False))
+                 (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)), False,
+                 MM(t.GetWidth()) / 2))
 
     out = []
     for n, items in by_net.items():
@@ -197,25 +234,6 @@ def air_lines(board, nets):
             have.append(j)
             rest.remove(j)
     return out
-
-
-def cross(a, b):
-    """Пересекаются ли два отрезка (строго, без касаний в общей точке)."""
-    (x1, y1), (x2, y2) = a
-    (x3, y3), (x4, y4) = b
-    for p in (a[0], a[1]):
-        for q in (b[0], b[1]):
-            if abs(p[0] - q[0]) < 1e-6 and abs(p[1] - q[1]) < 1e-6:
-                return False
-
-    def side(px, py, qx, qy, rx, ry):
-        return (qx - px) * (ry - py) - (qy - py) * (rx - px)
-
-    d1 = side(x1, y1, x2, y2, x3, y3)
-    d2 = side(x1, y1, x2, y2, x4, y4)
-    d3 = side(x3, y3, x4, y4, x1, y1)
-    d4 = side(x3, y3, x4, y4, x2, y2)
-    return ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0))
 
 
 def report_crossings(air):

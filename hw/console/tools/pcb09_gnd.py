@@ -88,6 +88,74 @@ def deep_inside(poly, x, y, r=RING):
     return all(poly.Contains(pt(x + dx * r, y + dy * r)) for dx, dy in DIRS)
 
 
+#
+# Заклёпки, которые ставятся не «одна на кусок», а у конкретного вывода.
+# Горячая петля понижающего: даташит SY8089 (Layout Design, п. 2) — «CIN
+# вплотную к IN и GND, площадь петли CIN–GND минимальна». У SOT-23-5 IN и LX
+# на одной стороне корпуса, GND посередине другой, и землю ёмкости с землёй
+# микросхемы на лице не свести: между ними всегда либо LX, либо EN. Обычный
+# ответ двухслойной платы — заклёпка в плоскость у каждой из двух земель, и
+# петля замыкается через изнанку под корпусом, а не вокруг ячейки.
+REQUIRED = [("C1", "2"), ("U2", "2"), ("C2", "2"), ("U3", "2"),
+            ("C3", "2"), ("U4", "2")]
+REACH = 2.0          # дальше — уже не «у вывода»
+
+
+def required(board, gnd, front, back, gpads, pierce):
+    """Заклёпка у каждого вывода из `REQUIRED`: ближайшее законное место."""
+    added, miss = 0, []
+    for ref, num in REQUIRED:
+        f = board.FindFootprintByReference(ref)
+        if f is None:
+            continue
+        p = [q for q in f.Pads() if q.GetNumber() == num][0]
+        px = pcbnew.ToMM(p.GetPosition().x)
+        py = pcbnew.ToMM(p.GetPosition().y)
+        one = next((o for o in front if o.Collide(p.GetPosition(), 0)), None)
+        if one is None:
+            miss.append(f"{ref}.{num}: площадка не в заливке")
+            continue
+        near = [q for q in gpads if q.Collide(one, 0)]
+        whole = pcbnew.SHAPE_POLY_SET(one)
+        for q in near:
+            whole.BooleanAdd(q)
+        rd = VIA_PAD / 2 + 0.1
+        best, best_d = None, None
+        k = int(REACH / GRID)
+        for i in range(-k, k + 1):
+            for j in range(-k, k + 1):
+                x, y = px + i * GRID, py + j * GRID
+                d = (x - px) ** 2 + (y - py) ** 2
+                if d > REACH * REACH or (best_d is not None and d >= best_d):
+                    continue
+                if not deep_inside(whole, x, y):
+                    continue
+                if any(q.Contains(pt(x, y))
+                       or any(q.Contains(pt(x + dx * rd, y + dy * rd))
+                              for dx, dy in DIRS) for q in near):
+                    continue
+                if not any(deep_inside(b, x, y) for b in back):
+                    continue
+                if any((x - vx) ** 2 + (y - vy) ** 2 < HOLE * HOLE
+                       for vx, vy in pierce):
+                    continue
+                best, best_d = (x, y), d
+        if best is None:
+            miss.append(f"{ref}.{num}: в {REACH} мм нет места")
+            continue
+        v = pcbnew.PCB_VIA(board)
+        v.SetPosition(pt(*best))
+        v.SetWidth(mm(VIA_PAD))
+        v.SetDrill(mm(VIA_DRILL))
+        v.SetNet(gnd)
+        v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+        v.SetLocked(True)
+        board.Add(v)
+        pierce.append(best)
+        added += 1
+    return added, miss
+
+
 def pieces(zones, layer, net):
     """Куски залитой меди цепи `net` на слое `layer`, каждый со своими дырами."""
     out = []
@@ -150,6 +218,14 @@ def main():
     # правилам добивает два из трёх. Пока заход был один, эти два выглядели
     # «не влезает» — то есть отчёт называл невозможным то, что возможно на
     # следующем шаге.
+    zones = list(board.Zones())
+    n_req, miss = required(board, gnd, pieces(zones, pcbnew.F_Cu, code),
+                           pieces(zones, pcbnew.B_Cu, code), gpads, pierce)
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    print(f"заклёпок у горячих петель баков: {n_req} из {len(REQUIRED)}")
+    for m in miss:
+        print(f"    НЕ ПОСТАВЛЕНА: {m} — петля CIN–GND замкнётся вокруг ячейки")
+
     total, left = 0, []
     for round_no in range(6):
         zones = list(board.Zones())
@@ -246,7 +322,11 @@ def bridge(board, code, left):
                          margin=R10.MARGIN, toll=())
         if not path:
             continue
-        R10.lay(board, path, gnd, g, width=0.4)
+        # Ширина — та, под которую искался путь (`R10.TRACK`). Стояло 0.4 «на
+        # пользу земле», а занятость сетки считается под 0.2: мост к куску у
+        # `JP1` лёг в 0.1 мм от `RESET`, `REFCLK` и `+1V8` — шесть нарушений
+        # зазора в DRC.
+        R10.lay(board, path, gnd, g, width=R10.TRACK)
         done.add((cx, cy))
         print(f"    кусок {area:7.2f} мм² в ({cx}, {cy}) — подведена дорожка, "
               f"{len(path)} клеток")
@@ -291,11 +371,17 @@ def place(board, gnd, code, front, back, gpads, pierce):
                 # Здесь, впрочем, это ничего не дало: на всех трёх оставшихся
                 # кусках места лежат глубоко внутри площадок, и запас был не
                 # при чём. Правило оставлено как верное, а не как полезное.
-                rd = VIA_DRILL / 2
+                #
+                # Поправка: мерить надо ПЛОЩАДКОЙ заклёпки, а не сверлом.
+                # «Кромка отверстия у кромки площадки» на ЛУТ-плате значит
+                # головку проволочки на площадке детали — вывод на неё не лечь.
+                # Так легли заклёпки в `C807` и `JP1`. Запас 0.1 — чтобы
+                # огранка кругов не пропустила касание.
+                rd = VIA_PAD / 2 + 0.1
                 if any(q.Contains(pt(x, y))
                        or any(q.Contains(pt(x + dx * rd, y + dy * rd))
                               for dx, dy in DIRS) for q in near):
-                    stop["сверло попало бы в площадку детали"] += 1
+                    stop["заклёпка легла бы на площадку детали"] += 1
                     continue
                 if not any(deep_inside(b, x, y) for b in back):
                     stop["на изнанке в этом месте не плоскость"] += 1

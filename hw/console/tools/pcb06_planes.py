@@ -35,7 +35,11 @@ BOARD_W, BOARD_H = 156.0, 74.0
 EDGE = 0.5                      # отступ меди от реза, как в правилах платы
 CORNER_R = 3.0
 
-VIA_PAD, VIA_DRILL = 0.9, 0.5   # 10-mech.md §7, минимум для CNC3018
+# Площадка крупная — сшивку паять руками с двух сторон (10-mech.md §7). Сверло
+# то же, что у переходных разводки, 0.4: стояло 0.5, и на плате было два
+# сверла под заклёпки — лишняя смена на станке ради 33 отверстий. Поясок от
+# этого только шире: 0.25 на сторону против 0.2.
+VIA_PAD, VIA_DRILL = 0.9, 0.4
 
 # Сшивка: шаг сетки по свободной земле.
 #
@@ -46,7 +50,28 @@ VIA_PAD, VIA_DRILL = 0.9, 0.5   # 10-mech.md §7, минимум для CNC3018
 # Считаем по делу. Наружу у нас ничего быстрее шины дисплея не выходит (ядро
 # 480 МГц и DDR заперты внутри корпуса), f_knee порядка 400 МГц, λ/20 ≈ 21 мм.
 # TI SZZA009 и Отт для двухслойных плат дают сетку 12.7 мм — она и берётся.
-STITCH_STEP = 12.7
+STITCH_STEP = float(os.environ.get("PCB_STITCH", 12.7))
+
+# Сетка — не по всей плате. Замер: без сетки вовсе каждый кусок лицевой
+# заливки всё равно связан с изнанкой (добивка `pcb09_gnd.py`, +2 заклёпки),
+# а сама сетка стоила 30 заклёпок, и больше половины из них — под дисплеем и
+# у кнопок, где быстрых сигналов нет: обратный ток лицевых дорожек и так идёт
+# по сплошной изнанке прямо под ними.
+#
+# Оставлено два правила из A64 PCB Layout Guide (Allwinner, раздел EMC):
+#   * «вдоль края платы заклёпки земли, шаг меньше 3 см» — кольцо `EDGE_*`;
+#   * у быстрых сигналов (шина дисплея 50 МГц, USB, кварцы, сам чип) —
+#     прежняя сетка 12.7 мм, в прямоугольнике `FAST` (координаты от угла
+#     платы, как всё в этом файле).
+# `PCB_FULL_GRID=1` возвращает прежнюю сетку по всей плате — для сравнения.
+FULL_GRID = bool(os.environ.get("PCB_FULL_GRID"))
+FAST = (65.0, 15.0, 122.0, 72.0)      # x 115…172, y 55…112 в осях платы
+EDGE_STEP = 28.0                      # < 30 мм по руководству, с запасом
+EDGE_IN = 3.5                         # отступ кольца от края: внутри VBUS
+# насколько можно сдвинуть вдоль края. 6 не хватало внизу: между кнопками
+# SW105/SW106 и розеткой USB точка не нашлась, и край остался без заклёпки
+# на 55 мм.
+EDGE_SLIDE = 12.0
 
 # Термопад F133: девять переходных внутри 5.72 x 5.72. У Xassette их шесть в
 # пределах ±4 мм от центра (08-decoupling.md §4), берём чуть плотнее — это
@@ -54,6 +79,13 @@ STITCH_STEP = 12.7
 EPAD_GRID = [(-1.6, -1.6), (0.0, -1.6), (1.6, -1.6),
              (-1.6, 0.0), (0.0, 0.0), (1.6, 0.0),
              (-1.6, 1.6), (0.0, 1.6), (1.6, 1.6)]
+
+# Термопад зарядника TP4056: 1 А × (5 − 3.7) В = 1.3 Вт на ESOP-8
+# (02-power.md §2.5: «под термопад нужен полигон меди»). Лицевая медь у
+# термопада — островок внутри петли `VBUS`, тепло уходит только в изнанку,
+# а к ней была одна заклёпка в 4 мм. Четыре — под самим термопадом
+# 3.3 × 2.4 мм, по углам; смещения — в осях платы, от центра термопада.
+THERMAL = {"U5": [(-1.0, -0.6), (1.0, -0.6), (-1.0, 0.6), (1.0, 0.6)]}
 
 
 def mm(v):
@@ -317,10 +349,26 @@ def main():
     u1 = board.FindFootprintByReference("U1")
     ex = pcbnew.ToMM(u1.GetPosition().x) - OX
     ey = pcbnew.ToMM(u1.GetPosition().y) - OY
+    # центр термопада, а не корпуса: у U5 они совпадают, но мерить надо то,
+    # во что сверлим
+    thermal = {}
+    for ref in THERMAL:
+        f = board.FindFootprintByReference(ref)
+        ep = max(f.Pads(), key=lambda p: p.GetSize().x * p.GetSize().y)
+        thermal[ref] = (pcbnew.ToMM(ep.GetPosition().x) - OX,
+                        pcbnew.ToMM(ep.GetPosition().y) - OY)
 
     gnd = wipe(board)
     if gnd is None:
         raise SystemExit("цепь GND на плате не найдена")
+
+    # Сплошное подключение — у ВСЕХ деталей, а не только по умолчанию зоны:
+    # библиотечная паяльная перемычка (`JP1`, Jumper:SolderJumper-2) несёт
+    # свой режим «термобарьер», и её земляная площадка держалась на одной
+    # спице — DRC `starved_thermal`. Паяем феном, барьеры не нужны.
+    for f in board.GetFootprints():
+        if f.GetLocalZoneConnection() == pcbnew.ZONE_CONNECTION_THERMAL:
+            f.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_INHERITED)
 
     plane(board, pcbnew.B_Cu, gnd, EDGE)
     plane(board, pcbnew.F_Cu, gnd, EDGE)
@@ -339,31 +387,78 @@ def main():
     for dx, dy in EPAD_GRID:
         via(board, gnd, ex + dx, ey + dy)
         n_epad += 1
+    for ref, grid in THERMAL.items():
+        for dx, dy in grid:
+            via(board, gnd, thermal[ref][0] + dx, thermal[ref][1] + dy)
+            n_epad += 1
 
-    # сшивка по свободному полю
+    def fits(x, y):
+        return (EDGE + 1.0 < x < BOARD_W - EDGE - 1.0
+                and EDGE + 1.0 < y < BOARD_H - EDGE - 1.0
+                and not any(bx1 < x < bx2 and by1 < y < by2
+                            for bx1, by1, bx2, by2 in busy)
+                and not near_wire(x, y, segs)
+                and not any((x - vx) ** 2 + (y - vy) ** 2 < r * r
+                            for vx, vy, r in holes))
+
+    # сшивка по полю — только там, где быстрые сигналы (`FAST`)
     n_grid = 0
+    fx1, fy1, fx2, fy2 = FAST
     y = STITCH_STEP
     while y < BOARD_H:
         x = STITCH_STEP
         while x < BOARD_W:
-            if (EDGE + 1.0 < x < BOARD_W - EDGE - 1.0
-                    and EDGE + 1.0 < y < BOARD_H - EDGE - 1.0
-                    and not any(bx1 < x < bx2 and by1 < y < by2
-                                for bx1, by1, bx2, by2 in busy)
-                    and not near_wire(x, y, segs)
-                    and not any((x - vx) ** 2 + (y - vy) ** 2 < r * r
-                                for vx, vy, r in holes)):
+            if (FULL_GRID or (fx1 <= x <= fx2 and fy1 <= y <= fy2)) \
+                    and fits(x, y):
                 via(board, gnd, x, y)
+                holes.append((x, y, VIA_PAD + 0.25))
                 n_grid += 1
             x += STITCH_STEP
         y += STITCH_STEP
+
+    # кольцо по краю: шаг не больше `EDGE_STEP`, место ищется вдоль края
+    n_edge, n_edge_miss = 0, 0
+    if not FULL_GRID:
+        a, b = EDGE_IN, (BOARD_W - EDGE_IN, BOARD_H - EDGE_IN)
+        sides = [((a, a), (b[0], a)), ((b[0], a), (b[0], b[1])),
+                 ((b[0], b[1]), (a, b[1])), ((a, b[1]), (a, a))]
+        for (x1, y1), (x2, y2) in sides:
+            length = math.hypot(x2 - x1, y2 - y1)
+            n = max(1, math.ceil(length / EDGE_STEP))
+            ux, uy = (x2 - x1) / length, (y2 - y1) / length
+            nx, ny = -uy, ux                      # внутрь платы
+            for k in range(n):
+                t0 = (k + 0.5) * length / n
+                spot = None
+                # вдоль края ±EDGE_SLIDE, вглубь до 2 мм
+                for s in [0] + [d * sgn for d in
+                                [q * 0.4 for q in range(1, int(EDGE_SLIDE / 0.4) + 1)]
+                                for sgn in (1, -1)]:
+                    for dep in (0.0, 0.8, 1.6, 2.4, 3.2):
+                        x = x1 + ux * (t0 + s) + nx * dep
+                        y = y1 + uy * (t0 + s) + ny * dep
+                        if fits(x, y):
+                            spot = (x, y)
+                            break
+                    if spot:
+                        break
+                if spot is None:
+                    n_edge_miss += 1
+                    continue
+                via(board, gnd, *spot)
+                holes.append(spot + (VIA_PAD + 0.25,))
+                n_edge += 1
 
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())
     board.Save(str(BOARD))
     print(f"  полигон GND: изнанка сплошная, лицо заливкой")
     print(f"  переходных под термопадом: {n_epad}")
-    print(f"  переходных сшивки по полю: {n_grid}")
+    print(f"  переходных сшивки по полю: {n_grid}"
+          + ("" if FULL_GRID else " (только зона быстрых сигналов)"))
+    if not FULL_GRID:
+        print(f"  переходных по краю платы: {n_edge}, шаг ≤ {EDGE_STEP:.0f} мм"
+              + (f"; НЕ НАШЛОСЬ МЕСТА: {n_edge_miss}" if n_edge_miss else ""))
     print(f"  островков питания: {n_isl}")
 
 
