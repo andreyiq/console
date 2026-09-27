@@ -90,20 +90,42 @@ def sync(board):
         target = want.get(ref)
         if not target or ":" not in target:
             continue                       # крепёж `H*` в схеме не значится
-        if fp.GetFPIDAsString() == target:
-            continue
         nick, name = target.split(":", 1)
-        new = pcbnew.FootprintLoad(str(lib_dir(nick)), name)
+        # Корпус из своей библиотеки сверяем и по СОДЕРЖИМОМУ, не только по
+        # имени. У `J601` в файле платы координаты линий уплыли на 1 нм
+        # (4.500001 вместо 4.5) — след поворотов туда и обратно, — и DRC
+        # держал вечное `lib_footprint_mismatch`, хотя форма та же. Лечится
+        # тем же, чем подмена: свежей копией из библиотеки.
+        stale = False
+        if fp.GetFPIDAsString() == target:
+            if nick != "console":
+                continue
+            new = pcbnew.FootprintLoad(str(lib_dir(nick)), name)
+            if new is None or not fp.FootprintNeedsUpdate(new):
+                continue
+            stale = True
+        else:
+            new = pcbnew.FootprintLoad(str(lib_dir(nick)), name)
         if new is None:
             changed.append(f"{ref}: НЕ НАЙДЕН {target}")
             continue
-        todo.append((fp, new, nick, name))
+        todo.append((fp, new, nick, name, stale))
 
-    for fp, new, nick, name in todo:
+    for fp, new, nick, name, stale in todo:
         ref = fp.GetReference()
         nets = {p.GetNumber(): p.GetNet() for p in fp.Pads()}
         new.SetReference(ref)
         new.SetValue(fp.GetValue())
+        # Поля из схемы (`Источник`, `LCSC`) переносим: без них BOM теряет
+        # номер заказа, а плата — ссылку на решение.
+        for fld in fp.GetFields():
+            if fld.GetName() in ("Reference", "Value", "Footprint",
+                                 "Datasheet", "Description"):
+                continue
+            new.SetField(fld.GetName(), fld.GetText())
+            got = new.GetFieldByName(fld.GetName())
+            got.SetLayer(pcbnew.F_Fab)
+            got.SetVisible(False)
         new.SetPosition(fp.GetPosition())
         new.SetOrientation(fp.GetOrientation())
         board.Add(new)
@@ -115,7 +137,9 @@ def sync(board):
         new.SetFPID(pcbnew.LIB_ID(nick, name))
         new.SetLocked(fp.IsLocked())
         board.Remove(fp)
-        changed.append(f"{ref}: {fp.GetFPIDAsString().split(':')[-1]} -> {name}")
+        changed.append(f"{ref}: корпус разошёлся с библиотекой — обновлён "
+                       f"из {nick}:{name}" if stale else
+                       f"{ref}: {fp.GetFPIDAsString().split(':')[-1]} -> {name}")
     return changed
 
 

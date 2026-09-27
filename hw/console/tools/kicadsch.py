@@ -404,7 +404,11 @@ def write(s):
                     "label", "no_connect", "bus") and mine:
             dropped += 1
             continue
-        if kind == "text" and mine and "БЛОК" not in chunk \
+        # Заголовок рамки узнаём только по номеру («5. ЗВУК…»). Прежняя
+        # защита «в тексте есть слово БЛОК» не берегла ни одного заголовка, а
+        # берегла заметки «В ПЕРВОЙ РЕВИЗИИ БЛОКА НЕТ»: блок вернулся, а
+        # надпись осталась лежать поверх его проводов.
+        if kind == "text" and mine \
                 and not re.search(r'\(text "%d\.' % s.block, chunk):
             dropped += 1
             continue
